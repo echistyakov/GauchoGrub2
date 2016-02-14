@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Gaucho Grub</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="menu_tab">Menus</string>
+    <string name="schedule_tab">Schedule</string>
+    <string name="dining_cams_tab">Dining Cams</string>
+    <string name="drawer_open">Open Drawer</string>
+    <string name="drawer_close">Close Drawer</string>
+    <string-array
+        name="nav_drawer_array">
+        <item>Main Menu</item>
+        <item>Food Menus</item>
+        <item>Schedules</item>
+        <item>Favorites</item>
+        <item>Swipes</item>
+        <item>Dining Cams</item>
+    </string-array>
+    <string-array
+        name="dining_commons_array">
+        <item>Carrillo</item>
+        <item>De La Guerra</item>
+        <item>Ortega</item>
+        <item>Portolla</item>
+    </string-array>
+
+    <string-array
+        name="date_nav_array">
+        <item>2/17/2015</item>
+    </string-array>
+
+    <string-array
+        name="dining_cams_array">
+        <item>Carrillo</item>
+        <item>De La Guerra</item>
+        <item>Ortega</item>
+    </string-array>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>
