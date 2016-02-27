@@ -15,7 +15,7 @@ import com.g10.gauchogrub.services.NotificationService;
 
 import java.util.Calendar;
 
-public class SplashScreen extends Activity {
+public class SplashActivity extends Activity {
 
     private final static int SPLASH_INTERVAL = 2 * 1000;  // 2 seconds
 
@@ -48,7 +48,7 @@ public class SplashScreen extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent i = new Intent(SplashScreen.this, BaseActivity.class);
+                Intent i = new Intent(SplashActivity.this, BaseActivity.class);
                 startActivity(i);
                 this.finish();
             }
