@@ -3,8 +3,6 @@ package com.g10.gauchogrub.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import org.apache.http.util.ByteArrayBuffer;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.UnsupportedEncodingException;
