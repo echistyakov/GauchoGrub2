@@ -3,8 +3,11 @@ package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
+import com.google.common.base.Charsets;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Closeables;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.io.IOException;
@@ -27,6 +30,7 @@ public class WebUtils {
      */
     public Bitmap getBitmap(URL url, int timeout) {
         HttpURLConnection connection = null;
+        InputStream stream = null;
         Bitmap image = null;
         try {
             logger.info(url.toString());
@@ -35,12 +39,14 @@ public class WebUtils {
             connection.setReadTimeout(timeout);
             connection.connect();
 
-            byte[] response = readByteStream(connection.getInputStream());
+            stream = connection.getInputStream();
+            byte[] response = readByteStream(stream);
             logger.info("GET image/jpeg: " + response.length + " bytes");
             image = BitmapFactory.decodeByteArray(response, 0, response.length);
         } catch (IOException e) {
             return null;
         } finally {
+            Closeables.closeQuietly(stream);
             connection.disconnect();
         }
         return image;
@@ -73,9 +79,13 @@ public class WebUtils {
     private String readResponse(HttpURLConnection connection) throws IOException {
         int responseCode = connection.getResponseCode();
         if (responseCode == 200 || responseCode == 204) {
-            String response = readInputStream(connection.getInputStream());
-            connection.disconnect();
-            return response;
+            InputStream inputStream = null;
+            try {
+                inputStream = connection.getInputStream();
+                return readInputStream(inputStream);
+            } finally {
+                Closeables.closeQuietly(inputStream);
+            }
         } else {
             throw new RuntimeException("Bad request");
         }
@@ -83,28 +93,12 @@ public class WebUtils {
 
     /* Reads data (String) from an input stream */
     private String readInputStream(InputStream stream) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        StringBuffer response = new StringBuffer();
-        String inputLine;
-        while ((inputLine = reader.readLine()) != null) {
-            response.append(inputLine);
-        }
-        reader.close();
-        return response.toString();
+        return CharStreams.toString(new InputStreamReader(stream, Charsets.UTF_8));
     }
 
     /* Reads data (byte[]) from an input stream */
     private byte[] readByteStream(InputStream stream) throws IOException {
-        /*BufferedInputStream reader = new BufferedInputStream(stream);
-        ByteArrayBuffer response = new ByteArrayBuffer(100000);
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = reader.read(buffer)) != -1) {
-            response.append(buffer, 0, length);
-        }
-        reader.close();
-        return response.toByteArray();*/
-        return null;
+        return ByteStreams.toByteArray(stream);
     }
 
     /* Creates a query String from key-value pairs in the dictionary */
