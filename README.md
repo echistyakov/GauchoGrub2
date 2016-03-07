@@ -1,5 +1,5 @@
-# GauchoGrub2
-Gaucho Grub v2.0
+# Gaucho Grub v2.0
+##### Eric Swenson | Andrew Tran | Evgeny Chistyakov
 
 Release practices:
   1. Release builds are ProGuarded (minified) by default.
