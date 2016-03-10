@@ -32,4 +32,6 @@ dependencies {
     compile 'joda-time:joda-time:2.9.2'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.google.guava:guava:19.0'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.android.support:support-v4:23.2.0'
 }
