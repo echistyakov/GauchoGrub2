@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/DiningCamsFragment_camImageView"
-        android:contentDescription=""
+        android:contentDescription="@string/dining_cam_description"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

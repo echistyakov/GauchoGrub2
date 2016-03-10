@@ -26,6 +26,8 @@
         <item name="ORT">Ortega</item>
     </string-array>
 
+    <string name="dining_cam_description">Live feed of the dining commons exterior</string>
+
 
     <!-- Strings related to Settings -->
 
