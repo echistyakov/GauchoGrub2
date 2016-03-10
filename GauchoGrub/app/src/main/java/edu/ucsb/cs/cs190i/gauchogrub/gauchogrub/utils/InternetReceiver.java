@@ -9,7 +9,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.DataAutomationService;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.MenuScraperService;
+
 
 public class InternetReceiver extends BroadcastReceiver {
 
@@ -25,7 +26,7 @@ public class InternetReceiver extends BroadcastReceiver {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        Intent automationIntent = new Intent(context, DataAutomationService.class);
+        Intent automationIntent = new Intent(context, MenuScraperService.class);
         PendingIntent pendingAutomationIntent = PendingIntent.getService(context, 0, automationIntent, 0);
         if (netInfo != null && netInfo.isConnectedOrConnecting()) {
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);

@@ -12,26 +12,27 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabContentFactory;
 
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.BaseTabbedFragment;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 
-public class DiningCamsFragment extends BaseTabbedFragment implements Runnable {
+public class DiningCamsFragment extends android.support.v4.app.Fragment implements Runnable {
 
     private DiningCam currentCam;
+
     private Handler handler;
-    private ImageView imageView;
+
+    @Bind(R.id.DiningCamsFragment_camImageView)
+    public ImageView imageView;
+
     private final int delay = 10 * 1000;  // Milliseconds (10 seconds)
     private boolean isOn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-        View rootView = inflater.inflate(R.layout.dining_cams_fragment, container, false);
-        this.imageView = (ImageView) rootView.findViewById(R.id.dining_cam_image_view);
+        View rootView = inflater.inflate(R.layout.fragment_diningcams, container, false);
+        ButterKnife.bind(this, rootView);
         this.handler = new Handler();
-
-        TabHost tabs = (TabHost) rootView.findViewById(R.id.tabHost);
-        this.setUpTabs(tabs, createTabContent(), 3);
 
         return rootView;
     }
@@ -116,17 +117,4 @@ public class DiningCamsFragment extends BaseTabbedFragment implements Runnable {
         }
     }
 
-    /**
-     * inherited method from BaseTabbedFragment that handles creation of content within a
-     * dining common tab
-     * @return the current imageView after updates
-     */
-    public TabContentFactory createTabContent() {
-        return new TabContentFactory() {
-            public View createTabContent(String tag) {
-                setDisplayContent(Integer.parseInt(tag));
-                return imageView;
-            }
-        };
-    }
 }

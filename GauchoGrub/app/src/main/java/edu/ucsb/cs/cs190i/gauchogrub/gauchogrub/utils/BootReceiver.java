@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.DataAutomationService;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.MenuScraperService;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.NotificationService;
 
 import java.util.Calendar;
@@ -33,7 +33,7 @@ public class BootReceiver extends BroadcastReceiver {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netinfo = cm.getActiveNetworkInfo();
         // Prepares intent for data automation service
-        Intent timedIntent = new Intent(context, DataAutomationService.class);
+        Intent timedIntent = new Intent(context, MenuScraperService.class);
         PendingIntent pendingAutomationIntent = PendingIntent.getService(context, 0, timedIntent, 0);
 
         // sets up notification service
