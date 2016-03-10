@@ -27,12 +27,22 @@ repositories {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.2.0'
-    compile 'com.android.support:design:23.2.0'
-    compile 'joda-time:joda-time:2.9.2'
-    compile 'com.google.code.gson:gson:2.6.2'
-    compile 'com.google.guava:guava:19.0'
-    compile 'com.jakewharton:butterknife:7.0.1'
+    // Android support
     compile 'com.android.support:support-v4:23.2.0'
     compile 'com.android.support:recyclerview-v7:23.2.0'
+    compile 'com.android.support:appcompat-v7:23.2.0'
+    compile 'com.android.support:design:23.2.0'
+
+    // Date/Time Handling
+    compile 'joda-time:joda-time:2.9.2'
+    // JSON Parsing
+    compile 'com.google.code.gson:gson:2.6.2'
+    // Guava
+    compile 'com.google.guava:guava:19.0'
+
+    // View related
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.timehop.stickyheadersrecyclerview:library:0.4.3'
+    compile 'it.michelelacorte.swipeablecard:library:2.2.0'
+    compile 'com.gordonwong:material-sheet-fab:1.2.1'
 }
