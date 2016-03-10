@@ -30,4 +30,16 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_add_friends_to_messages" />
 
+    <ListPreference
+        android:key="default_dining_common"
+        android:entries="@array/dining_commons"
+        android:title="@string/pref_title_default_dining_common"/>
+
+    <SwitchPreference
+        android:key="geolocation_override_switch"
+        android:title="@string/pref_title_geolocation_override" />
+
+    <SwitchPreference
+        android:key="favorites_notification_switch"
+        android:title="@string/pref_title_favorites_notification" />
 </PreferenceScreen>
