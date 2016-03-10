@@ -28,4 +28,5 @@ public class Menu {
     @JunctionTable(name = "menu_to_menuitem")
     @ManyToMany(mappedBy = "menus")
     Result<MenuItem> menuItems;
+
 }

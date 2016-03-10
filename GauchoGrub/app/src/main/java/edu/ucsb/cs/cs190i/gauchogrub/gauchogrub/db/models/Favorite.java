@@ -16,4 +16,5 @@ public class Favorite {
     @ForeignKey
     @Column(nullable = false, index = true, unique = true)
     MenuItem menuItem;
+
 }
