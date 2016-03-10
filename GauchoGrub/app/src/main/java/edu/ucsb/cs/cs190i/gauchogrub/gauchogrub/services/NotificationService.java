@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.BaseActivity;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.MainActivity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.menu.DiningCommon;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.menu.Menu;
@@ -58,7 +58,7 @@ public class NotificationService extends Service {
             }
             // Sends out up to 5 individual notifications (don't want to send the user
             // too many notifications)
-            Intent baseIntent = new Intent(getBaseContext(), BaseActivity.class);
+            Intent baseIntent = new Intent(getBaseContext(), MainActivity.class);
             PendingIntent bIntent = PendingIntent.getActivity(getBaseContext(), 0,
                     baseIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             for (String meal : favorites.keySet()) {
@@ -68,7 +68,7 @@ public class NotificationService extends Service {
                     logger.info(line);
                 }
                 builder = new NotificationCompat.Builder(getBaseContext())
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.mipmap.ic_launcher)
                         .setGroup(meal)
                         .setGroupSummary(true)
                         .setContentTitle("Favorites Today - " + meal)
