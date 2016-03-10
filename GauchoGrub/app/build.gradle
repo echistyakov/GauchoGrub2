@@ -37,15 +37,20 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    // JUnit
     testCompile 'junit:junit:4.12'
+    // Android Libraries
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.android.support:design:23.2.0'
+    // Joda Time
     compile 'joda-time:joda-time:2.9.2'
+    // Gson
     compile 'com.google.code.gson:gson:2.6.2'
+    // Guava
     compile 'com.google.guava:guava:19.0'
+    // Butter Knife
     compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.android.support:support-v4:23.2.0'
-    compile 'com.android.support:recyclerview-v7:23.2.0'
+    // Requery
     compile 'io.requery:requery:1.0-SNAPSHOT'
     compile 'io.requery:requery-android:1.0-SNAPSHOT'
     apt 'io.requery:requery-processor:1.0-SNAPSHOT'
