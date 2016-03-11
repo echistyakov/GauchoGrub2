@@ -1,23 +1,26 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- ListPreference's summary set to its value by the activity code. -->
     <ListPreference
-        android:key="default_dining_common"
+        android:key="@string/pref_key_default_dining_common"
         android:entries="@array/dining_commons"
         android:entryValues="@array/dining_commons_values"
         android:title="@string/pref_title_default_dining_common" />
 
     <SwitchPreference
-        android:key="geolocation_override_switch"
+        android:key="@string/pref_key_geolocation_override"
         android:defaultValue="false"
         android:title="@string/pref_title_geolocation_override"
         android:summary="@string/pref_summary_geolocation_override"/>
 
     <MultiSelectListPreference
-        android:key="default_filter"
+        android:key="@string/pref_key_default_filter"
+        android:entries="@array/pref_default_filter_entries"
+        android:entryValues="@array/pref_default_filter_entry_values"
+        android:defaultValue="@array/pref_default_filter_default_values"
         android:title="@string/pref_title_default_filter" />
 
     <SwitchPreference
-        android:key="favorites_notification_switch"
+        android:key="@string/pref_key_favorites_notification"
         android:defaultValue="false"
         android:title="@string/pref_title_favorites_notification" />
 </PreferenceScreen>

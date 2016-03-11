@@ -37,12 +37,31 @@
     <string name="dining_cam_description">Live feed of the dining commons exterior</string>
 
     <!-- Strings specific to Settings -->
+    <string name="pref_key_default_dining_common">default_dining_common</string>
+    <string name="pref_key_geolocation_override">geolocation_override_switch</string>
+    <string name="pref_key_default_filter">default_filter</string>
+    <string name="pref_key_favorites_notification">favorites_notification_switch</string>
+
     <string name="pref_title_default_dining_common">Default Dining Common</string>
     <string name="pref_title_geolocation_override">Geolocation Override</string>
     <string name="pref_title_favorites_notification">Favorites Notification</string>
     <string name="pref_title_default_filter">Default Filter for Menu</string>
 
     <string name="pref_summary_geolocation_override">Override the default dining common based on your location</string>
+
+    <string-array name="pref_default_filter_entries">
+        <item>No vegetarian</item>
+        <item>No vegan</item>
+        <item>No nuts</item>
+    </string-array>
+
+    <string-array name="pref_default_filter_entry_values">
+        <item>NO_VEGETARIAN</item>
+        <item>NO_VEGAN</item>
+        <item>NO_NUTS</item>
+    </string-array>
+
+    <string-array name="pref_default_filter_default_values"/>
     <!-- END Strings specific to Settings-->
 
     <!-- TODO: Remove or change this placeholder text -->
