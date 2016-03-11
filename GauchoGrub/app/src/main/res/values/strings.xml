@@ -50,14 +50,14 @@
     <string name="pref_summary_geolocation_override">Override the default dining common based on your location</string>
 
     <string-array name="pref_default_filter_entries">
-        <item>No vegetarian</item>
-        <item>No vegan</item>
+        <item>Only vegetarian</item>
+        <item>Only vegan</item>
         <item>No nuts</item>
     </string-array>
 
     <string-array name="pref_default_filter_entry_values">
-        <item>NO_VEGETARIAN</item>
-        <item>NO_VEGAN</item>
+        <item>ONLY_VEGETARIAN</item>
+        <item>ONLY_VEGAN</item>
         <item>NO_NUTS</item>
     </string-array>
 
