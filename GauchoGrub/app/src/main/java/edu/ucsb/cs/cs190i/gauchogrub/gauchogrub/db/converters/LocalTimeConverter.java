@@ -1,6 +1,5 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.converters;
 
-import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 
 import io.requery.Converter;
