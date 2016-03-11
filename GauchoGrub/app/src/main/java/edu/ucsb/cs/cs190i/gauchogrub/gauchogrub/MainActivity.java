@@ -3,10 +3,13 @@ package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +19,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fab.MaterialSheetFab;
 
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dining_cams.DiningCamsFragment;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dummy.DummyContent;
@@ -28,6 +40,35 @@ public class MainActivity extends AppCompatActivity
                    AboutFragment.OnFragmentInteractionListener,
                    SwipesFragment.OnFragmentInteractionListener {
 
+    public static final String LOG_TAG = "MainActivity";
+
+    private ActionBarDrawerToggle toggle;
+
+    @Bind(R.id.fab)
+    public MaterialSheetFab fab;
+
+    @Bind(R.id.fab_cardView)
+    public View fabSheetView;
+
+    @Bind(R.id.dimOverLayFrameLayout)
+    public View fabOverlay;
+
+    int sheetColor = Color.WHITE;
+    int fabColor = Color.CYAN;
+
+    private com.gordonwong.materialsheetfab.MaterialSheetFab materialSheetFab;
+
+    @Bind(R.id.fab_sheet_button1)
+    public Button fabSheetButton1;
+
+    @Bind(R.id.fab_sheet_button2)
+    public Button fabSheetButton2;
+
+    @Bind(R.id.fab_sheet_button3)
+    public Button fabSheetButton3;
+
+    public final String STATE_CURRENT_DINING_COMMON = "STATE_CURRENT_DINING_COMMON";
+
     private final String STATE_FRAGMENT_ID = "FRAGMENT_ID";
     private int currentFragmentId = R.id.nav_menus;
 
@@ -35,22 +76,16 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        materialSheetFab = new com.gordonwong.materialsheetfab.MaterialSheetFab<>(fab, fabSheetView, fabOverlay, sheetColor, fabColor);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -135,6 +170,64 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.removeDrawerListener(toggle);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        renderDiningCommonUpdates();
+    }
+
+    @OnClick ({R.id.fab_sheet_button1, R.id.fab_sheet_button2, R.id.fab_sheet_button3})
+    public void updateCurrentDiningCommon(Button fabSheetButton) {
+        String diningCommon = fabSheetButton.getText().toString();
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        // Set state
+        editor.putString(STATE_CURRENT_DINING_COMMON, diningCommon);
+        // Apply changes asynchronously
+        editor.apply();
+        // Render buttons
+        renderDiningCommonUpdates();
+    }
+
+    public void renderDiningCommonUpdates() {
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        // Get diningCommonStrings
+        ArrayList<String> diningCommonStrings = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.dining_commons)));
+        // Get constant strings for switch
+        String defaultString = getResources().getString(R.string.DLG);
+        // Get currently stored default Dining Common or else DLG string
+        String currentDiningCommon = sharedPreferences.getString(STATE_CURRENT_DINING_COMMON, defaultString);
+        if(!diningCommonStrings.contains(currentDiningCommon))
+            currentDiningCommon = defaultString;
+        // Create ArrayList of fabSheetButton references
+        ArrayList<Button> fabSheetButtons = new ArrayList<>();
+        fabSheetButtons.add(fabSheetButton1);
+        fabSheetButtons.add(fabSheetButton2);
+        fabSheetButtons.add(fabSheetButton3);
+
+        // Set Page Title
+        setTitle(currentDiningCommon);
+
+        Log.d(LOG_TAG, "Current dining common: " + currentDiningCommon);
+
+        // Set text for cardView buttons
+        int i = 0;
+        for(String diningCommonString : diningCommonStrings) {
+            if(!diningCommonString.equals(currentDiningCommon))  {
+                Log.d(LOG_TAG, diningCommonString);
+                Button fabSheetButton = fabSheetButtons.get(i++);
+                fabSheetButton.setText(diningCommonString);
+            }
+        }
     }
 
     @Override
