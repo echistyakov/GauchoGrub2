@@ -12,18 +12,23 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Dining Commons -->
+    <string name="DLG">De La Guerra</string>
+    <string name="CAR">Carrillo</string>
+    <string name="ORT">Ortega</string>
+    <string name="POR">Portola</string>
+
     <string-array name="dining_commons">
-        <item name="DLG">De La Guerra</item>
-        <item name="CAR">Carrillo</item>
-        <item name="ORT">Ortega</item>
-        <item name="POR">Portola</item>
+        <item name="CAR">@string/CAR</item>
+        <item name="DLG">@string/DLG</item>
+        <item name="ORT">@string/ORT</item>
+        <item name="POR">@string/POR</item>
     </string-array>
 
     <!-- Dining Cams -->
     <string-array name="dining_cams">
-        <item name="DLG">De La Guerra</item>
-        <item name="CAR">Carrillo</item>
-        <item name="ORT">Ortega</item>
+        <item name="CAR">@string/CAR</item>
+        <item name="DLG">@string/DLG</item>
+        <item name="ORT">@string/ORT</item>
     </string-array>
 
     <string name="dining_cam_description">Live feed of the dining commons exterior</string>
