@@ -6,6 +6,7 @@ import io.requery.ForeignKey;
 import io.requery.Generated;
 import io.requery.Key;
 import io.requery.ManyToMany;
+import io.requery.PreInsert;
 import io.requery.query.MutableResult;
 
 @Entity
@@ -33,5 +34,11 @@ public class MenuItem {
 
     @Column(nullable = false, index = true, unique = false, value = "false")
     boolean hasNuts;
+
+    @PreInsert
+    void preInsert() {
+        // Vegan implies vegetarian
+        this.isVegetarian = (this.isVegetarian || this.isVegan);
+    }
 
 }
