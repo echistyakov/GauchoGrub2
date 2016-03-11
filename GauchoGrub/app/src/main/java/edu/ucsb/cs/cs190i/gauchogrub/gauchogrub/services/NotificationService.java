@@ -52,17 +52,6 @@ public class NotificationService extends IntentService {
         return Service.START_NOT_STICKY;
     }
 
-    /**
-     * onBind is a required method that will bind the service if desired
-     *
-     * @param intent the intent object that the service receives
-     * @return null prevents binding of the service
-     */
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
     @Override
     protected void onHandleIntent(Intent intent) {
 
