@@ -1,4 +1,14 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+    }
+}
+
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 23
@@ -6,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId "edu.ucsb.cs.cs190i.gauchogrub.gauchogrub"
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -22,28 +32,36 @@ android {
 
 repositories {
     mavenCentral()
+    maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local' }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    // JUnit
     testCompile 'junit:junit:4.12'
+    // Android Libraries
     // Android support
     compile 'com.android.support:support-v4:23.2.0'
     compile 'com.android.support:recyclerview-v7:23.2.0'
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.android.support:design:23.2.0'
     compile 'com.android.support:cardview-v7:23.2.0'
-
-    // Date/Time Handling
+    // Joda Time
     compile 'joda-time:joda-time:2.9.2'
-    // JSON Parsing
+    // Gson
     compile 'com.google.code.gson:gson:2.6.2'
     // Guava
     compile 'com.google.guava:guava:19.0'
-
-    // View related
+    // Butter Knife
     compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.timehop.stickyheadersrecyclerview:library:0.4.3@aar'
-    compile "com.daimajia.swipelayout:library:1.2.0@aar"
+    // Requery
+    compile 'io.requery:requery:1.0-SNAPSHOT'
+    compile 'io.requery:requery-android:1.0-SNAPSHOT'
+    apt 'io.requery:requery-processor:1.0-SNAPSHOT'
+    // Material sheet fab
     compile 'com.gordonwong:material-sheet-fab:1.2.1'
+    // Sticky headers
+    compile 'com.timehop.stickyheadersrecyclerview:library:0.4.3@aar'
+    // Swipe layout
+    compile "com.daimajia.swipelayout:library:1.2.0@aar"
 }
