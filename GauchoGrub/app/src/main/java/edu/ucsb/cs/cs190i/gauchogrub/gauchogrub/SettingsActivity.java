@@ -126,8 +126,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            // Do not show the Up button in the action bar, as there is no
-            // logical Parent Activity for the single-screen Settings Activity
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
