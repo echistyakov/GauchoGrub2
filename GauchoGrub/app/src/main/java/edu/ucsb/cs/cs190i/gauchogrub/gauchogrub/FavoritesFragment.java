@@ -58,6 +58,9 @@ public class FavoritesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        MainActivity activity = (MainActivity) getActivity();
+        activity.fab.show();
+        activity.updateAppBarTitle(getString(R.string.FavoritesFragment_app_bar_title), true);
     }
 
     @Override

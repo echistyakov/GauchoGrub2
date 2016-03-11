@@ -65,6 +65,9 @@ public class SwipesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        MainActivity activity = (MainActivity) getActivity();
+        activity.fab.hide();
+        activity.updateAppBarTitle(getString(R.string.SwipesFragment_app_bar_title), false);
     }
 
     @Override

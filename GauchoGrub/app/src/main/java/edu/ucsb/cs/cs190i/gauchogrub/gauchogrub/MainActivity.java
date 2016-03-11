@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -215,7 +216,7 @@ public class MainActivity extends AppCompatActivity
         fabSheetButtons.add(fabSheetButton3);
 
         // Set Page Title
-        setTitle(currentDiningCommon);
+        updateAppBarTitle("Menu: " + currentDiningCommon, false);
 
         Log.d(LOG_TAG, "Current dining common: " + currentDiningCommon);
 
@@ -244,5 +245,23 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
 
+    }
+
+    /**
+     * 
+     * @param title the base title for the appbar
+     * @param showDiningCommonName true if you should append ": " + currentDiningCommon
+     */
+    public void updateAppBarTitle(@Nullable String title, Boolean showDiningCommonName) {
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        String defaultString = getResources().getString(R.string.DLG);
+        String currentDiningCommon = sharedPreferences.getString(STATE_CURRENT_DINING_COMMON, defaultString);
+        if(title == null) {
+            setTitle(currentDiningCommon);
+        } else if (showDiningCommonName) {
+            setTitle(title + ": " + currentDiningCommon);
+        } else {
+            setTitle(title);
+        }
     }
 }

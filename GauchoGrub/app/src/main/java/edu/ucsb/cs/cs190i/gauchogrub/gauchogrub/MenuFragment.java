@@ -52,6 +52,9 @@ public class MenuFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+        MainActivity activity = (MainActivity) getActivity();
+        activity.fab.show();
+        activity.updateAppBarTitle(getString(R.string.MenuFragment_app_bar_title), true);
     }
 
     @Override

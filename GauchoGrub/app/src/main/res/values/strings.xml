@@ -29,12 +29,18 @@
     <string name="action_settings">Settings</string>
 
     <!-- Menu Fragment -->
+    <string name="MenuFragment_app_bar_title">Menu</string>
     <!-- Favorites Fragment -->
+    <string name="FavoritesFragment_app_bar_title">Favorites</string>
     <!-- Schedules Fragment -->
+    <string name="SchedulesFragment_app_bar_title">Schedule</string>
     <!-- Swipes Fragment -->
+    <string name="SwipesFragment_app_bar_title">Swipes</string>
     <string name="swipes_url">https://webapps.ucen.ucsb.edu/plus/</string>
     <!-- Cams Fragment -->
+    <string name="DiningCamsFragment_app_bar_title">Dining Cam</string>
     <!-- About Fragment -->
+    <string name="AboutFragment_app_bar_title">About</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
