@@ -25,11 +25,16 @@
     </string-array>
 
     <!-- Dining Commons Value Array (for Settings) -->
+    <string name="DLG_value">DLG</string>
+    <string name="CAR_value">CAR</string>
+    <string name="ORT_value">ORT</string>
+    <string name="POR_value">POR</string>
+
     <string-array name="dining_commons_values">
-        <item>DLG</item>
-        <item>CAR</item>
-        <item>ORT</item>
-        <item>POR</item>
+        <item>@string/DLG_value</item>
+        <item>@string/CAR_value</item>
+        <item>@string/ORT_value</item>
+        <item>@string/POR_value</item>
     </string-array>
 
     <!-- Dining Cams -->

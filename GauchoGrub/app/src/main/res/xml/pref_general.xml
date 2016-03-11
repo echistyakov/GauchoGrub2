@@ -4,7 +4,7 @@
         android:key="@string/pref_key_default_dining_common"
         android:entries="@array/dining_commons"
         android:entryValues="@array/dining_commons_values"
-        android:defaultValue="DLG"
+        android:defaultValue="@string/DLG_value"
         android:title="@string/pref_title_default_dining_common" />
 
     <SwitchPreference
