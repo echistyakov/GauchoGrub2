@@ -36,7 +36,7 @@ public class MenuItem {
     boolean hasNuts;
 
     @PreInsert
-    void preInsert() {
+    void onPreInsert() {
         // Vegan implies vegetarian
         this.isVegetarian = (this.isVegetarian || this.isVegan);
     }
