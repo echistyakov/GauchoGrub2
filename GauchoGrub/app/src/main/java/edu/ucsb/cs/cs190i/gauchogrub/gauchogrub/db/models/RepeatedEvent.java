@@ -1,8 +1,10 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models;
 
-import org.joda.time.Interval;
+import org.joda.time.LocalTime;
 
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.converters.LocalTimeConverter;
 import io.requery.Column;
+import io.requery.Convert;
 import io.requery.Entity;
 import io.requery.ForeignKey;
 import io.requery.Generated;
@@ -24,10 +26,12 @@ public class RepeatedEvent {
     Meal meal;
 
     @Column(nullable = false, index = true, unique = false)
-    Interval from;
+    @Convert(LocalTimeConverter.class)
+    LocalTime from;
 
     @Column(nullable = false, index = true, unique = false)
-    Interval to;
+    @Convert(LocalTimeConverter.class)
+    LocalTime to;
 
     @Column(nullable = false, index = true, unique = false)
     int dayOfWeek;

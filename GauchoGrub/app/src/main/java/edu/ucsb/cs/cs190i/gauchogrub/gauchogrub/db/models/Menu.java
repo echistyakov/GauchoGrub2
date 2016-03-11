@@ -1,8 +1,10 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.converters.LocalDateConverter;
 import io.requery.Column;
+import io.requery.Convert;
 import io.requery.Entity;
 import io.requery.ForeignKey;
 import io.requery.Generated;
@@ -23,7 +25,8 @@ public class Menu {
     RepeatedEvent event;
 
     @Column(nullable = false, index = true, unique = false)
-    DateTime date;
+    @Convert(LocalDateConverter.class)
+    LocalDate date;
 
     @JunctionTable(name = "menu_to_menuitem")
     @ManyToMany(mappedBy = "menus")
