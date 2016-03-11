@@ -14,8 +14,6 @@ import butterknife.ButterKnife;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dummy.DummyContent;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dummy.DummyContent.DummyItem;
 
-import java.util.List;
-
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -59,7 +57,7 @@ public class MenuFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_menuitem_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_menus, container, false);
         ButterKnife.bind(this, view);
 
         // Set the adapter

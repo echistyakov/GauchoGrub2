@@ -1,6 +1,10 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
 
+import android.app.ActionBar;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -13,8 +17,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dining_cams.DiningCamsFragment;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dummy.DummyContent;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+                   MenuFragment.OnListFragmentInteractionListener,
+                   ScheduleFragment.OnFragmentInteractionListener,
+                   FavoritesFragment.OnFragmentInteractionListener,
+                   AboutFragment.OnFragmentInteractionListener,
+                   SwipesFragment.OnFragmentInteractionListener {
+
+    private final String STATE_FRAGMENT_ID = "FRAGMENT_ID";
+    private int currentFragmentId = R.id.nav_menus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,22 +93,63 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+
+
         if (id == R.id.nav_menus) {
-
+            MenuFragment fragment = new MenuFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                    .commit();
         } else if (id == R.id.nav_favorites) {
-
+            FavoritesFragment fragment = new FavoritesFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                    .commit();
         } else if (id == R.id.nav_schedules) {
+            ScheduleFragment fragment = new ScheduleFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                    .commit();
 
         } else if (id == R.id.nav_cams) {
-
+            DiningCamsFragment fragment = new DiningCamsFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                    .commit();
         } else if (id == R.id.nav_swipes) {
-
+            SwipesFragment fragment = new SwipesFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                    .commit();
         } else if (id == R.id.nav_settings) {
-
+            Intent intent = new Intent(this, SettingsActivity.class);
+            this.startActivity(intent);
+        } else if (id == R.id.nav_about) {
+            AboutFragment fragment = new AboutFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                    .commit();
         }
-
+        // Update current fragment id
+        currentFragmentId = id;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putInt(STATE_FRAGMENT_ID, currentFragmentId);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
     }
 }
