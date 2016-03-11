@@ -29,32 +29,34 @@ public class BootReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netinfo = cm.getActiveNetworkInfo();
-        // Prepares intent for data automation service
-        Intent timedIntent = new Intent(context, MenuScraperService.class);
-        PendingIntent pendingAutomationIntent = PendingIntent.getService(context, 0, timedIntent, 0);
+        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netinfo = cm.getActiveNetworkInfo();
 
-        // sets up notification service
-        Intent notificationIntent = new Intent(context, NotificationService.class);
-        PendingIntent pendingNotificationIntent = PendingIntent.getService(context, 0, notificationIntent, 0);
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 8);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pendingNotificationIntent);
+            // sets up notification service
+            Intent notificationIntent = new Intent(context, NotificationService.class);
+            PendingIntent pendingNotificationIntent = PendingIntent.getService(context, 0, notificationIntent, 0);
+            Calendar notificationCalendar = Calendar.getInstance();
+            notificationCalendar.set(Calendar.HOUR_OF_DAY, 8);
+            notificationCalendar.set(Calendar.MINUTE, 0);
+            notificationCalendar.set(Calendar.SECOND, 0);
+            alarmManager.setRepeating(AlarmManager.RTC, notificationCalendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, pendingNotificationIntent);
 
-        // sets up data automation service
-        if (netinfo != null && netinfo.isConnectedOrConnecting()) {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, 2 * 60 * 1000, pendingAutomationIntent);
-            context.startService(timedIntent);
+            // sets up data automation service
+            Intent timedIntent = new Intent(context, MenuScraperService.class);
+            PendingIntent pendingAutomationIntent = PendingIntent.getService(context, 0, timedIntent, 0);
+            if (netinfo != null && netinfo.isConnectedOrConnecting()) {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, 2 * 60 * 1000, pendingAutomationIntent);
+                context.startService(timedIntent);
+            }
+            Calendar scraperCalendar = Calendar.getInstance();
+            scraperCalendar.set(Calendar.HOUR_OF_DAY, 5);
+            scraperCalendar.set(Calendar.MINUTE, 0);
+            scraperCalendar.set(Calendar.SECOND, 0);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, scraperCalendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, pendingAutomationIntent);
         }
-        calendar.set(Calendar.HOUR_OF_DAY, 5);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pendingAutomationIntent);
     }
 }
