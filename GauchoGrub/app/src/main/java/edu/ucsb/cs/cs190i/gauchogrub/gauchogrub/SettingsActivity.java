@@ -38,6 +38,12 @@ import java.util.Set;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
+
+    // Strings for handling special cases in multi-select-preference summary
+    private static String NO_FILTER_STRING;
+    private static String VEGAN_STRING;
+    private static String VEGETARIAN_STRING;
+
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -70,7 +76,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if (index != -1)
                         selectedEntries.add((String) entriesArray[multiSelectListPreference.findIndexOfValue(str)]);
                 }
-                preference.setSummary(Joiner.on("\n").join(selectedEntries));
+                // Show special text if there are no selected entries to make it clearer
+                if(selectedEntries.isEmpty())
+                    preference.setSummary(NO_FILTER_STRING);
+                else {
+                    // Only show "Only Vegan" in summary if both "Only Vegan" and "Only Vegetarian" are selected, as they overlap
+                    int vegetarianStringIndex = selectedEntries.indexOf(VEGETARIAN_STRING);
+                    if(selectedEntries.contains(VEGAN_STRING) && vegetarianStringIndex != -1)
+                        selectedEntries.remove(vegetarianStringIndex);
+                    preference.setSummary(Joiner.on(", ").join(selectedEntries));
+
+                }
             } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
@@ -120,6 +136,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         setupActionBar();
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new GeneralPreferenceFragment()).commit();
+        NO_FILTER_STRING = getString(R.string.pref_default_filter_no_filter);
+        VEGAN_STRING = getString(R.string.pref_vegan);
+        VEGETARIAN_STRING = getString(R.string.pref_vegetarian);
     }
 
     /**
