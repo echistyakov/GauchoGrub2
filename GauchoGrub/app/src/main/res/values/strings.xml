@@ -67,7 +67,7 @@
     </string-array>
 
     <string-array name="pref_default_filter_default_values"/>
-    <string name="pref_default_filter_no_filter">No Filters Selected</string>
+    <string name="pref_default_filter_no_filter">None</string>
     <!-- END Strings specific to Settings-->
 
     <!-- TODO: Remove or change this placeholder text -->
