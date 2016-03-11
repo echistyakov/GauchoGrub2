@@ -66,7 +66,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 CharSequence[] entriesArray = multiSelectListPreference.getEntries();
                 List<String> selectedEntries = new ArrayList<>();
                 for (String str : setOfStrings) {
-                    selectedEntries.add((String) entriesArray[multiSelectListPreference.findIndexOfValue(str)]);
+                    int index = multiSelectListPreference.findIndexOfValue(str);
+                    if (index != -1)
+                        selectedEntries.add((String) entriesArray[multiSelectListPreference.findIndexOfValue(str)]);
                 }
                 preference.setSummary(Joiner.on("\n").join(selectedEntries));
             } else {
