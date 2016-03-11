@@ -1,5 +1,6 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services;
 
+import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -32,14 +33,39 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
-public class NotificationService extends Service {
+public class NotificationService extends IntentService {
 
     public static Logger logger = Logger.getLogger("NotificationService");
+
+    /**
+     * Creates an IntentService.  Invoked by your subclass's constructor.
+     *
+     * @param name Used to name the worker thread, important only for debugging.
+     */
+    public NotificationService(String name) {
+        super(name);
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         new NotificationTask().execute();
         return Service.START_NOT_STICKY;
+    }
+
+    /**
+     * onBind is a required method that will bind the service if desired
+     *
+     * @param intent the intent object that the service receives
+     * @return null prevents binding of the service
+     */
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+
     }
 
     /**
@@ -138,15 +164,4 @@ public class NotificationService extends Service {
         return notifications;
     }
 
-
-    /**
-     * onBind is a required method that will bind the service if desired
-     *
-     * @param intent the intent object that the service receives
-     * @return null prevents binding of the service
-     */
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
 }
