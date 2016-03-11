@@ -19,20 +19,19 @@ public class MenuItem {
     @Column(nullable = false, index = true, unique = false)
     MenuCategory menuCategory;
 
-    @ForeignKey
-    @Column(nullable = false, index = true, unique = false)
-    MenuItemType menuItemType;
-
     @Column(nullable = false, index = true, unique = false)
     String title;
 
     @ManyToMany(mappedBy = "menuItems")
     MutableResult<Menu> menus;
 
-    @Column(nullable = false, index = true, unique = false, value = "0")
-    int TotalRatings;
+    @Column(nullable = false, index = true, unique = false, value = "false")
+    boolean isVegetarian;
 
-    @Column(nullable = false, index = true, unique = false, value = "0")
-    int totalPositiveRatings;
+    @Column(nullable = false, index = true, unique = false, value = "false")
+    boolean isVegan;
+
+    @Column(nullable = false, index = true, unique = false, value = "false")
+    boolean hasNuts;
 
 }

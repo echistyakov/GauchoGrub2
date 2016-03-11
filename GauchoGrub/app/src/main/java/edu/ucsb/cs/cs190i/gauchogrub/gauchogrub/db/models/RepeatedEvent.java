@@ -34,6 +34,7 @@ public class RepeatedEvent {
     LocalTime to;
 
     @Column(nullable = false, index = true, unique = false)
+    /* Use day-of-the-week values from Joda DateTimeConstants class (1-indexed) */
     int dayOfWeek;
 
 }

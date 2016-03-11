@@ -5,6 +5,7 @@ import io.requery.Entity;
 import io.requery.Generated;
 import io.requery.Key;
 
+/* MenuCategory: salads, bakery, pizza, cereal, etc. */
 @Entity
 public class MenuCategory {
 
