@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "edu.ucsb.cs.cs190i.gauchogrub.gauchogrub"
-        minSdkVersion 19
+        minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -42,7 +42,7 @@ dependencies {
 
     // View related
     compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.timehop.stickyheadersrecyclerview:library:0.4.3'
-    compile 'it.michelelacorte.swipeablecard:library:2.2.0'
+    compile 'com.timehop.stickyheadersrecyclerview:library:0.4.3@aar'
+    compile "com.daimajia.swipelayout:library:1.2.0@aar"
     compile 'com.gordonwong:material-sheet-fab:1.2.1'
 }

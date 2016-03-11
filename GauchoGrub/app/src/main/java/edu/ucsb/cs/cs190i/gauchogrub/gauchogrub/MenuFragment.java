@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.ButterKnife;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dummy.DummyContent;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dummy.DummyContent.DummyItem;
 
@@ -59,6 +60,7 @@ public class MenuFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menuitem_list, container, false);
+        ButterKnife.bind(this, view);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
