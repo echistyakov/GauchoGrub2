@@ -77,7 +77,15 @@ public class MenuScraperService extends IntentService {
     }
 
     private void parseDiningCommonMenu(Element diningCommonMenu) {
-        Elements mealPanelElements = diningCommonMenu.children();
+        Elements panelElements = diningCommonMenu.children();
+        Elements mealPanelElements = new Elements();
+        // filter panels by "panel-success" class so that we do not
+        // scrape "meal-warning" panels when the meal is not served
+        // at the dining common
+        for (Element panel: panelElements) {
+            if (panel.hasClass("panel-success"))
+                mealPanelElements.add(panel);
+        }
         for (Element panelComponent : mealPanelElements) {
             if (panelComponent.hasClass("panel-heading")) {
                 // store meal type
