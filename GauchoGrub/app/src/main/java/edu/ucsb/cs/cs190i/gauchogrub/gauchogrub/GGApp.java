@@ -20,7 +20,7 @@ public class GGApp extends Application {
      * Note if you're using Dagger you can make this part of your application level module returning
      * {@code @Provides @Singleton}.
      */
-    SingleEntityStore<Persistable> getData() {
+    public SingleEntityStore<Persistable> getData() {
         if (dataStore == null) {
             // override onUpgrade to handle migrating to a new version
             DatabaseSource source = new DatabaseSource(this, Models.DEFAULT, 1);
