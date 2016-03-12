@@ -95,7 +95,10 @@
         <item>@string/parsable_POR_id</item>
     </string-array>
 
-    <string name="bright_meal">Bright Meal</string>
+    <string name="parsable_bright_meal">Bright Meal</string>
+    <string name="parsable_veg">(v)</string>
+    <string name="parsable_vgn">(vgn)</string>
+    <string name="parsable_has_nuts">(w/nuts)</string>
     <!-- END Strings for Parsing -->
 
     <!-- TODO: Remove or change this placeholder text -->
