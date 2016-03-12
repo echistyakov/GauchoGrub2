@@ -7,6 +7,7 @@ import android.content.Context;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -76,6 +77,17 @@ public class MenuScraperService extends IntentService {
     }
 
     private void parseDiningCommonMenu(Element diningCommonMenu) {
-
+        Elements mealPanelElements = diningCommonMenu.children();
+        for (Element panelComponent : mealPanelElements) {
+            if (panelComponent.hasClass("panel-heading")) {
+                // store meal type
+            } else {
+                // handle panel-body
+                for (Element foodList : panelComponent.children()) {
+                    // get first child of foodList (which should be a dt) as a menuCategory
+                    // store each menuitem, which should be a dl
+                }
+            }
+        }
     }
 }
