@@ -1,4 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:id="@+id/menuItem_swipeLayout">
+    <!-- Bottom View Start-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:background="#66ddff00"
+        android:id="@+id/menuItem_bottomWrapper"
+        android:gravity="end"
+        android:layout_width="match_parent"
+        android:weightSum="1"
+        android:layout_height="match_parent">
+        <!--What you want to show-->
+        <ImageButton
+            android:contentDescription=""
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@android:drawable/btn_star_big_on"
+            style="?android:attr/borderlessButtonStyle"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/id"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/content"/>
+    </LinearLayout>
+    <!-- Bottom View End-->
+
+    <!-- Surface View Start -->
+    <LinearLayout
+        android:padding="10dp"
+        android:background="#ffffff"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/menuItem_topWrapper">
+        <!--What you want to show in SurfaceView-->
+
+    </LinearLayout>
+    <!-- Surface View End -->
+</com.daimajia.swipe.SwipeLayout>
+
+
+<!--
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -18,3 +65,4 @@
         android:layout_margin="@dimen/text_margin"
         android:textAppearance="?attr/textAppearanceListItem" />
 </LinearLayout>
+-->

@@ -10,10 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dummy.DummyContent;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dummy.DummyContent.DummyItem;
-
-import java.util.List;
+import butterknife.ButterKnife;
 
 /**
  * A fragment representing a list of Items.
@@ -53,12 +50,16 @@ public class MenuFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+        MainActivity activity = (MainActivity) getActivity();
+        activity.fab.show();
+        activity.updateAppBarTitle(getString(R.string.MenuFragment_app_bar_title), true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_menuitem_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_menus, container, false);
+        ButterKnife.bind(this, view);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -69,7 +70,7 @@ public class MenuFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyMenuItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MenuRecyclerAdapter());
         }
         return view;
     }
@@ -104,6 +105,5 @@ public class MenuFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
     }
 }

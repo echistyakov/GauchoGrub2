@@ -7,21 +7,17 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SwipesFragment.OnFragmentInteractionListener} interface
+ * {@link ScheduleFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link SwipesFragment#newInstance} factory method to
+ * Use the {@link ScheduleFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SwipesFragment extends Fragment {
+public class ScheduleFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -33,10 +29,7 @@ public class SwipesFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    @Bind(R.id.SwipesFragment_webView)
-    public WebView webView;
-
-    public SwipesFragment() {
+    public ScheduleFragment() {
         // Required empty public constructor
     }
 
@@ -46,11 +39,11 @@ public class SwipesFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment SwipesFragment.
+     * @return A new instance of fragment ScheduleFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SwipesFragment newInstance(String param1, String param2) {
-        SwipesFragment fragment = new SwipesFragment();
+    public static ScheduleFragment newInstance(String param1, String param2) {
+        ScheduleFragment fragment = new ScheduleFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -66,18 +59,15 @@ public class SwipesFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         MainActivity activity = (MainActivity) getActivity();
-        activity.fab.hide();
-        activity.updateAppBarTitle(getString(R.string.SwipesFragment_app_bar_title), false);
+        activity.fab.show();
+        activity.updateAppBarTitle(getString(R.string.SchedulesFragment_app_bar_title), true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_swipes, container, false);
-        ButterKnife.bind(this, view);
-        webView.loadUrl(getString(R.string.swipes_url));
-        return view;
+        return inflater.inflate(R.layout.fragment_schedule, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
