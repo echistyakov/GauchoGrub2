@@ -20,6 +20,10 @@ import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
 import io.requery.Persistable;
 import io.requery.meta.AttributeBuilder;
+import io.requery.meta.QueryAttribute;
+import io.requery.query.Result;
+import io.requery.query.Selection;
+import io.requery.query.Tuple;
 import io.requery.rx.SingleEntityStore;
 import io.requery.sql.EntityDataStore;
 
@@ -110,7 +114,8 @@ public class MenuScraperService extends IntentService {
                 for (Element menuItem : foodListByCategory.getElementsByTag("dd")) {
                     String menuItemTitleStr = menuItem.text();
                     // determine if MenuItem of same MenuCategory and title exists in DB
-
+                    AttributeBuilder<> attrBuilder = new AttributeBuilder("title", MenuItem.class);
+                    Selection<Result<Tuple>> selectedMenuItems = mDataStore.select(MenuItem.class, );
                     // mDataStore.select(MenuItem.class, )
 
                     isVegetarian = menuItemTitleStr.contains(VEGETARIAN);
