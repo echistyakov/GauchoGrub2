@@ -13,28 +13,30 @@ import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
 
+import org.joda.time.DateTime;
+
 import java.util.List;
 
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuCategory;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItemEntity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
+import io.requery.android.QueryRecyclerAdapter;
+import io.requery.query.Result;
 
 
-public class MenuRecyclerAdapter extends RecyclerView.Adapter<MenuRecyclerAdapter.ViewHolder> {
+public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItemEntity, MenuRecyclerAdapter.ViewHolder> {
 
-    private Context context;
-    private List<MenuCategory> sectionTitles;
-    private List<List<MenuItem>> menuItems;
-    private int menuItemCount;
+    private DateTime date;
 
-    public MenuRecyclerAdapter(List<MenuCategory> sectionTitles, List<List<MenuItem>> menuItems, Context context) {
-        this.context = context;
-        this.sectionTitles = sectionTitles;
-        this.menuItems = menuItems;
-        menuItemCount = 0;
-        for(List<MenuItem> list : menuItems) {
-            menuItemCount += list.size();
-        }
+    protected MenuRecyclerAdapter() {
+        super(MenuItemEntity.$TYPE);
+        this.date = DateTime.now();
+    }
+
+    protected MenuRecyclerAdapter(DateTime date) {
+        super(MenuItemEntity.$TYPE);
+        this.date = date;
     }
 
 
@@ -56,7 +58,7 @@ public class MenuRecyclerAdapter extends RecyclerView.Adapter<MenuRecyclerAdapte
      * @param viewType The view type of the new View.
      * @return A new ViewHolder that holds a View of the given view type.
      * @see #getItemViewType(int)
-     * @see #onBindViewHolder(ViewHolder, int)
+     *  #onBindViewHolder(ViewHolder, int)
      */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -64,108 +66,57 @@ public class MenuRecyclerAdapter extends RecyclerView.Adapter<MenuRecyclerAdapte
         return new ViewHolder(v);
     }
 
-    /**
-     * Called by RecyclerView to display the data at the specified position. This method should
-     * update the contents of the {@link ViewHolder#itemView} to reflect the item at the given
-     * position.
-     * <p/>
-     * Note that unlike {@link ListView}, RecyclerView will not call this method
-     * again if the position of the item changes in the data set unless the item itself is
-     * invalidated or the new position cannot be determined. For this reason, you should only
-     * use the <code>position</code> parameter while acquiring the related data item inside
-     * this method and should not keep a copy of it. If you need the position of an item later
-     * on (e.g. in a click listener), use {@link ViewHolder#getAdapterPosition()} which will
-     * have the updated adapter position.
-     * <p/>
-     * Override {#onBindViewHolder(ViewHolder, int, List)} instead if Adapter can
-     * handle effcient partial bind.
-     *
-     * @param holder   The ViewHolder which should be updated to represent the contents of the
-     *                 item at the given position in the data set.
-     * @param position The position of the item within the adapter's data set.
-     */
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Object menuRow = getObjectAtIndex(position);
-        if(menuRow instanceof MenuItem) {
-            // TODO: Set text
-            // TODO: Handle Logic for icons
-
-            // TODO: Handle logic for swipe listener
-            holder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
-
-                @Override
-                public void onStartOpen(SwipeLayout layout) {
-
-                }
-
-                @Override
-                public void onOpen(SwipeLayout layout) {
-                    // TODO: Handle logic for saving favorite
-
-                    // TODO: Show Snackbar upon saving favorite
-                    // Close layout upon favorite
-                    layout.close();
-                }
-
-                @Override
-                public void onStartClose(SwipeLayout layout) {
-
-                }
-
-                @Override
-                public void onClose(SwipeLayout layout) {
-
-                }
-
-                @Override
-                public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
-
-                }
-
-                @Override
-                public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
-
-                }
-            });
-
-        } else if (menuRow instanceof MenuCategory) {
-            holder.menuItemNutsImageView.setVisibility(View.INVISIBLE);
-            holder.menuItemVegImageView.setVisibility(View.INVISIBLE);
-            holder.menuItemTextView.setTextSize(28);
-            holder.menuItemTextView.setPadding(0, 7, 0, 0);
-            // Prevent touch events on category name
-            holder.menuItemTextView.setClickable(false);
-            holder.swipeLayout.addSwipeDenier(new SwipeLayout.SwipeDenier() {
-                @Override
-                public boolean shouldDenySwipe(MotionEvent ev) {
-                    return true;
-                }
-            });
-            // TODO: Set text
-        }
-    }
-
-    private Object getObjectAtIndex(int position) {
-        int counter = 0;
-        for(List<MenuItem> list : menuItems) {
-            if(list.size() + counter - 1 <= position) {
-                return list.get(position - counter);
-            } else {
-                counter += list.size();
-            }
-        }
+    public Result<MenuItemEntity> performQuery() {
+        // TODO: Implement query based on DateTime
         return null;
     }
 
-    /**
-     * Returns the total number of items in the data set hold by the adapter.
-     *
-     * @return The total number of items in this adapter.
-     */
     @Override
-    public int getItemCount() {
-        return menuItemCount;
+    public void onBindViewHolder(MenuItemEntity menuItemEntity, ViewHolder viewHolder, int i) {
+        if(menuItemEntity.getHasNuts()) {
+
+        }
+        if(menuItemEntity.getIsVegetarian()) {
+
+        }
+        if(menuItemEntity.getIsVegan()) {
+
+        }
+        viewHolder.menuItemTextView.setText(menuItemEntity.getTitle());
+        viewHolder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
+            @Override
+            public void onStartOpen(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onOpen(SwipeLayout layout) {
+                // TODO: Add item to favorites
+                // TODO: Notify user with Snackbar
+                layout.close();
+            }
+
+            @Override
+            public void onStartClose(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onClose(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
+
+            }
+
+            @Override
+            public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
+
+            }
+        });
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
