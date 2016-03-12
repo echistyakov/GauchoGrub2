@@ -94,6 +94,8 @@
         <item>@string/parsable_ORT_id</item>
         <item>@string/parsable_POR_id</item>
     </string-array>
+
+    <string name="bright_meal">Bright Meal</string>
     <!-- END Strings for Parsing -->
 
     <!-- TODO: Remove or change this placeholder text -->

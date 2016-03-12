@@ -72,8 +72,8 @@ public class MenuScraperService extends IntentService {
             Document doc = Jsoup.connect(getString(R.string.parsable_menu_url) + "?day=" + formattedDate).get();
             String[] diningCommonIds = getResources().getStringArray(R.array.parsable_dining_commons_ids);
             for (String id : diningCommonIds) {
-                parseDiningCommonMenu(doc.getElementById(id));
                 Log.d(TAG, id);
+                parseDiningCommonMenu(doc.getElementById(id));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,31 +81,25 @@ public class MenuScraperService extends IntentService {
     }
 
     private void parseDiningCommonMenu(Element diningCommonMenu) {
-        Elements panelElements = diningCommonMenu.children();
-        Elements mealPanelElements = new Elements();
+        String brightMeal = getString(R.string.bright_meal);
+        Elements mealPanels = diningCommonMenu.children();
+        Elements filteredMealPanels = new Elements();
         // filter panels by "panel-success" class so that we do not
-        // scrape "meal-warning" panels when the meal is not served
-        // at the dining common
-        for (Element panel: panelElements) {
-            if (panel.hasClass("panel-success"))
-                mealPanelElements.add(panel);
+        // scrape warning panels (when meals are not served), and
+        // do not include Bright Meal panels
+        for (Element panel: mealPanels) {
+            if (panel.hasClass("panel-success") && !panel.getElementsByTag("h5").first().text().equals(brightMeal))
+                filteredMealPanels.add(panel);
         }
-        for (Element panelComponent : mealPanelElements) {
-            if (panelComponent.hasClass("panel-heading")) {
-                String mealType = panelComponent.getElementsByTag("h5").first().text();
-                Log.d(TAG, mealType);
-                // store meal type
-            } else {
-                // handle panel-body
-                for (Element foodList : panelComponent.children()) {
-                    // get first child of foodList (which should be a dt) as a menuCategory
-                    String menuCategory = foodList.child(0).text();
-                    Log.d(TAG, menuCategory);
-                    // store each menuitem, which should be a dl
-                    for (Element menuItem : foodList.getElementsByTag("dd")) {
-                        String menuItemStr = menuItem.text();
-                        Log.d(TAG, menuItemStr);
-                    }
+        for (Element mealPanel : filteredMealPanels) {
+            String mealTypeStr = mealPanel.getElementsByTag("h5").first().text();
+            Log.d(TAG, mealTypeStr);
+            for (Element foodListByCategory : mealPanel.getElementsByClass("course-list").first().children()) {
+                String menuCategoryStr = foodListByCategory.getElementsByTag("dt").first().text();
+                Log.d(TAG, menuCategoryStr);
+                for (Element menuItem : foodListByCategory.getElementsByTag("dd")) {
+                    String menuItemStr = menuItem.text();
+                    Log.d(TAG, menuItemStr);
                 }
             }
         }
