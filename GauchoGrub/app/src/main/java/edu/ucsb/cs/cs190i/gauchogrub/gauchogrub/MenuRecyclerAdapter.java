@@ -83,6 +83,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItemEntity, Me
         if(menuItemEntity.getIsVegan()) {
 
         }
+        // TODO: Add logic to check for favorites?
         viewHolder.menuItemTextView.setText(menuItemEntity.getTitle());
         viewHolder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
             @Override

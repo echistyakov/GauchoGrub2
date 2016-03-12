@@ -10,7 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import butterknife.ButterKnife;
+import io.requery.Persistable;
+import io.requery.rx.SingleEntityStore;
 
 /**
  * A fragment representing a list of Items.
@@ -25,6 +30,10 @@ public class MenuFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+
+    private MenuRecyclerAdapter menuRecyclerAdapter;
+    private SingleEntityStore<Persistable> data;
+    private ExecutorService executorService;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -58,20 +67,19 @@ public class MenuFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_menus, container, false);
+        RecyclerView view = (RecyclerView) inflater.inflate(R.layout.fragment_menus, container, false);
         ButterKnife.bind(this, view);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new MenuRecyclerAdapter());
-        }
+        data = ((GGApp) getActivity().getApplication()).getData();
+        // TODO: handle date selection
+        menuRecyclerAdapter = new MenuRecyclerAdapter();
+        executorService = Executors.newSingleThreadExecutor();
+        menuRecyclerAdapter.setExecutor(executorService);
+        view.setAdapter(menuRecyclerAdapter);
+        Context context = view.getContext();
+        view.setLayoutManager(new LinearLayoutManager(context));
+
+
         return view;
     }
 
@@ -91,6 +99,19 @@ public class MenuFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        menuRecyclerAdapter.queryAsync();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        executorService.shutdown();
+        menuRecyclerAdapter.close();
     }
 
     /**
