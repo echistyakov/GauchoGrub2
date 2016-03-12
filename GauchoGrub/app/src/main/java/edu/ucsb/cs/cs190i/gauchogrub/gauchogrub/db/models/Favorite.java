@@ -2,9 +2,9 @@ package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models;
 
 import io.requery.Column;
 import io.requery.Entity;
-import io.requery.ForeignKey;
 import io.requery.Generated;
 import io.requery.Key;
+import io.requery.ManyToOne;
 
 /* A favorite MenuItem (note: specific to a DiningCommons) */
 @Entity
@@ -14,11 +14,11 @@ public class Favorite {
     @Generated
     int id;
 
-    @ForeignKey
+    @ManyToOne
     @Column(nullable = false, index = true, unique = true)
     DiningCommon diningCommon;
 
-    @ForeignKey
+    @ManyToOne
     @Column(nullable = false, index = true, unique = true)
     MenuItem menuItem;
 
