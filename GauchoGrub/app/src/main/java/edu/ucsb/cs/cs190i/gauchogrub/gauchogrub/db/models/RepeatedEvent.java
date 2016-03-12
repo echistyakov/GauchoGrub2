@@ -10,6 +10,8 @@ import io.requery.ForeignKey;
 import io.requery.Generated;
 import io.requery.Key;
 
+/* An event repeated every week on a specific day in a specific DiningCommon during a specific Meal.
+ * Has a start and end time (from/to). */
 @Entity
 public class RepeatedEvent {
 

@@ -6,6 +6,7 @@ import io.requery.ForeignKey;
 import io.requery.Generated;
 import io.requery.Key;
 
+/* A favorite MenuItem (note: specific to a DiningCommons) */
 @Entity
 public class Favorite {
 

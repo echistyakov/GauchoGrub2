@@ -13,6 +13,7 @@ import io.requery.Key;
 import io.requery.ManyToMany;
 import io.requery.query.Result;
 
+/* Menu (i.e. a list of MenuItems served during a specific RepeatedEvent on a specific date. */
 @Entity
 public class Menu {
 

@@ -196,6 +196,8 @@ public class MainActivity extends AppCompatActivity
         editor.apply();
         // Render buttons
         renderDiningCommonUpdates();
+        // Hide the sheet
+        materialSheetFab.hideSheet();
     }
 
     public void renderDiningCommonUpdates() {
