@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import butterknife.ButterKnife;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dummy.DummyContent;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dummy.DummyContent.DummyItem;
 
 /**
  * A fragment representing a list of Items.
@@ -72,7 +70,7 @@ public class MenuFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyMenuItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MenuRecyclerAdapter());
         }
         return view;
     }
@@ -107,6 +105,5 @@ public class MenuFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
     }
 }
