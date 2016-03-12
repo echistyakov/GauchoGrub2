@@ -9,6 +9,7 @@ import io.requery.ManyToMany;
 import io.requery.PreInsert;
 import io.requery.query.MutableResult;
 
+/* Food item (in a many-to-many relationship with Menus) */
 @Entity
 public class MenuItem {
 

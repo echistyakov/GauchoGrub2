@@ -6,7 +6,7 @@ import io.requery.Entity;
 import io.requery.Generated;
 import io.requery.Key;
 
-/* Meal: breakfast, dinner, lunch, brunch, etc. */
+/* Meal type: breakfast, dinner, lunch, brunch, etc. */
 @Entity
 public class Meal {
 
