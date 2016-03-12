@@ -1,14 +1,41 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
-/**
- * Created by elswenson on 3/11/2016.
- */
+import com.daimajia.swipe.SwipeLayout;
+
+import java.util.List;
+
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuCategory;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
+
+
 public class MenuRecyclerAdapter extends RecyclerView.Adapter<MenuRecyclerAdapter.ViewHolder> {
+
+    private Context context;
+    private List<MenuCategory> sectionTitles;
+    private List<List<MenuItem>> menuItems;
+    private int menuItemCount;
+
+    public MenuRecyclerAdapter(List<MenuCategory> sectionTitles, List<List<MenuItem>> menuItems, Context context) {
+        this.context = context;
+        this.sectionTitles = sectionTitles;
+        this.menuItems = menuItems;
+        menuItemCount = 0;
+        for(List<MenuItem> list : menuItems) {
+            menuItemCount += list.size();
+        }
+    }
 
 
     /**
@@ -20,7 +47,7 @@ public class MenuRecyclerAdapter extends RecyclerView.Adapter<MenuRecyclerAdapte
      * layout file.
      * <p/>
      * The new ViewHolder will be used to display items of the adapter using
-     * {@link #onBindViewHolder(ViewHolder, int, List)}. Since it will be re-used to display
+     * { #onBindViewHolder(ViewHolder, int, List)}. Since it will be re-used to display
      * different items in the data set, it is a good idea to cache references to sub views of
      * the View to avoid unnecessary {@link View#findViewById(int)} calls.
      *
@@ -33,7 +60,8 @@ public class MenuRecyclerAdapter extends RecyclerView.Adapter<MenuRecyclerAdapte
      */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_menuitem, parent, false);
+        return new ViewHolder(v);
     }
 
     /**
@@ -49,7 +77,7 @@ public class MenuRecyclerAdapter extends RecyclerView.Adapter<MenuRecyclerAdapte
      * on (e.g. in a click listener), use {@link ViewHolder#getAdapterPosition()} which will
      * have the updated adapter position.
      * <p/>
-     * Override {@link #onBindViewHolder(ViewHolder, int, List)} instead if Adapter can
+     * Override {#onBindViewHolder(ViewHolder, int, List)} instead if Adapter can
      * handle effcient partial bind.
      *
      * @param holder   The ViewHolder which should be updated to represent the contents of the
@@ -58,7 +86,76 @@ public class MenuRecyclerAdapter extends RecyclerView.Adapter<MenuRecyclerAdapte
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        Object menuRow = getObjectAtIndex(position);
+        if(menuRow instanceof MenuItem) {
+            // TODO: Set text
+            // TODO: Handle Logic for icons
 
+            // TODO: Handle logic for swipe listener
+            holder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
+
+                @Override
+                public void onStartOpen(SwipeLayout layout) {
+
+                }
+
+                @Override
+                public void onOpen(SwipeLayout layout) {
+                    // TODO: Handle logic for saving favorite
+
+                    // TODO: Show Snackbar upon saving favorite
+                    // Close layout upon favorite
+                    layout.close();
+                }
+
+                @Override
+                public void onStartClose(SwipeLayout layout) {
+
+                }
+
+                @Override
+                public void onClose(SwipeLayout layout) {
+
+                }
+
+                @Override
+                public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
+
+                }
+
+                @Override
+                public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
+
+                }
+            });
+
+        } else if (menuRow instanceof MenuCategory) {
+            holder.menuItemNutsImageView.setVisibility(View.INVISIBLE);
+            holder.menuItemVegImageView.setVisibility(View.INVISIBLE);
+            holder.menuItemTextView.setTextSize(28);
+            holder.menuItemTextView.setPadding(0, 7, 0, 0);
+            // Prevent touch events on category name
+            holder.menuItemTextView.setClickable(false);
+            holder.swipeLayout.addSwipeDenier(new SwipeLayout.SwipeDenier() {
+                @Override
+                public boolean shouldDenySwipe(MotionEvent ev) {
+                    return true;
+                }
+            });
+            // TODO: Set text
+        }
+    }
+
+    private Object getObjectAtIndex(int position) {
+        int counter = 0;
+        for(List<MenuItem> list : menuItems) {
+            if(list.size() + counter - 1 <= position) {
+                return list.get(position - counter);
+            } else {
+                counter += list.size();
+            }
+        }
+        return null;
     }
 
     /**
@@ -68,13 +165,24 @@ public class MenuRecyclerAdapter extends RecyclerView.Adapter<MenuRecyclerAdapte
      */
     @Override
     public int getItemCount() {
-        return 0;
+        return menuItemCount;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
+        public SwipeLayout swipeLayout;
+        public TextView menuItemTextView;
+        public ImageView menuItemVegImageView;
+        public ImageView menuItemNutsImageView;
+
         public ViewHolder(View v) {
             super(v);
+            swipeLayout = (SwipeLayout) v.findViewById(R.id.menuItem_swipeLayout);
+            menuItemTextView = (TextView) v.findViewById(R.id.menuItem_text);
+            menuItemNutsImageView = (ImageView) v.findViewById(R.id.menuItem_hasNuts);
+            menuItemVegImageView = (ImageView) v.findViewById(R.id.menuItem_isVeg);
+
+            swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
         }
     }
 }

@@ -194,10 +194,10 @@ public class MainActivity extends AppCompatActivity
         editor.putString(STATE_CURRENT_DINING_COMMON, diningCommon);
         // Apply changes asynchronously
         editor.apply();
-        // Render buttons
-        renderDiningCommonUpdates();
         // Hide the sheet
         materialSheetFab.hideSheet();
+        // Render buttons
+        renderDiningCommonUpdates();
     }
 
     public void renderDiningCommonUpdates() {
