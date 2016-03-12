@@ -1,6 +1,8 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,27 +19,43 @@ import org.joda.time.DateTime;
 
 import java.util.List;
 
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.FavoriteEntity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuCategory;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItemEntity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
+import io.requery.Persistable;
 import io.requery.android.QueryRecyclerAdapter;
 import io.requery.query.Result;
+import io.requery.rx.SingleEntityStore;
 
 
 public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItemEntity, MenuRecyclerAdapter.ViewHolder> {
 
+    private Context context;
     private DateTime date;
+    private Result<FavoriteEntity> favorites;
+    private View baseView;
 
     protected MenuRecyclerAdapter() {
         super(MenuItemEntity.$TYPE);
         this.date = DateTime.now();
     }
 
-    protected MenuRecyclerAdapter(DateTime date) {
+    protected MenuRecyclerAdapter(DateTime date, Context context, View baseView) {
         super(MenuItemEntity.$TYPE);
         this.date = date;
+        this.context = context;
+        favorites = getFavorites(context);
+        this.baseView = baseView;
     }
+
+    private Result<FavoriteEntity> getFavorites(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.MainActivity_dining_common_shared_prefs), Context.MODE_PRIVATE);
+        String currentDiningCommon = sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON, context.getResources().getString(R.string.DLG));
+        SingleEntityStore<Persistable> data = ((GGApp) context.getApplicationContext()).getData();
+        return data.select(FavoriteEntity.class).where(FavoriteEntity.DINING_COMMON.like(currentDiningCommon)).get();
+}
 
 
     /**
@@ -73,17 +91,17 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItemEntity, Me
     }
 
     @Override
-    public void onBindViewHolder(MenuItemEntity menuItemEntity, ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(final MenuItemEntity menuItemEntity, ViewHolder viewHolder, int i) {
+        // Nuts and V/VGN independent
         if(menuItemEntity.getHasNuts()) {
-
+            viewHolder.menuItemNutsImageView.setImageResource(R.mipmap.ic_nuts);
         }
-        if(menuItemEntity.getIsVegetarian()) {
-
+        // Vegan icon has priority over vegetarian
+        if (menuItemEntity.getIsVegan()) {
+            viewHolder.menuItemVegImageView.setImageResource(R.mipmap.ic_vegan);
+        } else if(menuItemEntity.getIsVegetarian()) {
+            viewHolder.menuItemVegImageView.setImageResource(R.mipmap.ic_vegetarian);
         }
-        if(menuItemEntity.getIsVegan()) {
-
-        }
-        // TODO: Add logic to check for favorites?
         viewHolder.menuItemTextView.setText(menuItemEntity.getTitle());
         viewHolder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
             @Override
@@ -93,8 +111,10 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItemEntity, Me
 
             @Override
             public void onOpen(SwipeLayout layout) {
-                // TODO: Add item to favorites
+                // TODO: Add or remove item w.r.t. favorites
                 // TODO: Notify user with Snackbar
+                // Placeholder for proper strings in string resource and favorites handling logic
+                Snackbar.make(baseView.findViewById(android.R.id.content), menuItemEntity.getTitle() + " has been favorited", Snackbar.LENGTH_SHORT);
                 layout.close();
             }
 
@@ -126,6 +146,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItemEntity, Me
         public TextView menuItemTextView;
         public ImageView menuItemVegImageView;
         public ImageView menuItemNutsImageView;
+        public boolean isFavorite;
 
         public ViewHolder(View v) {
             super(v);

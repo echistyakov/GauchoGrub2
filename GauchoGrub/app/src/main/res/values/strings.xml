@@ -30,6 +30,7 @@
 
     <!-- Menu Fragment -->
     <string name="MenuFragment_app_bar_title">Menu</string>
+    <string name="MainActivity_dining_common_shared_prefs">currentDiningCommon</string>
     <!-- Favorites Fragment -->
     <string name="FavoritesFragment_app_bar_title">Favorites</string>
     <!-- Schedules Fragment -->

@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity
     @Bind(R.id.fab_sheet_button3)
     public Button fabSheetButton3;
 
-    public final String STATE_CURRENT_DINING_COMMON = "STATE_CURRENT_DINING_COMMON";
+    public final static String STATE_CURRENT_DINING_COMMON = "STATE_CURRENT_DINING_COMMON";
 
     private final String STATE_FRAGMENT_ID = "FRAGMENT_ID";
     private int currentFragmentId = R.id.nav_menus;
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity
     @OnClick ({R.id.fab_sheet_button1, R.id.fab_sheet_button2, R.id.fab_sheet_button3})
     public void updateCurrentDiningCommon(Button fabSheetButton) {
         String diningCommon = fabSheetButton.getText().toString();
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs),MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         // Set state
         editor.putString(STATE_CURRENT_DINING_COMMON, diningCommon);
@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void renderDiningCommonUpdates() {
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs),MODE_PRIVATE);
         // Get diningCommonStrings
         ArrayList<String> diningCommonStrings = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.dining_commons)));
         // Get constant strings for switch
@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity
      * @param showDiningCommonName true if you should append ": " + currentDiningCommon
      */
     public void updateAppBarTitle(@Nullable String title, Boolean showDiningCommonName) {
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs),MODE_PRIVATE);
         String defaultString = getResources().getString(R.string.DLG);
         String currentDiningCommon = sharedPreferences.getString(STATE_CURRENT_DINING_COMMON, defaultString);
         if(title == null) {
