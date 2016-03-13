@@ -13,11 +13,15 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.GGApp;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommonEntity;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MealEntity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuCategory;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuCategoryEntity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuEntity;
@@ -92,18 +96,16 @@ public class MenuScraperService extends IntentService {
             String[] diningCommonIds = getResources().getStringArray(R.array.parsable_dining_commons_ids);
             for (String id : diningCommonIds) {
                 Log.d(TAG, "PROCESSING DIV ID: " + id);
-                parseDiningCommonMenu(doc.getElementById(id));
+                parseDiningCommonMenu(idToDiningCommon(id), doc.getElementById(id));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void parseDiningCommonMenu(Element diningCommonMenu) {
-        boolean isVegetarian;
-        boolean isVegan;
-        boolean hasNuts;
-        Elements mealPanels = diningCommonMenu.children();
+    private void parseDiningCommonMenu(String diningCommonStr, Element diningCommonMenus) {
+        DiningCommonEntity diningCommonEntity = mDataStore.select(DiningCommonEntity.class).where(DiningCommonEntity.NAME.equal(diningCommonStr)).get().first();
+        Elements mealPanels = diningCommonMenus.children();
         Elements filteredMealPanels = new Elements();
         // filter panels by "panel-success" class so that we do not
         // scrape warning panels (when meals are not served), and
@@ -112,46 +114,60 @@ public class MenuScraperService extends IntentService {
             if (panel.hasClass("panel-success") && !panel.getElementsByTag("h5").first().text().equals(BRIGHT_MEAL))
                 filteredMealPanels.add(panel);
         }
+        // iterate through each meal, creating a new menu for that
+        // menu if it doesn't exist in the DB
         for (Element mealPanel : filteredMealPanels) {
             String mealTypeStr = mealPanel.getElementsByTag("h5").first().text();
             Log.d(TAG, mealTypeStr);
-            MenuEntity menuEntity = new MenuEntity();
-            menuEntity.setDate(new LocalDate(mDate.getTime()));
-//            mDataStore.select(RepeatedEventEntity.class).where(RepeatedEventEntity.DINING_COMMON.equal(/*dining common*/)).and(RepeatedEventEntity.MEAL.equal(mealTypeStr))
-
-            for (Element foodListByCategory : mealPanel.getElementsByClass("course-list").first().children()) {
-                String menuCategoryStr = foodListByCategory.getElementsByTag("dt").first().text();
-                Log.d(TAG, menuCategoryStr);
-                MenuCategoryEntity menuCategoryEntity = mDataStore.select(MenuCategoryEntity.class).where(MenuCategoryEntity.NAME.equal(menuCategoryStr)).get().first();
-                for (Element menuItem : foodListByCategory.getElementsByTag("dd")) {
-                    String menuItemTitleStr = menuItem.text();
-                    // determine if MenuItem of same title and MenuCategory exists in DB
-                    // if not, create new entity and insert it into the database
-                    Result<MenuItemEntity> selectedMenuItems = mDataStore.select(MenuItemEntity.class)
-                            .where(MenuItemEntity.TITLE.equal(menuItemTitleStr).and(MenuItemEntity.MENU_CATEGORY.equal(menuCategoryEntity))).get();
-                    if (selectedMenuItems.toList().size() != 0) {
-                        // update menu attribute
-                    } else {
-                        isVegetarian = menuItemTitleStr.contains(VEGETARIAN);
-                        isVegan = menuItemTitleStr.contains(VEGAN);
-                        hasNuts = menuItemTitleStr.contains(HAS_NUTS);
-
-                        MenuItemEntity newMenuItemEntity = new MenuItemEntity();
-                        newMenuItemEntity.setMenuCategory(menuCategoryEntity);
-                        newMenuItemEntity.setTitle(menuItemTitleStr);
-                        // set menu attribute
-
-                        newMenuItemEntity.setIsVegetarian(isVegetarian);
-                        newMenuItemEntity.setIsVegan(isVegan);
-                        newMenuItemEntity.setHasNuts(hasNuts);
-                        mDataStore.insert(newMenuItemEntity);
+            MealEntity mealEntity = mDataStore.select(MealEntity.class).where(MealEntity.NAME.equal(mealTypeStr)).get().first();
+            // check if menu exists in the DB
+            LocalDate localDate = new LocalDate(mDate.getTime());
+            RepeatedEventEntity repeatedEventEntity = mDataStore.select(RepeatedEventEntity.class)
+                    .where(RepeatedEventEntity.DINING_COMMON.equal(diningCommonEntity))
+                    .and(RepeatedEventEntity.MEAL.equal(mealEntity)).get().first();
+            MenuEntity menuEntity = mDataStore.select(MenuEntity.class)
+                    .where(MenuEntity.DATE.equal(localDate))
+                    .and(MenuEntity.EVENT.equal(repeatedEventEntity)).get().firstOrNull();
+            // if menuEntity null, we found no matching record in the DB and must create and populate a new MenuEntity
+            // else, do nothing
+            if (menuEntity == null) {
+                menuEntity = new MenuEntity();
+                menuEntity.setDate(localDate);
+                menuEntity.setEvent(repeatedEventEntity);
+                mDataStore.insert(menuEntity);
+                // iterate through each category of the menu
+                for (Element foodListByCategory : mealPanel.getElementsByClass("course-list").first().children()) {
+                    String menuCategoryStr = foodListByCategory.getElementsByTag("dt").first().text();
+                    Log.d(TAG, menuCategoryStr);
+                    MenuCategoryEntity menuCategoryEntity = mDataStore.select(MenuCategoryEntity.class).where(MenuCategoryEntity.NAME.equal(menuCategoryStr)).get().first();
+                    for (Element menuItem : foodListByCategory.getElementsByTag("dd")) {
+                        String menuItemTitleStr = menuItem.text();
+                        Log.d(TAG, menuItemTitleStr);
+                        // determine if MenuItem of same title and MenuCategory exists in DB
+                        // if not, create new entity and insert it into the database
+                        MenuItemEntity menuItemEntity = mDataStore.select(MenuItemEntity.class)
+                                .where(MenuItemEntity.TITLE.equal(menuItemTitleStr)
+                                .and(MenuItemEntity.MENU_CATEGORY.equal(menuCategoryEntity))).get().firstOrNull();
+                        if (menuItemEntity == null) {
+                            menuItemEntity = new MenuItemEntity();
+                            menuItemEntity.setMenuCategory(menuCategoryEntity);
+                            menuItemEntity.setTitle(menuItemTitleStr);
+                            menuItemEntity.setIsVegetarian(menuItemTitleStr.contains(VEGETARIAN));
+                            menuItemEntity.setIsVegan(menuItemTitleStr.contains(VEGAN));
+                            menuItemEntity.setHasNuts(menuItemTitleStr.contains(HAS_NUTS));
+                            mDataStore.insert(menuItemEntity);
+                        }
+                        menuEntity.getMenuItems().add(menuItemEntity);
                     }
-
-
-
-                    Log.d(TAG, menuItemTitleStr);
                 }
+                mDataStore.update(menuEntity);
             }
         }
+    }
+
+    private String idToDiningCommon(String id) {
+        String[] diningCommons = getResources().getStringArray(R.array.dining_commons);
+        List<String> ids = Arrays.asList(getResources().getStringArray(R.array.parsable_dining_commons_ids));
+        return diningCommons[ids.indexOf(id)];
     }
 }
