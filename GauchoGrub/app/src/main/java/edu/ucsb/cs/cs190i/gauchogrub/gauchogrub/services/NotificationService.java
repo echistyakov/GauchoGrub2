@@ -76,22 +76,9 @@ public class NotificationService extends IntentService {
      * @param date
      * @return
      */
-    private List<Favorite> getFavorites(String diningCommon, LocalDate date) {
-        ArrayList<Favorite> favorites = new ArrayList<>();
-        int dayOfWeek = date.getDayOfWeek();
-        // Get DiningCommonEntity from diningCommon string
-        DiningCommonEntity diningCommonEntityResult = data.select(DiningCommonEntity.class).where(DiningCommonEntity.NAME.eq(diningCommon)).get().first();
-        // Get RepeatedEventEntity result for current day of the week and the right dining common
-        List<RepeatedEventEntity> repeatedEvents = data.select(RepeatedEventEntity.class)
-                .where(RepeatedEventEntity.DAY_OF_WEEK.equal(dayOfWeek)
-                        .and(RepeatedEventEntity.DINING_COMMON.eq(diningCommonEntityResult))).get().toList();
-        // Get MenuEntity of the current day
-        List<MenuEntity> menusInDiningCommonToday = data.select(MenuEntity.class)
-                .where(MenuEntity.DATE.eq(date)).get().toList();
-    private List<FavoriteStruct> getFavorites(String diningCommon, Calendar calendar) {
+    private List<FavoriteStruct> getFavorites(String diningCommon, LocalDate date) {
         ArrayList<FavoriteStruct> favorites = new ArrayList<>();
-        // Meals
-        int dayOfWeek = LocalDate.fromCalendarFields(calendar).getDayOfWeek();
+        int dayOfWeek = date.getDayOfWeek();
         // Get DiningCommon from diningCommon string
         DiningCommon diningCommonResult = data.select(DiningCommon.class).where(DiningCommon.NAME.eq(diningCommon)).get().first();
         // Get RepeatedEvent result for current day of the week and the right dining common
@@ -100,7 +87,7 @@ public class NotificationService extends IntentService {
                         .and(RepeatedEvent.DINING_COMMON_ID.eq(diningCommonResult.getId()))).get().toList();
         // Get Menu of the current day
         List<Menu> menusInDiningCommonToday = data.select(Menu.class)
-                .where(Menu.DATE.eq(LocalDate.fromCalendarFields(calendar))).get().toList();
+                .where(Menu.DATE.eq(date)).get().toList();
         // Get all favorites
         List<Favorite> favoriteEntities = data.select(Favorite.class).get().toList();
         for(Menu menu : menusInDiningCommonToday) {
