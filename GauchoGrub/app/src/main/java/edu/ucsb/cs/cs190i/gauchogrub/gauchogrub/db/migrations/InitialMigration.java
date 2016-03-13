@@ -15,10 +15,8 @@ import java.util.logging.Level;
 
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommonEntity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Meal;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MealEntity;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEventEntity;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
 import io.requery.Persistable;
 import io.requery.sql.EntityDataStore;
 
@@ -45,9 +43,9 @@ public class InitialMigration extends BaseMigration {
     @Override
     public void backwards() {
         // Call to value() actually evaluates the query
-        this.dataStore.delete(DiningCommonEntity.class).get().value();
-        this.dataStore.delete(MealEntity.class).get().value();
-        this.dataStore.delete(RepeatedEventEntity.class).get().value();
+        this.dataStore.delete(DiningCommon.class).get().value();
+        this.dataStore.delete(Meal.class).get().value();
+        this.dataStore.delete(RepeatedEvent.class).get().value();
     }
 
     private void prepopulateDiningCommons() throws IOException {
@@ -57,7 +55,7 @@ public class InitialMigration extends BaseMigration {
         List<String[]> rows = reader.readAll();
         for (String[] row : rows) {
             String dcName = row[0];
-            DiningCommonEntity entity = new DiningCommonEntity();
+            DiningCommon entity = new DiningCommon();
             entity.setName(dcName);
             this.dataStore.insert(entity);
         }
@@ -70,7 +68,7 @@ public class InitialMigration extends BaseMigration {
         List<String[]> rows = reader.readAll();
         for (String[] row : rows) {
             String mealName = row[0];
-            MealEntity entity = new MealEntity();
+            Meal entity = new Meal();
             entity.setName(mealName);
             this.dataStore.insert(entity);
         }
@@ -84,17 +82,17 @@ public class InitialMigration extends BaseMigration {
         for (String[] row : rows) {
             // Get dining common id
             String dcName = row[0];
-            DiningCommon dc = this.dataStore.select(DiningCommonEntity.class).where(DiningCommonEntity.NAME.equal(dcName)).get().first();
+            DiningCommon dc = this.dataStore.select(DiningCommon.class).where(DiningCommon.NAME.equal(dcName)).get().first();
             // Get meal id
             String mealName = row[1];
-            Meal meal = this.dataStore.select(MealEntity.class).where(MealEntity.NAME.equal(mealName)).get().first();
+            Meal meal = this.dataStore.select(Meal.class).where(Meal.NAME.equal(mealName)).get().first();
             // From/to time
             LocalTime startTime = LocalTime.parse(row[2]);
             LocalTime endTime = LocalTime.parse(row[3]);
             int dayOfWeek = Integer.parseInt(row[4]);
 
-            RepeatedEventEntity entity = new RepeatedEventEntity();
-            entity.setDiningCommon(dc);
+            RepeatedEvent entity = new RepeatedEvent();
+            entity.setDiningCommonId(dc.getId());
             entity.setMeal(meal);
             entity.setStartTime(startTime);
             entity.setEndTime(endTime);

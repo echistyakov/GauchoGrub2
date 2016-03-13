@@ -6,6 +6,7 @@ import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.converters.LocalTimeConverter
 import io.requery.Column;
 import io.requery.Convert;
 import io.requery.Entity;
+import io.requery.ForeignKey;
 import io.requery.Generated;
 import io.requery.Key;
 import io.requery.ManyToOne;
@@ -15,19 +16,26 @@ import io.requery.query.Result;
 /* An event repeated every week on a specific day in a specific DiningCommon during a specific Meal.
  * Has a start and end time. */
 @Entity
-public class RepeatedEvent {
+public class BaseRepeatedEvent {
 
     @Key
     @Generated
     public int id;
 
-    @ManyToOne
+    @ForeignKey(references = BaseDiningCommon.class)
     @Column(nullable = false, index = true, unique = false)
-    public DiningCommon diningCommon;
+    public int diningCommonId;
+
+    @ManyToOne
+    public BaseDiningCommon diningCommon;
+
+    @ForeignKey(references = BaseMeal.class)
+    @Column(nullable = false, index = true, unique = false)
+    public int mealId;
 
     @ManyToOne
     @Column(nullable = false, index = true, unique = false)
-    public Meal meal;
+    public BaseMeal meal;
 
     @Column(nullable = false, index = true, unique = false)
     @Convert(LocalTimeConverter.class)

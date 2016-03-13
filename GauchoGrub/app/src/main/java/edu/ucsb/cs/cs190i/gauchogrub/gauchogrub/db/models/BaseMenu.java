@@ -6,24 +6,28 @@ import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.converters.LocalDateConverter
 import io.requery.Column;
 import io.requery.Convert;
 import io.requery.Entity;
+import io.requery.ForeignKey;
 import io.requery.Generated;
 import io.requery.JunctionTable;
 import io.requery.Key;
 import io.requery.ManyToMany;
 import io.requery.ManyToOne;
-import io.requery.query.Result;
+import io.requery.query.MutableResult;
 
 /* Menu (i.e. a list of MenuItems served during a specific RepeatedEvent on a specific date. */
 @Entity
-public class Menu {
+public class BaseMenu {
 
     @Key
     @Generated
     public int id;
 
-    @ManyToOne
+    @ForeignKey(references = BaseRepeatedEvent.class)
     @Column(nullable = false, index = true, unique = false)
-    public RepeatedEvent event;
+    public int eventId;
+
+    @ManyToOne
+    public BaseRepeatedEvent event;
 
     @Column(nullable = false, index = true, unique = false)
     @Convert(LocalDateConverter.class)
@@ -31,6 +35,6 @@ public class Menu {
 
     @JunctionTable
     @ManyToMany(mappedBy = "menus")
-    public Result<MenuItem> menuItems;
+    public MutableResult<BaseMenuItem> menuItems;
 
 }
