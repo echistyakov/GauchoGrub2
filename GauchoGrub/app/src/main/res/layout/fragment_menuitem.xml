@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:weightSum="1">
         <!--What you want to show-->
-        <ImageButton
+        <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
