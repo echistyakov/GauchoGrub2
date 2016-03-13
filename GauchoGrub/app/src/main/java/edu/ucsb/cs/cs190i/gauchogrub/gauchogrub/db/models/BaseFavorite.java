@@ -5,7 +5,6 @@ import io.requery.Entity;
 import io.requery.ForeignKey;
 import io.requery.Generated;
 import io.requery.Key;
-import io.requery.ManyToOne;
 
 /* A favorite MenuItem (note: specific to a DiningCommons) */
 @Entity
@@ -23,10 +22,10 @@ public class BaseFavorite {
     @Column(nullable = false, index = true, unique = false)
     public int menuItemId;
 
-    @ManyToOne
-    public BaseDiningCommon diningCommon;
+    //@ManyToOne
+    //public BaseDiningCommon diningCommon;
 
-    @ManyToOne
-    public BaseMenuItem menuItem;
+    //@ManyToOne
+    //public BaseMenuItem menuItem;
 
 }

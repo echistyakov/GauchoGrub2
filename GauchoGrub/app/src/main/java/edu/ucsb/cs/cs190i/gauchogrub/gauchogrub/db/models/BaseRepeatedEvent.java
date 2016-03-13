@@ -26,16 +26,15 @@ public class BaseRepeatedEvent {
     @Column(nullable = false, index = true, unique = false)
     public int diningCommonId;
 
-    @ManyToOne
-    public BaseDiningCommon diningCommon;
+    //@ManyToOne
+    //public BaseDiningCommon diningCommon;
 
     @ForeignKey(references = BaseMeal.class)
     @Column(nullable = false, index = true, unique = false)
     public int mealId;
 
-    @ManyToOne
-    @Column(nullable = false, index = true, unique = false)
-    public BaseMeal meal;
+    //@ManyToOne
+    //public BaseMeal meal;
 
     @Column(nullable = false, index = true, unique = false)
     @Convert(LocalTimeConverter.class)

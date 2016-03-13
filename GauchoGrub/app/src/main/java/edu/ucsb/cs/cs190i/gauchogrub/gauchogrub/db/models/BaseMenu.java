@@ -26,8 +26,8 @@ public class BaseMenu {
     @Column(nullable = false, index = true, unique = false)
     public int eventId;
 
-    @ManyToOne
-    public BaseRepeatedEvent event;
+    //@ManyToOne
+    //public BaseRepeatedEvent event;
 
     @Column(nullable = false, index = true, unique = false)
     @Convert(LocalDateConverter.class)

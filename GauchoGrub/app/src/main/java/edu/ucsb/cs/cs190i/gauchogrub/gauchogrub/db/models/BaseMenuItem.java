@@ -22,8 +22,8 @@ public class BaseMenuItem {
     @Column(nullable = false, index = true, unique = false)
     public int menuCategoryId;
 
-    @ManyToOne
-    public BaseMenuCategory menuCategory;
+    //@ManyToOne
+    //public BaseMenuCategory menuCategory;
 
     @Column(nullable = false, index = true, unique = false)
     public String title;

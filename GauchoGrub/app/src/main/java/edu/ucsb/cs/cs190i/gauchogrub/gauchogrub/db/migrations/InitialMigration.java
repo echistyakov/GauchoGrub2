@@ -19,18 +19,21 @@ import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Meal;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
 import io.requery.Persistable;
 import io.requery.sql.EntityDataStore;
+import io.requery.sql.SchemaModifier;
+import io.requery.sql.TableCreationMode;
 
 public class InitialMigration extends BaseMigration {
 
     Context context;
 
-    public InitialMigration(EntityDataStore<Persistable> dataStore, Context context) {
-        super(dataStore);
+    public InitialMigration(SchemaModifier schemaModifier, EntityDataStore<Persistable> dataStore, Context context) {
+        super(schemaModifier, dataStore);
         this.context = context;
     }
 
     @Override
     public void forwards() {
+        this.schemaModifier.createTables(TableCreationMode.DROP_CREATE);
         try {
             prepopulateDiningCommons();
             prepopulateMeals();
@@ -42,10 +45,7 @@ public class InitialMigration extends BaseMigration {
 
     @Override
     public void backwards() {
-        // Call to value() actually evaluates the query
-        this.dataStore.delete(DiningCommon.class).get().value();
-        this.dataStore.delete(Meal.class).get().value();
-        this.dataStore.delete(RepeatedEvent.class).get().value();
+        this.schemaModifier.dropTables();
     }
 
     private void prepopulateDiningCommons() throws IOException {
@@ -93,7 +93,7 @@ public class InitialMigration extends BaseMigration {
 
             RepeatedEvent entity = new RepeatedEvent();
             entity.setDiningCommonId(dc.getId());
-            entity.setMeal(meal);
+            entity.setMealId(meal.getId());
             entity.setStartTime(startTime);
             entity.setEndTime(endTime);
             entity.setDayOfWeek(dayOfWeek);
