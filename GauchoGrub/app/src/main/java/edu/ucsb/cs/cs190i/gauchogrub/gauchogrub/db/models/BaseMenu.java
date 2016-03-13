@@ -11,26 +11,30 @@ import io.requery.Generated;
 import io.requery.JunctionTable;
 import io.requery.Key;
 import io.requery.ManyToMany;
-import io.requery.query.Result;
+import io.requery.ManyToOne;
+import io.requery.query.MutableResult;
 
 /* Menu (i.e. a list of MenuItems served during a specific RepeatedEvent on a specific date. */
 @Entity
-public class Menu {
+public class BaseMenu {
 
     @Key
     @Generated
     public int id;
 
-    @ForeignKey
+    @ForeignKey(references = BaseRepeatedEvent.class)
     @Column(nullable = false, index = true, unique = false)
-    public RepeatedEvent event;
+    public int eventId;
+
+    //@ManyToOne
+    //public BaseRepeatedEvent event;
 
     @Column(nullable = false, index = true, unique = false)
     @Convert(LocalDateConverter.class)
     public LocalDate date;
 
-    @JunctionTable(name = "menu_to_menuitem")
+    @JunctionTable
     @ManyToMany(mappedBy = "menus")
-    public Result<MenuItem> menuItems;
+    public MutableResult<BaseMenuItem> menuItems;
 
 }
