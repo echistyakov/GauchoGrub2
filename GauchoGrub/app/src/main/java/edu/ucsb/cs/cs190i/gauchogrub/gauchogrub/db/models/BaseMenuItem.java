@@ -6,26 +6,30 @@ import io.requery.ForeignKey;
 import io.requery.Generated;
 import io.requery.Key;
 import io.requery.ManyToMany;
+import io.requery.ManyToOne;
 import io.requery.PreInsert;
 import io.requery.query.MutableResult;
 
 /* Food item (in a many-to-many relationship with Menus) */
 @Entity
-public class MenuItem {
+public class BaseMenuItem {
 
     @Key
     @Generated
     public int id;
 
-    @ForeignKey
+    @ForeignKey(references = BaseMenuCategory.class)
     @Column(nullable = false, index = true, unique = false)
-    public MenuCategory menuCategory;
+    public int menuCategoryId;
+
+    //@ManyToOne
+    //public BaseMenuCategory menuCategory;
 
     @Column(nullable = false, index = true, unique = false)
     public String title;
 
     @ManyToMany(mappedBy = "menuItems")
-    public MutableResult<Menu> menus;
+    public MutableResult<BaseMenu> menus;
 
     @Column(nullable = false, index = true, unique = false, value = "false")
     public boolean isVegetarian;
