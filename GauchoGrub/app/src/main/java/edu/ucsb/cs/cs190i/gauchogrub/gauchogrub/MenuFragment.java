@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.requery.Persistable;
 import io.requery.rx.SingleEntityStore;
@@ -34,6 +35,9 @@ public class MenuFragment extends Fragment {
     private MenuRecyclerAdapter menuRecyclerAdapter;
     private SingleEntityStore<Persistable> data;
     private ExecutorService executorService;
+
+    @Bind(R.id.MenuFragment_recyclerView)
+    RecyclerView recyclerView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -67,19 +71,15 @@ public class MenuFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        RecyclerView view = (RecyclerView) inflater.inflate(R.layout.fragment_menus, container, false);
+        View view = inflater.inflate(R.layout.fragment_menus, container, false);
         ButterKnife.bind(this, view);
-
         data = ((GGApp) getActivity().getApplication()).getData();
         // TODO: handle date selection
         menuRecyclerAdapter = new MenuRecyclerAdapter();
         executorService = Executors.newSingleThreadExecutor();
         menuRecyclerAdapter.setExecutor(executorService);
-        view.setAdapter(menuRecyclerAdapter);
-        Context context = view.getContext();
-        view.setLayoutManager(new LinearLayoutManager(context));
-
-
+        recyclerView.setAdapter(menuRecyclerAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         return view;
     }
 

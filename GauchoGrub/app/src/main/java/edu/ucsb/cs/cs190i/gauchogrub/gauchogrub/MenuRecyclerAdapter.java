@@ -53,9 +53,9 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItemEntity, Me
         super(MenuItemEntity.$TYPE);
         this.date = date;
         this.context = context;
+        dataStore = ((GGApp) context.getApplicationContext()).getData();
         favorites = getFavorites(context);
         this.baseView = baseView;
-        dataStore = ((GGApp) context.getApplicationContext()).getData();
     }
 
     private List<FavoriteEntity> getFavorites(Context context) {
