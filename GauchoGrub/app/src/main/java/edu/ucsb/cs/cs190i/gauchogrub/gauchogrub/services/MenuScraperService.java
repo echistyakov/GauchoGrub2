@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.Context;
 import android.util.Log;
 
+import org.joda.time.LocalDate;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,10 +18,16 @@ import java.util.Date;
 
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.GGApp;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuCategory;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuCategoryEntity;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuEntity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItemEntity;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEventEntity;
 import io.requery.Persistable;
 import io.requery.meta.AttributeBuilder;
 import io.requery.meta.QueryAttribute;
+import io.requery.meta.TypeBuilder;
 import io.requery.query.Result;
 import io.requery.query.Selection;
 import io.requery.query.Tuple;
@@ -84,7 +91,7 @@ public class MenuScraperService extends IntentService {
             Document doc = Jsoup.connect(getString(R.string.parsable_menu_url) + "?day=" + formattedDate).get();
             String[] diningCommonIds = getResources().getStringArray(R.array.parsable_dining_commons_ids);
             for (String id : diningCommonIds) {
-                Log.d(TAG, id);
+                Log.d(TAG, "PROCESSING DIV ID: " + id);
                 parseDiningCommonMenu(doc.getElementById(id));
             }
         } catch (IOException e) {
@@ -108,19 +115,39 @@ public class MenuScraperService extends IntentService {
         for (Element mealPanel : filteredMealPanels) {
             String mealTypeStr = mealPanel.getElementsByTag("h5").first().text();
             Log.d(TAG, mealTypeStr);
+            MenuEntity menuEntity = new MenuEntity();
+            menuEntity.setDate(new LocalDate(mDate.getTime()));
+//            mDataStore.select(RepeatedEventEntity.class).where(RepeatedEventEntity.DINING_COMMON.equal(/*dining common*/)).and(RepeatedEventEntity.MEAL.equal(mealTypeStr))
+
             for (Element foodListByCategory : mealPanel.getElementsByClass("course-list").first().children()) {
                 String menuCategoryStr = foodListByCategory.getElementsByTag("dt").first().text();
                 Log.d(TAG, menuCategoryStr);
+                MenuCategoryEntity menuCategoryEntity = mDataStore.select(MenuCategoryEntity.class).where(MenuCategoryEntity.NAME.equal(menuCategoryStr)).get().first();
                 for (Element menuItem : foodListByCategory.getElementsByTag("dd")) {
                     String menuItemTitleStr = menuItem.text();
-                    // determine if MenuItem of same MenuCategory and title exists in DB
-                    AttributeBuilder<> attrBuilder = new AttributeBuilder("title", MenuItem.class);
-                    Selection<Result<Tuple>> selectedMenuItems = mDataStore.select(MenuItem.class, );
-                    // mDataStore.select(MenuItem.class, )
+                    // determine if MenuItem of same title and MenuCategory exists in DB
+                    // if not, create new entity and insert it into the database
+                    Result<MenuItemEntity> selectedMenuItems = mDataStore.select(MenuItemEntity.class)
+                            .where(MenuItemEntity.TITLE.equal(menuItemTitleStr).and(MenuItemEntity.MENU_CATEGORY.equal(menuCategoryEntity))).get();
+                    if (selectedMenuItems.toList().size() != 0) {
+                        // update menu attribute
+                    } else {
+                        isVegetarian = menuItemTitleStr.contains(VEGETARIAN);
+                        isVegan = menuItemTitleStr.contains(VEGAN);
+                        hasNuts = menuItemTitleStr.contains(HAS_NUTS);
 
-                    isVegetarian = menuItemTitleStr.contains(VEGETARIAN);
-                    isVegan = menuItemTitleStr.contains(VEGAN);
-                    hasNuts = menuItemTitleStr.contains(HAS_NUTS);
+                        MenuItemEntity newMenuItemEntity = new MenuItemEntity();
+                        newMenuItemEntity.setMenuCategory(menuCategoryEntity);
+                        newMenuItemEntity.setTitle(menuItemTitleStr);
+                        // set menu attribute
+
+                        newMenuItemEntity.setIsVegetarian(isVegetarian);
+                        newMenuItemEntity.setIsVegan(isVegan);
+                        newMenuItemEntity.setHasNuts(hasNuts);
+                        mDataStore.insert(newMenuItemEntity);
+                    }
+
+
 
                     Log.d(TAG, menuItemTitleStr);
                 }
