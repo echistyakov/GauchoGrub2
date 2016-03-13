@@ -14,7 +14,6 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -22,20 +21,11 @@ import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.GGApp;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommonEntity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MealEntity;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuCategory;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuCategoryEntity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuEntity;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItemEntity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEventEntity;
 import io.requery.Persistable;
-import io.requery.meta.AttributeBuilder;
-import io.requery.meta.QueryAttribute;
-import io.requery.meta.TypeBuilder;
-import io.requery.query.Result;
-import io.requery.query.Selection;
-import io.requery.query.Tuple;
-import io.requery.rx.SingleEntityStore;
 import io.requery.sql.EntityDataStore;
 
 /**
@@ -45,10 +35,10 @@ import io.requery.sql.EntityDataStore;
  */
 public class MenuScraperService extends IntentService {
     private static final String TAG = "MenuScraperService";
-    private final String BRIGHT_MEAL = getString(R.string.parsable_bright_meal);
-    private final String VEGETARIAN = getString(R.string.parsable_veg);
-    private final String VEGAN = getString(R.string.parsable_vgn);
-    private final String HAS_NUTS = getString(R.string.parsable_has_nuts);
+    private String BRIGHT_MEAL;
+    private String VEGETARIAN;
+    private String VEGAN;
+    private String HAS_NUTS;
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_SCRAPE_MENU_AT_DATE = "edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.action.SCRAPE_MENU_AT_DATE";
     private static final String EXTRA_PARAM_DATE = "edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.extra.DATE";
@@ -57,12 +47,17 @@ public class MenuScraperService extends IntentService {
 
     public MenuScraperService() {
         super("MenuScraperService");
+
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         mDataStore = ((GGApp) getApplication()).getData();
+        BRIGHT_MEAL = getString(R.string.parsable_bright_meal);
+        VEGETARIAN = getString(R.string.parsable_veg);
+        VEGAN = getString(R.string.parsable_vgn);
+        HAS_NUTS = getString(R.string.parsable_has_nuts);
     }
 
     public static void startActionScrapeMenu(Context context, Date date) {
@@ -147,7 +142,7 @@ public class MenuScraperService extends IntentService {
                         // if not, create new entity and insert it into the database
                         MenuItemEntity menuItemEntity = mDataStore.select(MenuItemEntity.class)
                                 .where(MenuItemEntity.TITLE.equal(menuItemTitleStr)
-                                .and(MenuItemEntity.MENU_CATEGORY.equal(menuCategoryEntity))).get().firstOrNull();
+                                        .and(MenuItemEntity.MENU_CATEGORY.equal(menuCategoryEntity))).get().firstOrNull();
                         if (menuItemEntity == null) {
                             menuItemEntity = new MenuItemEntity();
                             menuItemEntity.setMenuCategory(menuCategoryEntity);
