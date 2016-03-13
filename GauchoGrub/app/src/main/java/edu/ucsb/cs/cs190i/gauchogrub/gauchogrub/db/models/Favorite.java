@@ -12,14 +12,14 @@ public class Favorite {
 
     @Key
     @Generated
-    int id;
+    public int id;
 
     @ManyToOne
     @Column(nullable = false, index = true, unique = true)
-    DiningCommon diningCommon;
+    public DiningCommon diningCommon;
 
     @ManyToOne
     @Column(nullable = false, index = true, unique = true)
-    MenuItem menuItem;
+    public MenuItem menuItem;
 
 }

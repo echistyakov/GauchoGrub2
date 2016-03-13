@@ -19,18 +19,18 @@ public class Menu {
 
     @Key
     @Generated
-    int id;
+    public int id;
 
     @ManyToOne
     @Column(nullable = false, index = true, unique = false)
-    RepeatedEvent event;
+    public RepeatedEvent event;
 
     @Column(nullable = false, index = true, unique = false)
     @Convert(LocalDateConverter.class)
-    LocalDate date;
+    public LocalDate date;
 
     @JunctionTable
     @ManyToMany(mappedBy = "menus")
-    Result<MenuItem> menuItems;
+    public Result<MenuItem> menuItems;
 
 }
