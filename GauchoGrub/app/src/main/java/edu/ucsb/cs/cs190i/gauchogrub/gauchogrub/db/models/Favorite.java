@@ -12,14 +12,14 @@ public class Favorite {
 
     @Key
     @Generated
-    int id;
+    public int id;
 
     @ForeignKey
     @Column(nullable = false, index = true, unique = true)
-    DiningCommon diningCommon;
+    public DiningCommon diningCommon;
 
     @ForeignKey
     @Column(nullable = false, index = true, unique = true)
-    MenuItem menuItem;
+    public MenuItem menuItem;
 
 }

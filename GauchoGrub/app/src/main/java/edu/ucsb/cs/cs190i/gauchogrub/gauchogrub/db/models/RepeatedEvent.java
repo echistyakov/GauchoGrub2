@@ -17,26 +17,26 @@ public class RepeatedEvent {
 
     @Key
     @Generated
-    int id;
+    public int id;
 
     @ForeignKey
     @Column(nullable = false, index = true, unique = false)
-    DiningCommon diningCommon;
+    public DiningCommon diningCommon;
 
     @ForeignKey
     @Column(nullable = false, index = true, unique = false)
-    Meal meal;
+    public Meal meal;
 
     @Column(nullable = false, index = true, unique = false)
     @Convert(LocalTimeConverter.class)
-    LocalTime from;
+    public LocalTime from;
 
     @Column(nullable = false, index = true, unique = false)
     @Convert(LocalTimeConverter.class)
-    LocalTime to;
+    public LocalTime to;
 
     @Column(nullable = false, index = true, unique = false)
     /* Use day-of-the-week values from Joda DateTimeConstants class (1-indexed) */
-    int dayOfWeek;
+    public int dayOfWeek;
 
 }

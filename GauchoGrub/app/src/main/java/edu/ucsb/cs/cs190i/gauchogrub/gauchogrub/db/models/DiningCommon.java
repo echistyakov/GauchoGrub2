@@ -10,9 +10,9 @@ public class DiningCommon {
 
     @Key
     @Generated
-    int id;
+    public int id;
 
     @Column(nullable = false, index = true, unique = true)
-    String name;
+    public String name;
 
 }

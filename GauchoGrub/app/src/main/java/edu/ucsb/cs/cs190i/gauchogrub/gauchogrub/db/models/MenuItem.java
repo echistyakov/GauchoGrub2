@@ -15,26 +15,26 @@ public class MenuItem {
 
     @Key
     @Generated
-    int id;
+    public int id;
 
     @ForeignKey
     @Column(nullable = false, index = true, unique = false)
-    MenuCategory menuCategory;
+    public MenuCategory menuCategory;
 
     @Column(nullable = false, index = true, unique = false)
-    String title;
+    public String title;
 
     @ManyToMany(mappedBy = "menuItems")
-    MutableResult<Menu> menus;
+    public MutableResult<Menu> menus;
 
     @Column(nullable = false, index = true, unique = false, value = "false")
-    boolean isVegetarian;
+    public boolean isVegetarian;
 
     @Column(nullable = false, index = true, unique = false, value = "false")
-    boolean isVegan;
+    public boolean isVegan;
 
     @Column(nullable = false, index = true, unique = false, value = "false")
-    boolean hasNuts;
+    public boolean hasNuts;
 
     @PreInsert
     void onPreInsert() {
