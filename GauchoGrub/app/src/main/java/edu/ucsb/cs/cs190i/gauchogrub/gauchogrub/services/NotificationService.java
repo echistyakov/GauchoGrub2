@@ -24,7 +24,6 @@ import io.requery.Persistable;
 import io.requery.sql.EntityDataStore;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -74,9 +73,21 @@ public class NotificationService extends IntentService {
     /**
      * Gets favorites for a specific diningCommon, today
      * @param diningCommon
-     * @param calendar
+     * @param date
      * @return
      */
+    private List<Favorite> getFavorites(String diningCommon, LocalDate date) {
+        ArrayList<Favorite> favorites = new ArrayList<>();
+        int dayOfWeek = date.getDayOfWeek();
+        // Get DiningCommonEntity from diningCommon string
+        DiningCommonEntity diningCommonEntityResult = data.select(DiningCommonEntity.class).where(DiningCommonEntity.NAME.eq(diningCommon)).get().first();
+        // Get RepeatedEventEntity result for current day of the week and the right dining common
+        List<RepeatedEventEntity> repeatedEvents = data.select(RepeatedEventEntity.class)
+                .where(RepeatedEventEntity.DAY_OF_WEEK.equal(dayOfWeek)
+                        .and(RepeatedEventEntity.DINING_COMMON.eq(diningCommonEntityResult))).get().toList();
+        // Get MenuEntity of the current day
+        List<MenuEntity> menusInDiningCommonToday = data.select(MenuEntity.class)
+                .where(MenuEntity.DATE.eq(date)).get().toList();
     private List<FavoriteStruct> getFavorites(String diningCommon, Calendar calendar) {
         ArrayList<FavoriteStruct> favorites = new ArrayList<>();
         // Meals
@@ -113,7 +124,7 @@ public class NotificationService extends IntentService {
     }
 
     private List<FavoriteStruct> getFavoritesToday(String diningCommon) {
-        return getFavorites(diningCommon, Calendar.getInstance());
+        return getFavorites(diningCommon, LocalDate.now());
     }
 
     private List<FavoriteStruct> getAllFavoritesToday() {
@@ -139,7 +150,5 @@ public class NotificationService extends IntentService {
             this.mealName = mealName;
             this.diningCommon = diningCommon;
         }
-
     }
-
 }

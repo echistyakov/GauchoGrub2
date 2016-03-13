@@ -8,13 +8,14 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import org.joda.time.DateTime;
+
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.MenuScraperService;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.NotificationService;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Calendar;
 
 public class BootReceiver extends BroadcastReceiver {
     /**
@@ -46,11 +47,8 @@ public class BootReceiver extends BroadcastReceiver {
     private void startNotificationService(Context context, AlarmManager alarmManager) {
         Intent notificationIntent = new Intent(context, NotificationService.class);
         PendingIntent pendingNotificationIntent = PendingIntent.getService(context, 0, notificationIntent, 0);
-        Calendar notificationCalendar = Calendar.getInstance();
-        notificationCalendar.set(Calendar.HOUR_OF_DAY, 7);
-        notificationCalendar.set(Calendar.MINUTE, 0);
-        notificationCalendar.set(Calendar.SECOND, 0);
-        alarmManager.setRepeating(AlarmManager.RTC, notificationCalendar.getTimeInMillis(),
+        DateTime dateTime = DateTime.now().withHourOfDay(7).withMinuteOfHour(0).withSecondOfMinute(0);
+        alarmManager.setRepeating(AlarmManager.RTC, dateTime.getMillis(),
                 AlarmManager.INTERVAL_DAY, pendingNotificationIntent);
     }
 
@@ -60,11 +58,8 @@ public class BootReceiver extends BroadcastReceiver {
         if (hasInternetAccess(context)) {
             context.startService(menuScraperIntent);
         }
-        Calendar scraperCalendar = Calendar.getInstance();
-        scraperCalendar.set(Calendar.HOUR_OF_DAY, 5);
-        scraperCalendar.set(Calendar.MINUTE, 0);
-        scraperCalendar.set(Calendar.SECOND, 0);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, scraperCalendar.getTimeInMillis(),
+        DateTime dateTime = DateTime.now().withHourOfDay(5).withMinuteOfHour(0).withSecondOfMinute(0);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, dateTime.getMillis(),
                 AlarmManager.INTERVAL_DAY, pendingMenuScraperIntent);
     }
 
@@ -77,7 +72,7 @@ public class BootReceiver extends BroadcastReceiver {
                 urlc.setRequestProperty("Connection", "close");
                 urlc.setConnectTimeout(1500);
                 urlc.connect();
-                return (urlc.getResponseCode() == 204 && urlc.getContentLength() == 0);
+                return urlc.getResponseCode() == 204;
             } catch (IOException e) {
                 e.printStackTrace();
             }
