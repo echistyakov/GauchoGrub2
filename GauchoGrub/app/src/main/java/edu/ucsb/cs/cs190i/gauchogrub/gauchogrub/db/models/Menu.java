@@ -11,6 +11,7 @@ import io.requery.Generated;
 import io.requery.JunctionTable;
 import io.requery.Key;
 import io.requery.ManyToMany;
+import io.requery.query.MutableResult;
 import io.requery.query.Result;
 
 @Entity
@@ -30,6 +31,6 @@ public class Menu {
 
     @JunctionTable(name = "menu_to_menuitem")
     @ManyToMany(mappedBy = "menus")
-    Result<MenuItem> menuItems;
+    MutableResult<MenuItem> menuItems;
 
 }
