@@ -6,7 +6,7 @@
     <!-- Bottom View Start-->
     <LinearLayout
         android:orientation="horizontal"
-        android:background="#66ddff00"
+        android:background="#FFFFFF"
         android:id="@+id/menuItem_bottomWrapper"
         android:gravity="end"
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
         <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_gravity="center"
+            android:layout_gravity="left"
             android:src="@android:drawable/btn_star_big_on"
             android:id="@+id/menuItem_favoritesStar"
             style="?android:attr/borderlessButtonStyle"/>

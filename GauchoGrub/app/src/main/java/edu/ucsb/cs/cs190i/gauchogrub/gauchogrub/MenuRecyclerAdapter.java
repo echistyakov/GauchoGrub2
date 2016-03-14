@@ -50,16 +50,11 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         this.date = date;
         this.context = context;
         dataStore = ((GGApp) context.getApplicationContext()).getData();
-        favorites = new ArrayList<>(getFavorites(context));
         this.baseView = baseView;
         this.mealName = mealName;
         this.diningCommon = diningCommon;
         this.diningCommonId = dataStore.select(DiningCommon.class).where(DiningCommon.NAME.eq(diningCommon)).get().first().getId();
         //Log.d(LOG_TAG, diningCommon + " " + date.toString("MM/dd") + " " + mealName);
-    }
-
-    private List<Favorite> getFavorites(Context context) {
-        return dataStore.select(Favorite.class).where(Favorite.DINING_COMMON_ID.eq(diningCommonId)).get().toList();
     }
 
 
@@ -146,15 +141,6 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         viewHolder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
             @Override
             public void onStartOpen(SwipeLayout layout) {
-                Favorite favorite = dataStore.select(Favorite.class)
-                        .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
-                                .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
-                        .get().firstOrNull();
-                if(favorite != null) {
-                    viewHolder.menuItemSwipeFavoriteStar.setImageResource(android.R.drawable.btn_star_big_off);
-                } else {
-                    viewHolder.menuItemSwipeFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
-                }
 
             }
 
@@ -169,7 +155,6 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                 // If the favorite exists
                 if(favorite != null) {
                     dataStore.delete(favorite);
-                    favorites.remove(favorite);
                     favoriteNotification = menuItem.getTitle() + " is removed from your favorites";
                     viewHolder.menuItemFavoriteStar.setImageResource(android.R.color.transparent);
                 } else {
@@ -177,7 +162,6 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                     newFavorite.setDiningCommonId(diningCommonId);
                     newFavorite.setMenuItemId(menuItem.getId());
                     dataStore.insert(newFavorite);
-                    favorites.add(newFavorite);
                     favoriteNotification = menuItem.getTitle() + " has been added to your favorites";
                     viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
                 }
@@ -225,7 +209,6 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
             menuItemVegImageView = (ImageView) v.findViewById(R.id.menuItem_isVeg);
             menuItemSwipeFavoriteStar = (ImageView) v.findViewById(R.id.menuItem_favoritesStar);
             menuItemFavoriteStar = (ImageView) v.findViewById(R.id.menuItem_isFavorite);
-
             swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
         }
     }
