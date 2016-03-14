@@ -67,4 +67,6 @@ dependencies {
     compile 'com.gordonwong:material-sheet-fab:1.2.1'
     // OpenCSV
     compile 'com.opencsv:opencsv:3.7'
+    // Jsoup (for HTML parsing)
+    compile 'org.jsoup:jsoup:1.7.3'
 }

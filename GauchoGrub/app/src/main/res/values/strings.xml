@@ -80,6 +80,27 @@
     <string name="pref_default_filter_no_filter">None</string>
     <!-- END Strings specific to Settings-->
 
+    <!-- Strings for Parsing -->
+    <string name="parsable_menu_url">https://appl.housing.ucsb.edu/menu/</string>
+
+    <string name="parsable_CAR_id">Carrillo-collapse</string>
+    <string name="parsable_DLG_id">DeLaGuerra-collapse</string>
+    <string name="parsable_ORT_id">Ortega-collapse</string>
+    <string name="parsable_POR_id">Portola-collapse</string>
+
+    <string-array name="parsable_dining_commons_ids">
+        <item>@string/parsable_CAR_id</item>
+        <item>@string/parsable_DLG_id</item>
+        <item>@string/parsable_ORT_id</item>
+        <item>@string/parsable_POR_id</item>
+    </string-array>
+
+    <string name="parsable_bright_meal">Bright Meal</string>
+    <string name="parsable_veg">(v)</string>
+    <string name="parsable_vgn">(vgn)</string>
+    <string name="parsable_has_nuts">(w/nuts)</string>
+    <!-- END Strings for Parsing -->
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
