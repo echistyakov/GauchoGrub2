@@ -104,7 +104,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
     @Override
     public void onBindViewHolder(final MenuItem menuItem, final ViewHolder viewHolder, int i) {
 
-        final Favorite favorite = dataStore.select(Favorite.class)
+        Favorite favorite = dataStore.select(Favorite.class)
                 .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
                         .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
                 .get().firstOrNull();
@@ -145,6 +145,10 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
 
             @Override
             public void onOpen(SwipeLayout layout) {
+                Favorite favorite = dataStore.select(Favorite.class)
+                        .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
+                                .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
+                        .get().firstOrNull();
                 // If the favorite exists
                 if(favorite != null) {
                     dataStore.delete(favorite);
