@@ -19,12 +19,12 @@ import java.util.List;
 
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.GGApp;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommonEntity;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MealEntity;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuCategoryEntity;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuEntity;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItemEntity;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEventEntity;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Meal;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuCategory;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Menu;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
 import io.requery.Persistable;
 import io.requery.sql.EntityDataStore;
 
@@ -99,7 +99,7 @@ public class MenuScraperService extends IntentService {
     }
 
     private void parseDiningCommonMenu(String diningCommonStr, Element diningCommonMenus) {
-        DiningCommonEntity diningCommonEntity = mDataStore.select(DiningCommonEntity.class).where(DiningCommonEntity.NAME.equal(diningCommonStr)).get().first();
+        DiningCommon diningCommon = mDataStore.select(DiningCommon.class).where(DiningCommon.NAME.equal(diningCommonStr)).get().first();
         Elements mealPanels = diningCommonMenus.children();
         Elements filteredMealPanels = new Elements();
         // filter panels by "panel-success" class so that we do not
@@ -114,48 +114,48 @@ public class MenuScraperService extends IntentService {
         for (Element mealPanel : filteredMealPanels) {
             String mealTypeStr = mealPanel.getElementsByTag("h5").first().text();
             Log.d(TAG, mealTypeStr);
-            MealEntity mealEntity = mDataStore.select(MealEntity.class).where(MealEntity.NAME.equal(mealTypeStr)).get().first();
+            Meal meal = mDataStore.select(Meal.class).where(Meal.NAME.equal(mealTypeStr)).get().first();
             // check if menu exists in the DB
             LocalDate localDate = new LocalDate(mDate.getTime());
-            RepeatedEventEntity repeatedEventEntity = mDataStore.select(RepeatedEventEntity.class)
-                    .where(RepeatedEventEntity.DINING_COMMON.equal(diningCommonEntity))
-                    .and(RepeatedEventEntity.MEAL.equal(mealEntity)).get().first();
-            MenuEntity menuEntity = mDataStore.select(MenuEntity.class)
-                    .where(MenuEntity.DATE.equal(localDate))
-                    .and(MenuEntity.EVENT.equal(repeatedEventEntity)).get().firstOrNull();
-            // if menuEntity null, we found no matching record in the DB and must create and populate a new MenuEntity
+            RepeatedEvent repeatedEvent = mDataStore.select(RepeatedEvent.class)
+                    .where(RepeatedEvent.DINING_COMMON_ID.equal(diningCommon.getId()))
+                    .and(RepeatedEvent.MEAL_ID.equal(meal.getId())).get().first();
+            Menu menu = mDataStore.select(Menu.class)
+                    .where(Menu.DATE.equal(localDate))
+                    .and(Menu.EVENT_ID.equal(repeatedEvent.getId())).get().firstOrNull();
+            // if menu null, we found no matching record in the DB and must create and populate a new MenuEntity
             // else, do nothing
-            if (menuEntity == null) {
-                menuEntity = new MenuEntity();
-                menuEntity.setDate(localDate);
-                menuEntity.setEvent(repeatedEventEntity);
-                mDataStore.insert(menuEntity);
+            if (menu == null) {
+                menu = new Menu();
+                menu.setDate(localDate);
+                menu.setEventId(repeatedEvent.getId());
+                mDataStore.insert(menu);
                 // iterate through each category of the menu
                 for (Element foodListByCategory : mealPanel.getElementsByClass("course-list").first().children()) {
                     String menuCategoryStr = foodListByCategory.getElementsByTag("dt").first().text();
                     Log.d(TAG, menuCategoryStr);
-                    MenuCategoryEntity menuCategoryEntity = mDataStore.select(MenuCategoryEntity.class).where(MenuCategoryEntity.NAME.equal(menuCategoryStr)).get().first();
-                    for (Element menuItem : foodListByCategory.getElementsByTag("dd")) {
-                        String menuItemTitleStr = menuItem.text();
+                    MenuCategory menuCategory = mDataStore.select(MenuCategory.class).where(MenuCategory.NAME.equal(menuCategoryStr)).get().first();
+                    for (Element menuItemElement : foodListByCategory.getElementsByTag("dd")) {
+                        String menuItemTitleStr = menuItemElement.text();
                         Log.d(TAG, menuItemTitleStr);
                         // determine if MenuItem of same title and MenuCategory exists in DB
                         // if not, create new entity and insert it into the database
-                        MenuItemEntity menuItemEntity = mDataStore.select(MenuItemEntity.class)
-                                .where(MenuItemEntity.TITLE.equal(menuItemTitleStr)
-                                        .and(MenuItemEntity.MENU_CATEGORY.equal(menuCategoryEntity))).get().firstOrNull();
-                        if (menuItemEntity == null) {
-                            menuItemEntity = new MenuItemEntity();
-                            menuItemEntity.setMenuCategory(menuCategoryEntity);
-                            menuItemEntity.setTitle(menuItemTitleStr);
-                            menuItemEntity.setIsVegetarian(menuItemTitleStr.contains(VEGETARIAN));
-                            menuItemEntity.setIsVegan(menuItemTitleStr.contains(VEGAN));
-                            menuItemEntity.setHasNuts(menuItemTitleStr.contains(HAS_NUTS));
-                            mDataStore.insert(menuItemEntity);
+                        MenuItem menuItem = mDataStore.select(MenuItem.class)
+                                .where(MenuItem.TITLE.equal(menuItemTitleStr)
+                                        .and(MenuItem.MENU_CATEGORY_ID.equal(menuCategory.getId()))).get().firstOrNull();
+                        if (menuItem == null) {
+                            menuItem = new MenuItem();
+                            menuItem.setMenuCategoryId(menuCategory.getId());
+                            menuItem.setTitle(menuItemTitleStr);
+                            menuItem.setIsVegetarian(menuItemTitleStr.contains(VEGETARIAN));
+                            menuItem.setIsVegan(menuItemTitleStr.contains(VEGAN));
+                            menuItem.setHasNuts(menuItemTitleStr.contains(HAS_NUTS));
+                            mDataStore.insert(menuItem);
                         }
-                        menuEntity.getMenuItems().add(menuItemEntity);
+                        menu.getMenuItems().add(menuItem);
                     }
                 }
-                mDataStore.update(menuEntity);
+                mDataStore.update(menu);
             }
         }
     }
