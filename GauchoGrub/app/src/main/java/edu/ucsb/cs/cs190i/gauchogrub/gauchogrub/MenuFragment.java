@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,27 +16,21 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.BaseMenuItem;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Meal;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Menu;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
 import io.requery.Persistable;
-import io.requery.query.Result;
 import io.requery.sql.EntityDataStore;
 
 /**
@@ -97,7 +90,7 @@ public class MenuFragment extends Fragment {
 
 
     private DateTime displayDate;
-    private String mealName;
+    private String mealName = "";
     private String diningCommon;
 
     private static final String STATE_DISPLAY_DATE = "STATE_DISPLAY_DATE";
@@ -125,25 +118,24 @@ public class MenuFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         data = ((GGApp) getActivity().getApplication()).getData();
-        int savedDateInMillis = 0;
-        if(savedInstanceState != null) {
-            savedDateInMillis = savedInstanceState.getInt(STATE_DISPLAY_DATE);
-            mealName = savedInstanceState.getString(STATE_MEAL_NAME, "");
-        }
-        if(savedDateInMillis != 0) {
-            displayDate = new DateTime(savedDateInMillis);
-        } else {
-            displayDate = DateTime.now();
-        }
-
-        if(mealName == null || mealName.length() == 0) {
-            mealName = getString(R.string.MenuFragment_dinner_string);
-        }
-
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs), Context.MODE_PRIVATE);
         diningCommon = sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON,
                 sharedPreferences.getString(getString(R.string.pref_key_default_dining_common),
                         getString(R.string.DLG)));
+        int savedDateInMillis = 0;
+        // Attempt to restore date and mealName from savedInstanceState, if it exists
+        if(savedInstanceState != null) {
+            savedDateInMillis = savedInstanceState.getInt(STATE_DISPLAY_DATE, 0);
+            if(savedDateInMillis == 0)
+                displayDate = DateTime.now();
+            else {
+                displayDate = new DateTime(savedDateInMillis);
+            }
+            mealName = savedInstanceState.getString(STATE_MEAL_NAME, firstMealOffered(diningCommon));
+        } else {
+            displayDate = DateTime.now();
+            mealName = firstMealOffered(diningCommon);
+        }
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -165,38 +157,54 @@ public class MenuFragment extends Fragment {
         ButterKnife.bind(this, view);
         recyclerView = (RecyclerView) view.findViewById(R.id.MenuFragment_recyclerView);
         setDateButtonsText();
-        setMealButtonsText();
+        generateMealButtons();
         buttonToday.setBackgroundColor(Color.LTGRAY);
         setRecyclerAdapter(diningCommon, displayDate, mealName);
         return view;
     }
 
-    public void updateRecyclerAdapter(String diningCommon) {
-        setMealButtonsText();
+    /**
+     * To be triggered from outside MenuFragment upon the switching of a diningCommon
+     * @param diningCommon
+     */
+    public void switchDiningCommon(String diningCommon) {
+        resetMealButtonBackgrounds();
+        this.diningCommon = diningCommon;
+        this.mealName = firstMealOffered(diningCommon);
+        generateMealButtons();
         setRecyclerAdapter(diningCommon, displayDate, mealName);
     }
 
+    /**
+     * setRecyclerAdapter sets a new recyclerAdapter based off the given parameters
+     * @param diningCommon the diningCommon whose menu will be viewed
+     * @param date the date of the menu which will be viewed
+     * @param mealName the name of the meal of the menu which will be viewed
+     */
     private void setRecyclerAdapter(String diningCommon, DateTime date, String mealName) {
         // Log.d(LOG_TAG, "Setting new recyclerAdapter for " + diningCommon + " " + date.toString("MM/dd") + " " + mealName);
+        // Get base view for the new adapter
         View view = getActivity().findViewById(android.R.id.content);
-        // Update set diningCommon
+        // Update member variables
         this.diningCommon = diningCommon;
         this.displayDate = date;
         this.mealName = mealName;
-        // Use currently set display day
+        // Remove current recyclerAdapater
         if(menuRecyclerAdapter != null) {
             recyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
             menuRecyclerAdapter.close();
             executorService.shutdownNow();
         }
+        // Create new adapter an dexecutor
         menuRecyclerAdapter = new MenuRecyclerAdapter(diningCommon, date, mealName, getContext(), view);
         executorService = Executors.newSingleThreadExecutor();
+        // Set executor and adapter
         menuRecyclerAdapter.setExecutor(executorService);
         recyclerView.setAdapter(menuRecyclerAdapter);
+        // Set layout manager
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        // Start async query
         menuRecyclerAdapter.queryAsync();
-        menuRecyclerAdapter.notifyDataSetChanged();
-        recyclerView.invalidate();
     }
 
     private void setDateButtonsText() {
@@ -211,7 +219,30 @@ public class MenuFragment extends Fragment {
         button6days.setText(date.plusDays(6).toString(dateTimeFormatter));
     }
 
-    private void setMealButtonsText() {
+    private String firstMealOffered(String diningCommon) {
+        String[] mealNames = getResources().getStringArray(R.array.MenuFragment_mealStrings);
+        int diningCommonId = data.select(DiningCommon.class).where(DiningCommon.NAME.eq(diningCommon)).get().first().getId();
+        for(int i = 0; i < mealNames.length; i++) {
+            Menu menu = data.select(Menu.class)
+                    .join(RepeatedEvent.class).on(Menu.EVENT_ID.eq(RepeatedEvent.ID))
+                    .join(DiningCommon.class).on(RepeatedEvent.DINING_COMMON_ID.eq(diningCommonId))
+                    .join(Meal.class).on(RepeatedEvent.MEAL_ID.eq(Meal.ID))
+                    .where(DiningCommon.NAME.eq(diningCommon)
+                            .and(Menu.DATE.eq(displayDate.toLocalDate()))
+                            .and(Meal.NAME.eq(mealNames[i]))).get().firstOrNull();
+            if(menu != null && !menu.getMenuItems().toList().isEmpty()) {
+                return mealNames[i];
+            }
+        }
+        return "";
+    }
+
+
+    /**
+     * generateMealButtons() generates the text for and sets the visibility of all meal buttons
+     * also, highlights the button of the currently selected meal
+     */
+    private void generateMealButtons() {
         String[] mealNames = getResources().getStringArray(R.array.MenuFragment_mealStrings);
         String breakfastString = getString(R.string.MenuFragment_breakfast_string);
         String brunchString = getString(R.string.MenuFragment_brunch_string);
@@ -233,12 +264,12 @@ public class MenuFragment extends Fragment {
             }
         }
         for(String mealName : offeredMeals) {
-            Log.d(LOG_TAG, mealName);
+            //Log.d(LOG_TAG, mealName);
             if(mealName.equals(breakfastString) || mealName.equals(brunchString)) {
                 breakfastButton.setText(mealName);
             }
         }
-        Log.d(LOG_TAG, "MealName = " + mealName);
+        //Log.d(LOG_TAG, "MealName = " + mealName);
         if(!offeredMeals.contains(breakfastString) && !offeredMeals.contains(brunchString)) {
             breakfastButton.setVisibility(View.INVISIBLE);
         } else {
@@ -355,7 +386,7 @@ public class MenuFragment extends Fragment {
         resetMealButtonBackgrounds();
         button.setBackgroundColor(Color.LTGRAY);
         mealName = button.getText().toString();
-        updateRecyclerAdapter(diningCommon);
+        setRecyclerAdapter(diningCommon, displayDate, mealName);
     }
 
     private void resetDateButtonBackgrounds() {

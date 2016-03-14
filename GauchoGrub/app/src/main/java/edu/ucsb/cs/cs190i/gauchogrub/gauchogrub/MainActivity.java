@@ -1,6 +1,5 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
 import android.content.SharedPreferences;
@@ -8,9 +7,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,18 +18,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fab.MaterialSheetFab;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.MenuScraperService;
 
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dining_cams.DiningCamsFragment;
 
@@ -209,7 +200,7 @@ public class MainActivity extends AppCompatActivity
         if(currentFragmentId == R.id.nav_menus) {
             MenuFragment menuFragment = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
             if(menuFragment != null) {
-                menuFragment.updateRecyclerAdapter(diningCommon);
+                menuFragment.switchDiningCommon(diningCommon);
             }
         }
         // Render buttons
