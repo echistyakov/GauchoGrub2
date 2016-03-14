@@ -16,10 +16,13 @@ import com.daimajia.swipe.SwipeLayout;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.BaseMenuItem;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Favorite;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Meal;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Menu;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
@@ -36,14 +39,16 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
     private List<Favorite> favorites;
     private View baseView;
     private EntityDataStore<Persistable> dataStore;
+    private String mealName;
 
-    protected MenuRecyclerAdapter(DateTime date, Context context, View baseView) {
+    protected MenuRecyclerAdapter(DateTime date, String mealName, Context context, View baseView) {
         super(MenuItem.$TYPE);
         this.date = date;
         this.context = context;
         dataStore = ((GGApp) context.getApplicationContext()).getData();
         favorites = getFavorites(context);
         this.baseView = baseView;
+        this.mealName = mealName;
     }
 
     private List<Favorite> getFavorites(Context context) {
@@ -85,12 +90,19 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                 .getString(R.string.MainActivity_dining_common_shared_prefs), Context.MODE_PRIVATE);
         String currentDiningCommon = sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON, context.getString(R.string.DLG));
         // Get Menus
-        Result<Menu> menuResult = dataStore.select(Menu.class)
+        Menu menu = dataStore.select(Menu.class)
                 .join(RepeatedEvent.class).on(Menu.EVENT_ID.eq(RepeatedEvent.ID))
                 .join(DiningCommon.class).on(RepeatedEvent.DINING_COMMON_ID.eq(DiningCommon.ID))
-                .where(DiningCommon.NAME.eq(currentDiningCommon).and(Menu.DATE.eq(LocalDate.now()))).get();
-
-        return null;
+                .join(Meal.class).on(RepeatedEvent.MEAL_ID.eq(Meal.ID))
+                .where(DiningCommon.NAME.eq(currentDiningCommon)
+                        .and(Menu.DATE.eq(LocalDate.now()))
+                        .and(Meal.NAME.eq(mealName))).get().first();
+        List<BaseMenuItem> menuItems = menu.getMenuItems().toList();
+        List<Integer> menuItemIds = new ArrayList<>();
+        for(BaseMenuItem menuItem : menuItems) {
+            menuItemIds.add(menuItem.id);
+        }
+        return dataStore.select(MenuItem.class).where(MenuItem.ID.in(menuItemIds)).get();
     }
 
     @Override

@@ -1,11 +1,11 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,20 +13,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
-import android.widget.ScrollView;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Meal;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
 import io.requery.Persistable;
-import io.requery.rx.SingleEntityStore;
 import io.requery.sql.EntityDataStore;
 
 /**
@@ -74,10 +78,24 @@ public class MenuFragment extends Fragment {
     @Bind(R.id.MenuFragment_button_6days)
     Button button6days;
 
+    @Bind(R.id.MenuFragment_mealButton_breakfast)
+    Button breakfastButton;
+
+    @Bind(R.id.MenuFragment_mealButton_lunch)
+    Button lunchButton;
+
+    @Bind(R.id.MenuFragment_mealButton_dinner)
+    Button dinnerButton;
+
+    @Bind(R.id.MenuFragment_mealButton_late_night)
+    Button lateNightButton;
+
 
     private DateTime displayDate;
+    private String mealName;
 
     private static final String STATE_DISPLAY_DATE = "STATE_DISPLAY_DATE";
+    private static final String STATE_MEAL_NAME = "STATE_MEAL_NAME";
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -103,6 +121,7 @@ public class MenuFragment extends Fragment {
         int savedDateInMillis = 0;
         if(savedInstanceState != null) {
             savedDateInMillis = savedInstanceState.getInt(STATE_DISPLAY_DATE);
+            mealName = savedInstanceState.getString(STATE_MEAL_NAME, "");
         }
         if(savedDateInMillis != 0) {
             displayDate = new DateTime(savedDateInMillis);
@@ -110,9 +129,18 @@ public class MenuFragment extends Fragment {
             displayDate = DateTime.now();
         }
 
+        if(mealName != null && mealName.length() == 0) {
+            mealName = getString(R.string.MenuFragment_dinner_string);
+        }
+
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         MainActivity activity = (MainActivity) getActivity();
         activity.fab.show();
         activity.updateAppBarTitle(getString(R.string.MenuFragment_app_bar_title), true);
@@ -124,14 +152,15 @@ public class MenuFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_menus, container, false);
         ButterKnife.bind(this, view);
         setDateButtonsText();
-        setRecyclerAdapter(displayDate);
+        setMealButtonsText();
+        setRecyclerAdapter(displayDate, mealName);
         return view;
     }
 
-    private void setRecyclerAdapter(DateTime date) {
+    private void setRecyclerAdapter(DateTime date, String mealName) {
         View view = getView();
         // Use currently set display day
-        menuRecyclerAdapter = new MenuRecyclerAdapter(date, getContext(), view);
+        menuRecyclerAdapter = new MenuRecyclerAdapter(date, mealName, getContext(), view);
         executorService = Executors.newSingleThreadExecutor();
         menuRecyclerAdapter.setExecutor(executorService);
         recyclerView.setAdapter(menuRecyclerAdapter);
@@ -139,14 +168,41 @@ public class MenuFragment extends Fragment {
     }
 
     private void setDateButtonsText() {
-        DateTime date = DateTime.now().plusDays(2);
+        DateTime date = DateTime.now();
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("M/dd");
-        button2days.setText(date.toString(dateTimeFormatter));
-        button3days.setText(date.plusDays(2).toString(dateTimeFormatter));
-        button4days.setText(date.plusDays(3).toString(dateTimeFormatter));
-        button5days.setText(date.plusDays(4).toString(dateTimeFormatter));
-        button6days.setText(date.plusDays(5).toString(dateTimeFormatter));
+        buttonToday.setText(date.toString(dateTimeFormatter));
+        buttonTomorrow.setText(date.plusDays(1).toString(dateTimeFormatter));
+        button2days.setText(date.plusDays(2).toString(dateTimeFormatter));
+        button3days.setText(date.plusDays(3).toString(dateTimeFormatter));
+        button4days.setText(date.plusDays(4).toString(dateTimeFormatter));
+        button5days.setText(date.plusDays(5).toString(dateTimeFormatter));
+        button6days.setText(date.plusDays(6).toString(dateTimeFormatter));
+    }
 
+    private void setMealButtonsText() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs), Context.MODE_PRIVATE);
+        List<Meal> meals =  data.select(Meal.class).join(RepeatedEvent.class).on(Meal.ID.eq(RepeatedEvent.DINING_COMMON_ID))
+                .join(DiningCommon.class).on(DiningCommon.ID.eq(RepeatedEvent.DINING_COMMON_ID))
+                .where(DiningCommon.NAME.eq(sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON, getString(R.string.DLG)))
+                        .and(RepeatedEvent.DAY_OF_WEEK.eq(displayDate.getDayOfWeek()))).get().toList();
+        ArrayList<String> mealNames = new ArrayList<>();
+        for(Meal meal : meals) {
+            mealNames.add(meal.getName());
+            if(meal.getName().equals(getString(R.string.MenuFragment_breakfast_string)) || meal.getName().equals(getString(R.string.MenuFragment_brunch_string)))
+                breakfastButton.setText(meal.getName());
+        }
+        if(!mealNames.contains(getString(R.string.MenuFragment_breakfast_string)) && !mealNames.contains(getString(R.string.MenuFragment_brunch_string))) {
+            breakfastButton.setVisibility(View.INVISIBLE);
+        }
+        if(!mealNames.contains(getString(R.string.MenuFragment_lunch_string))) {
+            lunchButton.setVisibility(View.INVISIBLE);
+        }
+        if(!mealNames.contains(getString(R.string.MenuFragment_dinner_string))) {
+            dinnerButton.setVisibility(View.INVISIBLE);
+        }
+        if(!mealNames.contains(getString(R.string.MenuFragment_latenight_string))) {
+            lateNightButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -183,6 +239,7 @@ public class MenuFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_DISPLAY_DATE, (int) displayDate.getMillis());
+        outState.putString(STATE_MEAL_NAME, mealName);
     }
 
     /**
@@ -200,10 +257,10 @@ public class MenuFragment extends Fragment {
     }
 
     @OnClick({R.id.MenuFragment_button_today, R.id.MenuFragment_button_tomorrow, R.id.MenuFragment_button_2days, R.id.MenuFragment_button_3days, R.id.MenuFragment_button_4days, R.id.MenuFragment_button_5days, R.id.MenuFragment_button_6days})
-    public void handleButtonClick(Button view) {
-        resetButtonBackgrounds();
-        view.setBackgroundColor(Color.CYAN);
-        switch(view.getId()) {
+    public void handleDateButtonClick(Button button) {
+        resetDateButtonBackgrounds();
+        button.setBackgroundColor(Color.CYAN);
+        switch(button.getId()) {
             case R.id.MenuFragment_button_today:
                 displayDate = DateTime.now();
                 break;
@@ -228,11 +285,28 @@ public class MenuFragment extends Fragment {
         }
         menuRecyclerAdapter.close();
         executorService.shutdownNow();
-        setRecyclerAdapter(displayDate);
-        Snackbar.make(recyclerView, view.getText() + " is now selected", Snackbar.LENGTH_SHORT).show();
+        setRecyclerAdapter(displayDate, mealName);
+        Snackbar.make(recyclerView, button.getText() + " is now selected", Snackbar.LENGTH_SHORT).show();
     }
 
-    private void resetButtonBackgrounds() {
+    @OnClick({R.id.MenuFragment_mealButton_breakfast, R.id.MenuFragment_mealButton_lunch, R.id.MenuFragment_mealButton_dinner, R.id.MenuFragment_mealButton_late_night})
+    public void handleMealButtonClick(Button button) {
+        resetMealButtonBackgrounds();
+        button.setBackgroundColor(Color.LTGRAY);
+        switch(button.getId()) {
+            case R.id.MenuFragment_mealButton_breakfast:
+
+                break;
+            case R.id.MenuFragment_mealButton_lunch:
+                break;
+            case R.id.MenuFragment_mealButton_dinner:
+                break;
+            case R.id.MenuFragment_mealButton_late_night:
+                break;
+        }
+    }
+
+    private void resetDateButtonBackgrounds() {
         buttonToday.setBackgroundColor(Color.WHITE);
         buttonTomorrow.setBackgroundColor(Color.WHITE);
         button2days.setBackgroundColor(Color.WHITE);
@@ -240,5 +314,12 @@ public class MenuFragment extends Fragment {
         button4days.setBackgroundColor(Color.WHITE);
         button5days.setBackgroundColor(Color.WHITE);
         button6days.setBackgroundColor(Color.WHITE);
+    }
+
+    private void resetMealButtonBackgrounds() {
+        breakfastButton.setBackgroundColor(Color.WHITE);
+        lunchButton.setBackgroundColor(Color.WHITE);
+        dinnerButton.setBackgroundColor(Color.WHITE);
+        lateNightButton.setBackgroundColor(Color.WHITE);
     }
 }

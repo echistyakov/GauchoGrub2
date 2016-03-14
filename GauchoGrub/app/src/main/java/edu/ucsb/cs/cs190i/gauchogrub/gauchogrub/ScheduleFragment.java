@@ -58,6 +58,11 @@ public class ScheduleFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         MainActivity activity = (MainActivity) getActivity();
         activity.fab.show();
         activity.updateAppBarTitle(getString(R.string.SchedulesFragment_app_bar_title), true);

@@ -25,12 +25,19 @@
         <item name="about">@string/drawer_about</item>
     </string-array>
 
+    <!-- MainActivity -->
+    <string name="MainActivity_dining_common_shared_prefs">currentDiningCommon</string>
+
     <!-- Appbar Actions -->
     <string name="action_settings">Settings</string>
 
     <!-- Menu Fragment -->
     <string name="MenuFragment_app_bar_title">Menu</string>
-    <string name="MainActivity_dining_common_shared_prefs">currentDiningCommon</string>
+    <string name="MenuFragment_breakfast_string">Breakfast</string>
+    <string name="MenuFragment_brunch_string">Brunch</string>
+    <string name="MenuFragment_lunch_string">Lunch</string>
+    <string name="MenuFragment_dinner_string">Dinner</string>
+    <string name="MenuFragment_latenight_string">Late Night</string>
     <!-- Favorites Fragment -->
     <string name="FavoritesFragment_app_bar_title">Favorites</string>
     <!-- Schedules Fragment -->
