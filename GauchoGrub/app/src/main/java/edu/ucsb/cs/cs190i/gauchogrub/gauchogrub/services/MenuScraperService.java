@@ -91,7 +91,7 @@ public class MenuScraperService extends IntentService {
             String[] diningCommonIds = getResources().getStringArray(R.array.parsable_dining_commons_ids);
             for (String id : diningCommonIds) {
                 Log.d(TAG, "PROCESSING DIV ID: " + id);
-                parseDiningCommonMenu(idToDiningCommon(id), doc.getElementById(id));
+                parseDiningCommonMenu(htmlIdToDiningCommon(id), doc.getElementById(id));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -160,7 +160,7 @@ public class MenuScraperService extends IntentService {
         }
     }
 
-    private String idToDiningCommon(String id) {
+    private String htmlIdToDiningCommon(String id) {
         String[] diningCommons = getResources().getStringArray(R.array.dining_commons);
         List<String> ids = Arrays.asList(getResources().getStringArray(R.array.parsable_dining_commons_ids));
         return diningCommons[ids.indexOf(id)];
