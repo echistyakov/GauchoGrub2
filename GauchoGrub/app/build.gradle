@@ -67,8 +67,8 @@ dependencies {
     compile 'com.gordonwong:material-sheet-fab:1.2.1'
     // OpenCSV
     compile 'com.opencsv:opencsv:3.7'
-    // Sticky headers
-    compile 'com.timehop.stickyheadersrecyclerview:library:0.4.3@aar'
+    // Jsoup (for HTML parsing)
+    compile 'org.jsoup:jsoup:1.7.3'
     // Swipe layout
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
 }
