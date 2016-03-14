@@ -6,51 +6,36 @@ import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
 
 import org.joda.time.DateTime;
 
-import java.util.Calendar;
 import java.util.List;
 
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommonEntity;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.FavoriteEntity;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuCategory;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Favorite;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItemEntity;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
 import io.requery.Persistable;
 import io.requery.android.QueryRecyclerAdapter;
 import io.requery.query.Result;
-import io.requery.rx.SingleEntityStore;
 import io.requery.sql.EntityDataStore;
 
 
-public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItemEntity, MenuRecyclerAdapter.ViewHolder> {
+public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecyclerAdapter.ViewHolder> {
 
     private Context context;
     private DateTime date;
-    private List<FavoriteEntity> favorites;
+    private List<Favorite> favorites;
     private View baseView;
-    private SingleEntityStore<Persistable> dataStore;
-
-    protected MenuRecyclerAdapter() {
-        super(MenuItemEntity.$TYPE);
-        this.date = DateTime.now();
-        dataStore = ((GGApp) context.getApplicationContext()).getData();
-    }
+    private EntityDataStore<Persistable> dataStore;
 
     protected MenuRecyclerAdapter(DateTime date, Context context, View baseView) {
-        super(MenuItemEntity.$TYPE);
+        super(MenuItem.$TYPE);
         this.date = date;
         this.context = context;
         dataStore = ((GGApp) context.getApplicationContext()).getData();
@@ -58,10 +43,10 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItemEntity, Me
         this.baseView = baseView;
     }
 
-    private List<FavoriteEntity> getFavorites(Context context) {
+    private List<Favorite> getFavorites(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.MainActivity_dining_common_shared_prefs), Context.MODE_PRIVATE);
         String currentDiningCommon = sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON, context.getResources().getString(R.string.DLG));
-        return dataStore.select(FavoriteEntity.class).where(FavoriteEntity.DINING_COMMON.like(currentDiningCommon)).get().toList();
+        return dataStore.select(Favorite.class).join(DiningCommon.class).on(Favorite.DINING_COMMON_ID.eq(DiningCommon.ID)).get().toList();
 }
 
 
@@ -92,39 +77,39 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItemEntity, Me
     }
 
     @Override
-    public Result<MenuItemEntity> performQuery() {
+    public Result<MenuItem> performQuery() {
         return null;
     }
 
     @Override
-    public void onBindViewHolder(final MenuItemEntity menuItemEntity, final ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(final MenuItem menuItem, final ViewHolder viewHolder, int i) {
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources()
                 .getString(R.string.MainActivity_dining_common_shared_prefs), Context.MODE_PRIVATE);
 
-        final DiningCommonEntity diningCommon = dataStore.select(DiningCommonEntity.class)
-                .where(DiningCommonEntity.NAME.eq(sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON, context.getString(R.string.DLG)))).get().first();
+        final DiningCommon diningCommon = dataStore.select(DiningCommon.class)
+                .where(DiningCommon.NAME.eq(sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON, context.getString(R.string.DLG)))).get().first();
 
-        final FavoriteEntity favoriteEntity = dataStore.select(FavoriteEntity.class)
-                .where(FavoriteEntity.DINING_COMMON.eq(diningCommon)
-                        .and(FavoriteEntity.MENU_ITEM.eq(menuItemEntity)))
+        final Favorite favorite = dataStore.select(Favorite.class)
+                .where(Favorite.DINING_COMMON_ID.eq(diningCommon.getId())
+                        .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
                 .get().firstOrNull();
 
         // Nuts and V/VGN independent
-        if(menuItemEntity.getHasNuts()) {
+        if(menuItem.getHasNuts()) {
             viewHolder.menuItemNutsImageView.setImageResource(R.mipmap.ic_nuts);
         }
         // Vegan icon has priority over vegetarian
-        if (menuItemEntity.getIsVegan()) {
+        if (menuItem.getIsVegan()) {
             viewHolder.menuItemVegImageView.setImageResource(R.mipmap.ic_vegan);
-        } else if(menuItemEntity.getIsVegetarian()) {
+        } else if(menuItem.getIsVegetarian()) {
             viewHolder.menuItemVegImageView.setImageResource(R.mipmap.ic_vegetarian);
         }
-        viewHolder.menuItemTextView.setText(menuItemEntity.getTitle());
+        viewHolder.menuItemTextView.setText(menuItem.getTitle());
         viewHolder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
             @Override
             public void onStartOpen(SwipeLayout layout) {
-                if(favoriteEntity != null) {
+                if(favorite != null) {
                     viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_off);
                 } else {
                     viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
@@ -137,19 +122,19 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItemEntity, Me
 
                 String favoriteNotification = "";
                 // If the favorite exists
-                if(favoriteEntity != null) {
-                    dataStore.delete(favoriteEntity);
-                    favorites.remove(favoriteEntity);
-                    favoriteNotification = menuItemEntity.getTitle() + " is removed from your favorites";
+                if(favorite != null) {
+                    dataStore.delete(favorite);
+                    favorites.remove(favorite);
+                    favoriteNotification = menuItem.getTitle() + " is removed from your favorites";
                     // Set background color
                     viewHolder.swipeLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 } else {
-                    FavoriteEntity newFavorite = new FavoriteEntity();
-                    newFavorite.setDiningCommon(diningCommon);
-                    newFavorite.setMenuItem(menuItemEntity);
+                    Favorite newFavorite = new Favorite();
+                    newFavorite.setDiningCommonId(diningCommon.getId());
+                    newFavorite.setMenuItemId(menuItem.getId());
                     dataStore.insert(newFavorite);
                     favorites.add(newFavorite);
-                    favoriteNotification = menuItemEntity.getTitle() + " has been added to your favorites";
+                    favoriteNotification = menuItem.getTitle() + " has been added to your favorites";
                     // Set background color
                     viewHolder.swipeLayout.setBackgroundColor(Color.parseColor("#2C8CA1"));
                 }

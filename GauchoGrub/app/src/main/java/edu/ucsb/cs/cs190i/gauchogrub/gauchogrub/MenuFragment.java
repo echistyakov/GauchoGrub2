@@ -1,7 +1,9 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,14 +11,23 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.HorizontalScrollView;
+import android.widget.ScrollView;
+
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.requery.Persistable;
 import io.requery.rx.SingleEntityStore;
+import io.requery.sql.EntityDataStore;
 
 /**
  * A fragment representing a list of Items.
@@ -33,11 +44,40 @@ public class MenuFragment extends Fragment {
     private OnListFragmentInteractionListener mListener;
 
     private MenuRecyclerAdapter menuRecyclerAdapter;
-    private SingleEntityStore<Persistable> data;
+    private EntityDataStore<Persistable> data;
     private ExecutorService executorService;
 
     @Bind(R.id.MenuFragment_recyclerView)
     RecyclerView recyclerView;
+
+    @Bind(R.id.MenuFragment_buttonScrollView)
+    HorizontalScrollView buttonScrollView;
+
+    @Bind(R.id.MenuFragment_button_today)
+    Button buttonToday;
+
+    @Bind(R.id.MenuFragment_button_tomorrow)
+    Button buttonTomorrow;
+
+    @Bind(R.id.MenuFragment_button_2days)
+    Button button2days;
+
+    @Bind(R.id.MenuFragment_button_3days)
+    Button button3days;
+
+    @Bind(R.id.MenuFragment_button_4days)
+    Button button4days;
+
+    @Bind(R.id.MenuFragment_button_5days)
+    Button button5days;
+
+    @Bind(R.id.MenuFragment_button_6days)
+    Button button6days;
+
+
+    private DateTime displayDate;
+
+    private static final String STATE_DISPLAY_DATE = "STATE_DISPLAY_DATE";
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -59,6 +99,16 @@ public class MenuFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        data = ((GGApp) getActivity().getApplication()).getData();
+        int savedDateInMillis = 0;
+        if(savedInstanceState != null) {
+            savedDateInMillis = savedInstanceState.getInt(STATE_DISPLAY_DATE);
+        }
+        if(savedDateInMillis != 0) {
+            displayDate = new DateTime(savedDateInMillis);
+        } else {
+            displayDate = DateTime.now();
+        }
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -73,16 +123,31 @@ public class MenuFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menus, container, false);
         ButterKnife.bind(this, view);
-        data = ((GGApp) getActivity().getApplication()).getData();
-        // TODO: handle date selection
-        menuRecyclerAdapter = new MenuRecyclerAdapter();
-        executorService = Executors.newSingleThreadExecutor();
-        menuRecyclerAdapter.setExecutor(executorService);
-        recyclerView.setAdapter(menuRecyclerAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        setDateButtonsText();
+        setRecyclerAdapter(displayDate);
         return view;
     }
 
+    private void setRecyclerAdapter(DateTime date) {
+        View view = getView();
+        // Use currently set display day
+        menuRecyclerAdapter = new MenuRecyclerAdapter(date, getContext(), view);
+        executorService = Executors.newSingleThreadExecutor();
+        menuRecyclerAdapter.setExecutor(executorService);
+        recyclerView.setAdapter(menuRecyclerAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+    private void setDateButtonsText() {
+        DateTime date = DateTime.now().plusDays(2);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("M/dd");
+        button2days.setText(date.toString(dateTimeFormatter));
+        button3days.setText(date.plusDays(2).toString(dateTimeFormatter));
+        button4days.setText(date.plusDays(3).toString(dateTimeFormatter));
+        button5days.setText(date.plusDays(4).toString(dateTimeFormatter));
+        button6days.setText(date.plusDays(5).toString(dateTimeFormatter));
+
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -114,6 +179,12 @@ public class MenuFragment extends Fragment {
         menuRecyclerAdapter.close();
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(STATE_DISPLAY_DATE, (int) displayDate.getMillis());
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -126,5 +197,48 @@ public class MenuFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
+    }
+
+    @OnClick({R.id.MenuFragment_button_today, R.id.MenuFragment_button_tomorrow, R.id.MenuFragment_button_2days, R.id.MenuFragment_button_3days, R.id.MenuFragment_button_4days, R.id.MenuFragment_button_5days, R.id.MenuFragment_button_6days})
+    public void handleButtonClick(Button view) {
+        resetButtonBackgrounds();
+        view.setBackgroundColor(Color.CYAN);
+        switch(view.getId()) {
+            case R.id.MenuFragment_button_today:
+                displayDate = DateTime.now();
+                break;
+            case R.id.MenuFragment_button_tomorrow:
+                displayDate = DateTime.now().plusDays(1);
+                break;
+            case R.id.MenuFragment_button_2days:
+                displayDate = DateTime.now().plusDays(2);
+                break;
+            case R.id.MenuFragment_button_3days:
+                displayDate = DateTime.now().plusDays(3);
+                break;
+            case R.id.MenuFragment_button_4days:
+                displayDate = DateTime.now().plusDays(4);
+                break;
+            case R.id.MenuFragment_button_5days:
+                displayDate = DateTime.now().plusDays(5);
+                break;
+            case R.id.MenuFragment_button_6days:
+                displayDate = DateTime.now().plusDays(6);
+                break;
+        }
+        menuRecyclerAdapter.close();
+        executorService.shutdownNow();
+        setRecyclerAdapter(displayDate);
+        Snackbar.make(recyclerView, view.getText() + " is now selected", Snackbar.LENGTH_SHORT).show();
+    }
+
+    private void resetButtonBackgrounds() {
+        buttonToday.setBackgroundColor(Color.WHITE);
+        buttonTomorrow.setBackgroundColor(Color.WHITE);
+        button2days.setBackgroundColor(Color.WHITE);
+        button3days.setBackgroundColor(Color.WHITE);
+        button4days.setBackgroundColor(Color.WHITE);
+        button5days.setBackgroundColor(Color.WHITE);
+        button6days.setBackgroundColor(Color.WHITE);
     }
 }
