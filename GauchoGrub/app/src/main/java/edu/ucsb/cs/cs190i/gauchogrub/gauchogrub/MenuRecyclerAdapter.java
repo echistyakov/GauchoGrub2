@@ -89,7 +89,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                 .join(RepeatedEvent.class).on(Menu.EVENT_ID.eq(RepeatedEvent.ID))
                 .join(DiningCommon.class).on(RepeatedEvent.DINING_COMMON_ID.eq(DiningCommon.ID))
                 .where(DiningCommon.NAME.eq(currentDiningCommon).and(Menu.DATE.eq(LocalDate.now()))).get();
-        
+
         return null;
     }
 
