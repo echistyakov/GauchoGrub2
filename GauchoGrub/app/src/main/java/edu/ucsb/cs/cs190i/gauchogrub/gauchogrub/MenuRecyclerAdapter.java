@@ -14,12 +14,15 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.util.List;
 
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Favorite;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Menu;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
 import io.requery.Persistable;
 import io.requery.android.QueryRecyclerAdapter;
 import io.requery.query.Result;
@@ -78,6 +81,15 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
 
     @Override
     public Result<MenuItem> performQuery() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources()
+                .getString(R.string.MainActivity_dining_common_shared_prefs), Context.MODE_PRIVATE);
+        String currentDiningCommon = sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON, context.getString(R.string.DLG));
+        // Get Menus
+        Result<Menu> menuResult = dataStore.select(Menu.class)
+                .join(RepeatedEvent.class).on(Menu.EVENT_ID.eq(RepeatedEvent.ID))
+                .join(DiningCommon.class).on(RepeatedEvent.DINING_COMMON_ID.eq(DiningCommon.ID))
+                .where(DiningCommon.NAME.eq(currentDiningCommon).and(Menu.DATE.eq(LocalDate.now()))).get();
+        
         return null;
     }
 
