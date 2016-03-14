@@ -40,6 +40,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
     private String mealName;
     private String diningCommon;
     private int diningCommonId;
+    private MenuRecyclerAdapter thisAdapter;
 
     private final String LOG_TAG = "MenuRecyclerAdapter";
 
@@ -51,6 +52,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         this.mealName = mealName;
         this.diningCommon = diningCommon;
         this.diningCommonId = dataStore.select(DiningCommon.class).where(DiningCommon.NAME.eq(diningCommon)).get().first().getId();
+        thisAdapter = this;
         //Log.d(LOG_TAG, diningCommon + " " + date.toString("MM/dd") + " " + mealName);
     }
 
@@ -102,7 +104,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
     @Override
     public void onBindViewHolder(final MenuItem menuItem, final ViewHolder viewHolder, int i) {
 
-        Favorite favorite = dataStore.select(Favorite.class)
+        final Favorite favorite = dataStore.select(Favorite.class)
                 .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
                         .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
                 .get().firstOrNull();
@@ -143,10 +145,6 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
 
             @Override
             public void onOpen(SwipeLayout layout) {
-                Favorite favorite = dataStore.select(Favorite.class)
-                        .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
-                                .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
-                        .get().firstOrNull();
                 // If the favorite exists
                 if(favorite != null) {
                     dataStore.delete(favorite);
@@ -158,6 +156,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                     dataStore.insert(newFavorite);
                     viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
                 }
+                thisAdapter.notifyDataSetChanged();
                 layout.close();
             }
 
