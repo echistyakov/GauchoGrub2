@@ -55,7 +55,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         this.mealName = mealName;
         this.diningCommon = diningCommon;
         this.diningCommonId = dataStore.select(DiningCommon.class).where(DiningCommon.NAME.eq(diningCommon)).get().first().getId();
-        //Log.d(LOG_TAG, diningCommon + " " + diningCommonId);
+        Log.d(LOG_TAG, diningCommon + " " + date.toString("MM/dd") + " " + mealName);
     }
 
     private List<Favorite> getFavorites(Context context) {
@@ -97,7 +97,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                 .join(DiningCommon.class).on(RepeatedEvent.DINING_COMMON_ID.eq(diningCommonId))
                 .join(Meal.class).on(RepeatedEvent.MEAL_ID.eq(Meal.ID))
                 .where(DiningCommon.NAME.eq(diningCommon)
-                        .and(Menu.DATE.eq(LocalDate.now()))
+                        .and(Menu.DATE.eq(date.toLocalDate()))
                         .and(Meal.NAME.eq(mealName))).get().first();
         List<BaseMenuItem> menuItems = menu.getMenuItems().toList();
         List<Integer> menuItemIds = new ArrayList<>();

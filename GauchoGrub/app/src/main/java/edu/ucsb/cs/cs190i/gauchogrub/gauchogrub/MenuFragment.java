@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -28,8 +30,10 @@ import java.util.concurrent.Executors;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.BaseMenuItem;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Meal;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Menu;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
 import io.requery.Persistable;
@@ -168,13 +172,17 @@ public class MenuFragment extends Fragment {
     }
 
     public void updateRecyclerAdapter(String diningCommon) {
+        setMealButtonsText();
         setRecyclerAdapter(diningCommon, displayDate, mealName);
     }
 
     private void setRecyclerAdapter(String diningCommon, DateTime date, String mealName) {
         // Log.d(LOG_TAG, "Setting new recyclerAdapter for " + diningCommon + " " + date.toString("MM/dd") + " " + mealName);
         View view = getActivity().findViewById(android.R.id.content);
-
+        // Update set diningCommon
+        this.diningCommon = diningCommon;
+        this.displayDate = date;
+        this.mealName = mealName;
         // Use currently set display day
         if(menuRecyclerAdapter != null) {
             recyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
@@ -204,28 +212,60 @@ public class MenuFragment extends Fragment {
     }
 
     private void setMealButtonsText() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs), Context.MODE_PRIVATE);
-        List<Meal> meals =  data.select(Meal.class).join(RepeatedEvent.class).on(Meal.ID.eq(RepeatedEvent.DINING_COMMON_ID))
-                .join(DiningCommon.class).on(DiningCommon.ID.eq(RepeatedEvent.DINING_COMMON_ID))
-                .where(DiningCommon.NAME.eq(diningCommon)
-                        .and(RepeatedEvent.DAY_OF_WEEK.eq(displayDate.getDayOfWeek()))).get().toList();
-        ArrayList<String> mealNames = new ArrayList<>();
-        for(Meal meal : meals) {
-            mealNames.add(meal.getName());
-            if(meal.getName().equals(getString(R.string.MenuFragment_breakfast_string)) || meal.getName().equals(getString(R.string.MenuFragment_brunch_string)))
-                breakfastButton.setText(meal.getName());
+        String[] mealNames = getResources().getStringArray(R.array.MenuFragment_mealStrings);
+        String breakfastString = getString(R.string.MenuFragment_breakfast_string);
+        String brunchString = getString(R.string.MenuFragment_brunch_string);
+        String lunchString = getString(R.string.MenuFragment_lunch_string);
+        String dinnerString = getString(R.string.MenuFragment_dinner_string);
+        String lateNightString = getString(R.string.MenuFragment_latenight_string);
+        ArrayList<String> offeredMeals = new ArrayList<>();
+        for(String mealName : mealNames) {
+            int diningCommonId = data.select(DiningCommon.class).where(DiningCommon.NAME.eq(diningCommon)).get().first().getId();
+            Menu menu = data.select(Menu.class)
+                    .join(RepeatedEvent.class).on(Menu.EVENT_ID.eq(RepeatedEvent.ID))
+                    .join(DiningCommon.class).on(RepeatedEvent.DINING_COMMON_ID.eq(diningCommonId))
+                    .join(Meal.class).on(RepeatedEvent.MEAL_ID.eq(Meal.ID))
+                    .where(DiningCommon.NAME.eq(diningCommon)
+                            .and(Menu.DATE.eq(displayDate.toLocalDate()))
+                            .and(Meal.NAME.eq(mealName))).get().firstOrNull();
+            if(menu != null && !menu.getMenuItems().toList().isEmpty()) {
+                offeredMeals.add(mealName);
+            }
         }
-        if(!mealNames.contains(getString(R.string.MenuFragment_breakfast_string)) && !mealNames.contains(getString(R.string.MenuFragment_brunch_string))) {
+        for(String mealName : offeredMeals) {
+            Log.d(LOG_TAG, mealName);
+            if(mealName.equals(breakfastString) || mealName.equals(brunchString)) {
+                breakfastButton.setText(mealName);
+            }
+        }
+        Log.d(LOG_TAG, "MealName = " + mealName);
+        if(!offeredMeals.contains(breakfastString) && !offeredMeals.contains(brunchString)) {
             breakfastButton.setVisibility(View.INVISIBLE);
+        } else {
+            breakfastButton.setVisibility(View.VISIBLE);
+            if(mealName.equals(breakfastString) || mealName.equals(brunchString))
+                breakfastButton.setBackgroundColor(Color.LTGRAY);
         }
-        if(!mealNames.contains(getString(R.string.MenuFragment_lunch_string))) {
+        if(!offeredMeals.contains(lunchString)) {
             lunchButton.setVisibility(View.INVISIBLE);
+        } else {
+            lunchButton.setVisibility(View.VISIBLE);
+            if(mealName.equals(lunchString))
+                lunchButton.setBackgroundColor(Color.LTGRAY);
         }
-        if(!mealNames.contains(getString(R.string.MenuFragment_dinner_string))) {
+        if(!offeredMeals.contains(dinnerString)) {
             dinnerButton.setVisibility(View.INVISIBLE);
+        } else {
+            dinnerButton.setVisibility(View.VISIBLE);
+            if(mealName.equals(dinnerString))
+                dinnerButton.setBackgroundColor(Color.LTGRAY);
         }
-        if(!mealNames.contains(getString(R.string.MenuFragment_latenight_string))) {
+        if(!offeredMeals.contains(lateNightString)) {
             lateNightButton.setVisibility(View.INVISIBLE);
+        } else {
+            lateNightButton.setVisibility(View.VISIBLE);
+            if(mealName.equals(lateNightString))
+                lateNightButton.setBackgroundColor(Color.LTGRAY);
         }
     }
 
@@ -308,24 +348,14 @@ public class MenuFragment extends Fragment {
                 break;
         }
         setRecyclerAdapter(diningCommon, displayDate, mealName);
-        Snackbar.make(recyclerView, button.getText() + " is now selected", Snackbar.LENGTH_SHORT).show();
     }
 
     @OnClick({R.id.MenuFragment_mealButton_breakfast, R.id.MenuFragment_mealButton_lunch, R.id.MenuFragment_mealButton_dinner, R.id.MenuFragment_mealButton_late_night})
     public void handleMealButtonClick(Button button) {
         resetMealButtonBackgrounds();
         button.setBackgroundColor(Color.LTGRAY);
-        switch(button.getId()) {
-            case R.id.MenuFragment_mealButton_breakfast:
-
-                break;
-            case R.id.MenuFragment_mealButton_lunch:
-                break;
-            case R.id.MenuFragment_mealButton_dinner:
-                break;
-            case R.id.MenuFragment_mealButton_late_night:
-                break;
-        }
+        mealName = button.getText().toString();
+        updateRecyclerAdapter(diningCommon);
     }
 
     private void resetDateButtonBackgrounds() {

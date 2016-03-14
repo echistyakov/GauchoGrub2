@@ -38,6 +38,15 @@
     <string name="MenuFragment_lunch_string">Lunch</string>
     <string name="MenuFragment_dinner_string">Dinner</string>
     <string name="MenuFragment_latenight_string">Late Night</string>
+
+    <string-array name="MenuFragment_mealStrings">
+        <item>@string/MenuFragment_breakfast_string</item>
+        <item>@string/MenuFragment_brunch_string</item>
+        <item>@string/MenuFragment_lunch_string</item>
+        <item>@string/MenuFragment_dinner_string</item>
+        <item>@string/MenuFragment_latenight_string</item>
+    </string-array>
+
     <!-- Favorites Fragment -->
     <string name="FavoritesFragment_app_bar_title">Favorites</string>
     <!-- Schedules Fragment -->
