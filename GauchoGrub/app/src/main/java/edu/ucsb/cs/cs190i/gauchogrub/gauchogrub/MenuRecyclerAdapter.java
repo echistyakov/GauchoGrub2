@@ -36,8 +36,6 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
 
     private Context context;
     private DateTime date;
-    private List<Favorite> favorites;
-    private View baseView;
     private EntityDataStore<Persistable> dataStore;
     private String mealName;
     private String diningCommon;
@@ -45,12 +43,11 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
 
     private final String LOG_TAG = "MenuRecyclerAdapter";
 
-    protected MenuRecyclerAdapter(String diningCommon, DateTime date, String mealName, Context context, View baseView) {
+    protected MenuRecyclerAdapter(String diningCommon, DateTime date, String mealName, Context context) {
         super(MenuItem.$TYPE);
         this.date = date;
         this.context = context;
         dataStore = ((GGApp) context.getApplicationContext()).getData();
-        this.baseView = baseView;
         this.mealName = mealName;
         this.diningCommon = diningCommon;
         this.diningCommonId = dataStore.select(DiningCommon.class).where(DiningCommon.NAME.eq(diningCommon)).get().first().getId();
@@ -150,23 +147,17 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                         .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
                                 .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
                         .get().firstOrNull();
-
-                String favoriteNotification = "";
                 // If the favorite exists
                 if(favorite != null) {
                     dataStore.delete(favorite);
-                    favoriteNotification = menuItem.getTitle() + " is removed from your favorites";
                     viewHolder.menuItemFavoriteStar.setImageResource(android.R.color.transparent);
                 } else {
                     Favorite newFavorite = new Favorite();
                     newFavorite.setDiningCommonId(diningCommonId);
                     newFavorite.setMenuItemId(menuItem.getId());
                     dataStore.insert(newFavorite);
-                    favoriteNotification = menuItem.getTitle() + " has been added to your favorites";
                     viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
                 }
-
-                Snackbar.make(baseView, favoriteNotification, Snackbar.LENGTH_SHORT);
                 layout.close();
             }
 
