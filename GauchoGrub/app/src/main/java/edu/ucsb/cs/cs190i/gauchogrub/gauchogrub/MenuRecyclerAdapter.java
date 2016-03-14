@@ -1,10 +1,10 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,8 +40,12 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
     private View baseView;
     private EntityDataStore<Persistable> dataStore;
     private String mealName;
+    private String diningCommon;
+    private int diningCommonId;
 
-    protected MenuRecyclerAdapter(DateTime date, String mealName, Context context, View baseView) {
+    private final String LOG_TAG = "MenuRecyclerAdapter";
+
+    protected MenuRecyclerAdapter(String diningCommon, DateTime date, String mealName, Context context, View baseView) {
         super(MenuItem.$TYPE);
         this.date = date;
         this.context = context;
@@ -49,12 +53,13 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         favorites = new ArrayList<>(getFavorites(context));
         this.baseView = baseView;
         this.mealName = mealName;
+        this.diningCommon = diningCommon;
+        this.diningCommonId = dataStore.select(DiningCommon.class).where(DiningCommon.NAME.eq(diningCommon)).get().first().getId();
+        Log.d(LOG_TAG, diningCommon + " " + diningCommonId);
     }
 
     private List<Favorite> getFavorites(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.MainActivity_dining_common_shared_prefs), Context.MODE_PRIVATE);
-        String currentDiningCommon = sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON, context.getResources().getString(R.string.DLG));
-        return dataStore.select(Favorite.class).join(DiningCommon.class).on(Favorite.DINING_COMMON_ID.eq(DiningCommon.ID)).get().toList();
+        return dataStore.select(Favorite.class).where(Favorite.DINING_COMMON_ID.eq(diningCommonId)).get().toList();
     }
 
 
@@ -86,15 +91,12 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
 
     @Override
     public Result<MenuItem> performQuery() {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources()
-                .getString(R.string.MainActivity_dining_common_shared_prefs), Context.MODE_PRIVATE);
-        String currentDiningCommon = sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON, context.getString(R.string.DLG));
         // Get Menus
         Menu menu = dataStore.select(Menu.class)
                 .join(RepeatedEvent.class).on(Menu.EVENT_ID.eq(RepeatedEvent.ID))
-                .join(DiningCommon.class).on(RepeatedEvent.DINING_COMMON_ID.eq(DiningCommon.ID))
+                .join(DiningCommon.class).on(RepeatedEvent.DINING_COMMON_ID.eq(diningCommonId))
                 .join(Meal.class).on(RepeatedEvent.MEAL_ID.eq(Meal.ID))
-                .where(DiningCommon.NAME.eq(currentDiningCommon)
+                .where(DiningCommon.NAME.eq(diningCommon)
                         .and(Menu.DATE.eq(LocalDate.now()))
                         .and(Meal.NAME.eq(mealName))).get().first();
         List<BaseMenuItem> menuItems = menu.getMenuItems().toList();
@@ -108,14 +110,8 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
     @Override
     public void onBindViewHolder(final MenuItem menuItem, final ViewHolder viewHolder, int i) {
 
-        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources()
-                .getString(R.string.MainActivity_dining_common_shared_prefs), Context.MODE_PRIVATE);
-
-        final DiningCommon diningCommon = dataStore.select(DiningCommon.class)
-                .where(DiningCommon.NAME.eq(sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON, context.getString(R.string.DLG)))).get().first();
-
         Favorite favorite = dataStore.select(Favorite.class)
-                .where(Favorite.DINING_COMMON_ID.eq(diningCommon.getId())
+                .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
                         .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
                 .get().firstOrNull();
 
@@ -133,6 +129,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         } else {
             viewHolder.menuItemVegImageView.setImageResource(android.R.color.transparent);
         }
+        // Handle favorites star
         if(favorite != null) {
             viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
         } else {
@@ -150,7 +147,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
             @Override
             public void onStartOpen(SwipeLayout layout) {
                 Favorite favorite = dataStore.select(Favorite.class)
-                        .where(Favorite.DINING_COMMON_ID.eq(diningCommon.getId())
+                        .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
                                 .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
                         .get().firstOrNull();
                 if(favorite != null) {
@@ -164,9 +161,9 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
             @Override
             public void onOpen(SwipeLayout layout) {
                 Favorite favorite = dataStore.select(Favorite.class)
-                    .where(Favorite.DINING_COMMON_ID.eq(diningCommon.getId())
-                            .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
-                    .get().firstOrNull();
+                        .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
+                                .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
+                        .get().firstOrNull();
 
                 String favoriteNotification = "";
                 // If the favorite exists
@@ -177,7 +174,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                     viewHolder.menuItemFavoriteStar.setImageResource(android.R.color.transparent);
                 } else {
                     Favorite newFavorite = new Favorite();
-                    newFavorite.setDiningCommonId(diningCommon.getId());
+                    newFavorite.setDiningCommonId(diningCommonId);
                     newFavorite.setMenuItemId(menuItem.getId());
                     dataStore.insert(newFavorite);
                     favorites.add(newFavorite);

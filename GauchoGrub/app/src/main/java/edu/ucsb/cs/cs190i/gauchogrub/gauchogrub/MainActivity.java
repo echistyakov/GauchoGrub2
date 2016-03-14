@@ -202,10 +202,16 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences.Editor editor = sharedPreferences.edit();
         // Set state
         editor.putString(STATE_CURRENT_DINING_COMMON, diningCommon);
-        // Apply changes asynchronously
+        // Apply changes synchronously
         editor.apply();
         // Hide the sheet
         materialSheetFab.hideSheet();
+        if(currentFragmentId == R.id.nav_menus) {
+            MenuFragment menuFragment = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
+            if(menuFragment != null) {
+                menuFragment.updateRecyclerAdapter(diningCommon);
+            }
+        }
         // Render buttons
         renderDiningCommonUpdates();
     }
