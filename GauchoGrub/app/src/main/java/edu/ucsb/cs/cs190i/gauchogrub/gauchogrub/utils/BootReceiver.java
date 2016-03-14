@@ -55,9 +55,6 @@ public class BootReceiver extends BroadcastReceiver {
     private void startMenuScraperService(Context context, AlarmManager alarmManager) {
         Intent menuScraperIntent = new Intent(context, MenuScraperService.class);
         PendingIntent pendingMenuScraperIntent = PendingIntent.getService(context, 0, menuScraperIntent, 0);
-        if (hasInternetAccess(context)) {
-            context.startService(menuScraperIntent);
-        }
         DateTime dateTime = DateTime.now().withHourOfDay(5).withMinuteOfHour(0).withSecondOfMinute(0);
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, dateTime.getMillis(),
                 AlarmManager.INTERVAL_DAY, pendingMenuScraperIntent);

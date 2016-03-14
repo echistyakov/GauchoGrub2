@@ -8,6 +8,10 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 
+import org.joda.time.DateTime;
+
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.MenuScraperService;
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
@@ -106,6 +110,9 @@ public class SplashActivity extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+
+        // Start MenuScraperService for the week
+        MenuScraperService.startActionScrapeMenu(this);
     }
 
     @Override

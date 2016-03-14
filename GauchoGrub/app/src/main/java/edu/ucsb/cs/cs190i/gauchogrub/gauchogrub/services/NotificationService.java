@@ -44,11 +44,6 @@ public class NotificationService extends IntentService {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return Service.START_NOT_STICKY;
-    }
-
-    @Override
     protected void onHandleIntent(Intent intent) {
         List<FavoriteStruct> favorites = getAllFavoritesToday();
         // Stop if favorites are empty
