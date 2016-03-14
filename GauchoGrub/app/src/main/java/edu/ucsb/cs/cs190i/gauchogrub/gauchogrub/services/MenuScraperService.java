@@ -27,6 +27,7 @@ import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Meal;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuCategory;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Menu;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Menu_MenuItem;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
 import io.requery.Persistable;
 import io.requery.query.Result;
@@ -102,6 +103,7 @@ public class MenuScraperService extends IntentService {
     }
 
     private void scrapeMenus(DateTime date) {
+        //Log.d(TAG, date.toString("MM/dd"));
         mDate = date;
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
         String formattedDate = mDate.toString(dateTimeFormatter);
@@ -109,7 +111,7 @@ public class MenuScraperService extends IntentService {
             Document doc = Jsoup.connect(getString(R.string.parsable_menu_url) + "?day=" + formattedDate).get();
             String[] diningCommonIds = getResources().getStringArray(R.array.parsable_dining_commons_ids);
             for (String id : diningCommonIds) {
-                Log.d(TAG, "PROCESSING DIV ID: " + id);
+                //Log.d(TAG, "PROCESSING DIV ID: " + id);
                 parseDiningCommonMenu(htmlIdToDiningCommon(id), doc.getElementById(id));
             }
         } catch (IOException e) {
@@ -132,7 +134,7 @@ public class MenuScraperService extends IntentService {
         // menu if it doesn't exist in the DB
         for (Element mealPanel : filteredMealPanels) {
             String mealTypeStr = mealPanel.getElementsByTag("h5").first().text();
-            Log.d(TAG, mealTypeStr);
+            //Log.d(TAG, mealTypeStr);
             Meal meal = mDataStore.select(Meal.class).where(Meal.NAME.equal(mealTypeStr)).get().first();
             // check if menu exists in the DB
             LocalDate localDate = new LocalDate(mDate.getMillis());
@@ -153,7 +155,7 @@ public class MenuScraperService extends IntentService {
                 Elements elements = mealPanel.getElementsByClass("course-list").first().children();
                 for (Element foodListByCategory : mealPanel.getElementsByClass("course-list").first().children()) {
                     String menuCategoryStr = foodListByCategory.getElementsByTag("dt").first().text();
-                    Log.d(TAG, menuCategoryStr);
+                    //Log.d(TAG, menuCategoryStr);
                     MenuCategory menuCategory = mDataStore.select(MenuCategory.class).where(MenuCategory.NAME.equal(menuCategoryStr)).get().firstOrNull();
                     if(menuCategory == null) {
                         MenuCategory newMenuCategory = new MenuCategory();
@@ -162,13 +164,15 @@ public class MenuScraperService extends IntentService {
                     }
                     for (Element menuItemElement : foodListByCategory.getElementsByTag("dd")) {
                         String menuItemTitleStr = menuItemElement.text();
-                        Log.d(TAG, menuItemTitleStr);
+                        //Log.d(TAG, menuItemTitleStr);
                         // determine if MenuItem of same title and MenuCategory exists in DB
                         // if not, create new entity and insert it into the database
                         MenuItem menuItem = mDataStore.select(MenuItem.class)
                                 .where(MenuItem.TITLE.equal(menuItemTitleStr)
                                         .and(MenuItem.MENU_CATEGORY_ID.equal(menuCategory.getId()))).get().firstOrNull();
+                        boolean newMenuItem = false;
                         if (menuItem == null) {
+                            newMenuItem = true;
                             menuItem = new MenuItem();
                             menuItem.setMenuCategoryId(menuCategory.getId());
                             menuItem.setTitle(menuItemTitleStr);
@@ -177,10 +181,14 @@ public class MenuScraperService extends IntentService {
                             menuItem.setHasNuts(menuItemTitleStr.contains(HAS_NUTS));
                             mDataStore.insert(menuItem);
                         }
-                        menu.getMenuItems().add(menuItem);
+                        Menu_MenuItem mm = new Menu_MenuItem();
+                        mm.setMenuId(menu.getId());
+                        mm.setMenuItemId(menuItem.getId());
+                        if(newMenuItem) {
+                            mDataStore.insert(mm);
+                        }
                     }
                 }
-                mDataStore.update(menu);
             }
         }
     }
