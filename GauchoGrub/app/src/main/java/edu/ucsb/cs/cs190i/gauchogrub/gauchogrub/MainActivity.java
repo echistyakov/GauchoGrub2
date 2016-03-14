@@ -1,9 +1,12 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,16 +20,21 @@ import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fab.MaterialSheetFab;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.MenuScraperService;
+
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dining_cams.DiningCamsFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+                   MenuFragment.OnListFragmentInteractionListener,
+                   ScheduleFragment.OnFragmentInteractionListener,
+                   FavoritesFragment.OnFragmentInteractionListener,
+                   AboutFragment.OnFragmentInteractionListener,
+                   SwipesFragment.OnFragmentInteractionListener {
 
     public static final String LOG_TAG = "MainActivity";
 
@@ -55,8 +63,12 @@ public class MainActivity extends AppCompatActivity
     @Bind(R.id.fab_sheet_button3)
     public Button fabSheetButton3;
 
-    public final String STATE_CURRENT_DINING_COMMON = "STATE_CURRENT_DINING_COMMON";
+    public final static String STATE_CURRENT_DINING_COMMON = "STATE_CURRENT_DINING_COMMON";
 
+    private final String STATE_FRAGMENT_ID = "FRAGMENT_ID";
+    private int currentFragmentId = R.id.nav_menus;
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -74,6 +86,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        // Set to Menu Fragment on open
+        MenuFragment fragment = new MenuFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                .commit();
     }
 
     @Override
@@ -101,9 +118,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        // Not using optionsMenu
 
         return super.onOptionsItemSelected(item);
     }
@@ -114,20 +129,45 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
+        if (id == R.id.nav_menus) {
+            MenuFragment fragment = new MenuFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                    .commit();
+        } else if (id == R.id.nav_favorites) {
+            FavoritesFragment fragment = new FavoritesFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                    .commit();
+        } else if (id == R.id.nav_schedules) {
+            ScheduleFragment fragment = new ScheduleFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                    .commit();
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-            MenuScraperService.startActionScrapeMenu(this, new Date(System.currentTimeMillis()));
+        } else if (id == R.id.nav_cams) {
+            DiningCamsFragment fragment = new DiningCamsFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                    .commit();
+        } else if (id == R.id.nav_swipes) {
+            SwipesFragment fragment = new SwipesFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                    .commit();
+        } else if (id == R.id.nav_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            this.startActivity(intent);
+        } else if (id == R.id.nav_about) {
+            AboutFragment fragment = new AboutFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                    .commit();
         }
-
+        // Update current fragment id
+        currentFragmentId = id;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -149,20 +189,26 @@ public class MainActivity extends AppCompatActivity
     @OnClick ({R.id.fab_sheet_button1, R.id.fab_sheet_button2, R.id.fab_sheet_button3})
     public void updateCurrentDiningCommon(Button fabSheetButton) {
         String diningCommon = fabSheetButton.getText().toString();
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs),MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         // Set state
         editor.putString(STATE_CURRENT_DINING_COMMON, diningCommon);
         // Apply changes asynchronously
         editor.apply();
-        // Render buttons
-        renderDiningCommonUpdates();
         // Hide the sheet
         materialSheetFab.hideSheet();
+        if(currentFragmentId == R.id.nav_menus) {
+            MenuFragment menuFragment = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
+            if(menuFragment != null) {
+                menuFragment.switchDiningCommon(diningCommon);
+            }
+        }
+        // Render buttons
+        renderDiningCommonUpdates();
     }
 
     public void renderDiningCommonUpdates() {
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs),MODE_PRIVATE);
         // Get diningCommonStrings
         ArrayList<String> diningCommonStrings = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.dining_commons)));
         // Get constant strings for switch
@@ -178,18 +224,47 @@ public class MainActivity extends AppCompatActivity
         fabSheetButtons.add(fabSheetButton3);
 
         // Set Page Title
-        setTitle(currentDiningCommon);
+        updateAppBarTitle("Menu: " + currentDiningCommon, false);
 
-        Log.d(LOG_TAG, "Current dining common: " + currentDiningCommon);
+        //Log.d(LOG_TAG, "Current dining common: " + currentDiningCommon);
 
         // Set text for cardView buttons
         int i = 0;
         for(String diningCommonString : diningCommonStrings) {
             if(!diningCommonString.equals(currentDiningCommon))  {
-                Log.d(LOG_TAG, diningCommonString);
+                //Log.d(LOG_TAG, diningCommonString);
                 Button fabSheetButton = fabSheetButtons.get(i++);
                 fabSheetButton.setText(diningCommonString);
             }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putInt(STATE_FRAGMENT_ID, currentFragmentId);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    /**
+     * 
+     * @param title the base title for the appbar
+     * @param showDiningCommonName true if you should append ": " + currentDiningCommon
+     */
+    public void updateAppBarTitle(@Nullable String title, Boolean showDiningCommonName) {
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs),MODE_PRIVATE);
+        String defaultString = getResources().getString(R.string.DLG);
+        String currentDiningCommon = sharedPreferences.getString(STATE_CURRENT_DINING_COMMON, defaultString);
+        if(title == null) {
+            setTitle(currentDiningCommon);
+        } else if (showDiningCommonName) {
+            setTitle(title + ": " + currentDiningCommon);
+        } else {
+            setTitle(title);
         }
     }
 }

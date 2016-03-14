@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/MenuFragment">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/MenuFragment_buttonScrollView"
+        android:scrollbars="none"
+        android:background="#FFFFFF">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="@dimen/MenuFragment_date_button_width"
+                android:layout_height="wrap_content"
+                android:id="@+id/MenuFragment_button_today"/>
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="@dimen/MenuFragment_date_button_width"
+                android:layout_height="wrap_content"
+                android:id="@+id/MenuFragment_button_tomorrow"/>
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="@dimen/MenuFragment_date_button_width"
+                android:layout_height="wrap_content"
+                android:id="@+id/MenuFragment_button_2days"/>
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="@dimen/MenuFragment_date_button_width"
+                android:layout_height="wrap_content"
+                android:id="@+id/MenuFragment_button_3days"/>
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="@dimen/MenuFragment_date_button_width"
+                android:layout_height="wrap_content"
+                android:id="@+id/MenuFragment_button_4days"/>
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="@dimen/MenuFragment_date_button_width"
+                android:layout_height="wrap_content"
+                android:id="@+id/MenuFragment_button_5days"/>
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="@dimen/MenuFragment_date_button_width"
+                android:layout_height="wrap_content"
+                android:id="@+id/MenuFragment_button_6days"/>
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/MenuFragment_MealScrollView"
+        android:layout_below="@+id/MenuFragment_buttonScrollView"
+        android:background="#FFFFFF">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            style="?android:attr/buttonBarStyle">
+
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="@dimen/MenuFragment_meal_button_width"
+                android:layout_height="match_parent"
+                android:id="@+id/MenuFragment_mealButton_breakfast"
+                android:text="@string/MenuFragment_breakfast_string"/>
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="@dimen/MenuFragment_meal_button_width"
+                android:layout_height="match_parent"
+                android:text="@string/MenuFragment_lunch_string"
+                android:id="@+id/MenuFragment_mealButton_lunch"/>
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="@dimen/MenuFragment_meal_button_width"
+                android:layout_height="match_parent"
+                android:text="@string/MenuFragment_dinner_string"
+                android:id="@+id/MenuFragment_mealButton_dinner"/>
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="@dimen/MenuFragment_meal_button_width"
+                android:layout_height="match_parent"
+                android:text="@string/MenuFragment_latenight_string"
+                android:id="@+id/MenuFragment_mealButton_late_night"/>
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/MenuFragment_recyclerView"
+        android:name="edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.MenuFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="LinearLayoutManager"
+        tools:context="edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.MenuFragment"
+        tools:listitem="@layout/fragment_menuitem"
+        android:layout_below="@+id/MenuFragment_MealScrollView"
+        android:layout_alignParentStart="true" />
+</RelativeLayout>

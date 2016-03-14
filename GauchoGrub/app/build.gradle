@@ -69,4 +69,6 @@ dependencies {
     compile 'com.opencsv:opencsv:3.7'
     // Jsoup (for HTML parsing)
     compile 'org.jsoup:jsoup:1.7.3'
+    // Swipe layout
+    compile "com.daimajia.swipelayout:library:1.2.0@aar"
 }

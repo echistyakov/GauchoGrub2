@@ -8,10 +8,14 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import org.joda.time.DateTime;
+
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.MenuScraperService;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.NotificationService;
 
-import java.util.Calendar;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class BootReceiver extends BroadcastReceiver {
     /**
@@ -29,32 +33,53 @@ public class BootReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netinfo = cm.getActiveNetworkInfo();
-        // Prepares intent for data automation service
-        Intent timedIntent = new Intent(context, MenuScraperService.class);
-        PendingIntent pendingAutomationIntent = PendingIntent.getService(context, 0, timedIntent, 0);
+        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        // sets up notification service
+            // sets up notification service
+            startNotificationService(context, alarmManager);
+
+            // sets up data automation service
+            startMenuScraperService(context, alarmManager);
+        }
+    }
+
+    private void startNotificationService(Context context, AlarmManager alarmManager) {
         Intent notificationIntent = new Intent(context, NotificationService.class);
         PendingIntent pendingNotificationIntent = PendingIntent.getService(context, 0, notificationIntent, 0);
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 8);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
+        DateTime dateTime = DateTime.now().withHourOfDay(7).withMinuteOfHour(0).withSecondOfMinute(0);
+        alarmManager.setRepeating(AlarmManager.RTC, dateTime.getMillis(),
                 AlarmManager.INTERVAL_DAY, pendingNotificationIntent);
+    }
 
-        // sets up data automation service
-        if (netinfo != null && netinfo.isConnectedOrConnecting()) {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, 2 * 60 * 1000, pendingAutomationIntent);
-            context.startService(timedIntent);
+    private void startMenuScraperService(Context context, AlarmManager alarmManager) {
+        Intent menuScraperIntent = new Intent(context, MenuScraperService.class);
+        PendingIntent pendingMenuScraperIntent = PendingIntent.getService(context, 0, menuScraperIntent, 0);
+        DateTime dateTime = DateTime.now().withHourOfDay(5).withMinuteOfHour(0).withSecondOfMinute(0);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, dateTime.getMillis(),
+                AlarmManager.INTERVAL_DAY, pendingMenuScraperIntent);
+    }
+
+    /* from http://stackoverflow.com/questions/6493517/detect-if-android-device-has-internet-connection */
+    private boolean hasInternetAccess(Context context) {
+        if (hasNetworkAccess(context)) {
+            try {
+                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://clients3.google.com/generate_204").openConnection());
+                urlc.setRequestProperty("User-Agent", "Android");
+                urlc.setRequestProperty("Connection", "close");
+                urlc.setConnectTimeout(1500);
+                urlc.connect();
+                return urlc.getResponseCode() == 204;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        calendar.set(Calendar.HOUR_OF_DAY, 5);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pendingAutomationIntent);
+        return false;
+    }
+
+    private boolean hasNetworkAccess(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null;
     }
 }

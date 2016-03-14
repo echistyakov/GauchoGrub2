@@ -1,4 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/menuItem_swipeLayout">
+    <!-- Bottom View Start-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:background="#FFFFFF"
+        android:id="@+id/menuItem_bottomWrapper"
+        android:gravity="end"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+        <!--What you want to show-->
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="left"
+            android:src="@android:drawable/btn_star_big_on"
+            android:id="@+id/menuItem_favoritesStar"
+            style="?android:attr/borderlessButtonStyle"/>
+    </LinearLayout>
+    <!-- Bottom View End-->
+
+    <!-- Surface View Start -->
+    <LinearLayout
+        android:padding="10dp"
+        android:background="#ffffff"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/menuItem_topWrapper">
+        <!--What you want to show in SurfaceView-->
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/menuItem_hasNuts"/>
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/menuItem_isVeg"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="24sp"
+            android:paddingTop="8sp"
+            android:paddingLeft="10sp"
+            android:id="@+id/menuItem_text" />
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/menuItem_isFavorite"
+            android:layout_gravity="right"/>
+
+    </LinearLayout>
+    <!-- Surface View End -->
+</com.daimajia.swipe.SwipeLayout>
+
+
+<!--
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -18,3 +78,4 @@
         android:layout_margin="@dimen/text_margin"
         android:textAppearance="?attr/textAppearanceListItem" />
 </LinearLayout>
+-->

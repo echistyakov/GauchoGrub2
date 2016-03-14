@@ -1,12 +1,17 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+
+import org.joda.time.DateTime;
+
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.MenuScraperService;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -93,6 +98,13 @@ public class SplashActivity extends AppCompatActivity {
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        }, 3000);
 
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +118,9 @@ public class SplashActivity extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+
+        // Start MenuScraperService for the week
+        MenuScraperService.startActionScrapeMenu(this);
     }
 
     @Override
