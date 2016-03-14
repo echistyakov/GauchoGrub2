@@ -55,7 +55,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         this.mealName = mealName;
         this.diningCommon = diningCommon;
         this.diningCommonId = dataStore.select(DiningCommon.class).where(DiningCommon.NAME.eq(diningCommon)).get().first().getId();
-        Log.d(LOG_TAG, diningCommon + " " + diningCommonId);
+        //Log.d(LOG_TAG, diningCommon + " " + diningCommonId);
     }
 
     private List<Favorite> getFavorites(Context context) {

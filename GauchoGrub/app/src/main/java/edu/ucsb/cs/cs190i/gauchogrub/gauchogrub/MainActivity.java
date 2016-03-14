@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences.Editor editor = sharedPreferences.edit();
         // Set state
         editor.putString(STATE_CURRENT_DINING_COMMON, diningCommon);
-        // Apply changes synchronously
+        // Apply changes asynchronously
         editor.apply();
         // Hide the sheet
         materialSheetFab.hideSheet();

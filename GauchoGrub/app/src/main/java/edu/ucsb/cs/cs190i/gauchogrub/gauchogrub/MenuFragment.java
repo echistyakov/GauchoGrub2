@@ -172,7 +172,7 @@ public class MenuFragment extends Fragment {
     }
 
     private void setRecyclerAdapter(String diningCommon, DateTime date, String mealName) {
-        Log.d(LOG_TAG, "Setting new recyclerAdapter for " + diningCommon + " " + date.toString("MM/dd") + " " + mealName);
+        // Log.d(LOG_TAG, "Setting new recyclerAdapter for " + diningCommon + " " + date.toString("MM/dd") + " " + mealName);
         View view = getActivity().findViewById(android.R.id.content);
 
         // Use currently set display day
