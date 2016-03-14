@@ -1,6 +1,7 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.migrations;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.opencsv.CSVReader;
 
