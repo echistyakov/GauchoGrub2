@@ -29,8 +29,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Meal;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
 import io.requery.Persistable;
+import io.requery.query.Result;
 import io.requery.sql.EntityDataStore;
 
 /**
@@ -129,7 +131,7 @@ public class MenuFragment extends Fragment {
             displayDate = DateTime.now();
         }
 
-        if(mealName != null && mealName.length() == 0) {
+        if(mealName == null || mealName.length() == 0) {
             mealName = getString(R.string.MenuFragment_dinner_string);
         }
 
@@ -153,18 +155,24 @@ public class MenuFragment extends Fragment {
         ButterKnife.bind(this, view);
         setDateButtonsText();
         setMealButtonsText();
+        buttonToday.setBackgroundColor(Color.LTGRAY);
         setRecyclerAdapter(displayDate, mealName);
         return view;
     }
 
     private void setRecyclerAdapter(DateTime date, String mealName) {
-        View view = getView();
+        View view = getActivity().findViewById(android.R.id.content);
+
         // Use currently set display day
+        if(menuRecyclerAdapter != null) {
+            menuRecyclerAdapter.close();
+        }
         menuRecyclerAdapter = new MenuRecyclerAdapter(date, mealName, getContext(), view);
         executorService = Executors.newSingleThreadExecutor();
         menuRecyclerAdapter.setExecutor(executorService);
         recyclerView.setAdapter(menuRecyclerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        menuRecyclerAdapter.queryAsync();
     }
 
     private void setDateButtonsText() {
@@ -259,7 +267,7 @@ public class MenuFragment extends Fragment {
     @OnClick({R.id.MenuFragment_button_today, R.id.MenuFragment_button_tomorrow, R.id.MenuFragment_button_2days, R.id.MenuFragment_button_3days, R.id.MenuFragment_button_4days, R.id.MenuFragment_button_5days, R.id.MenuFragment_button_6days})
     public void handleDateButtonClick(Button button) {
         resetDateButtonBackgrounds();
-        button.setBackgroundColor(Color.CYAN);
+        button.setBackgroundColor(Color.LTGRAY);
         switch(button.getId()) {
             case R.id.MenuFragment_button_today:
                 displayDate = DateTime.now();

@@ -46,7 +46,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         this.date = date;
         this.context = context;
         dataStore = ((GGApp) context.getApplicationContext()).getData();
-        favorites = getFavorites(context);
+        favorites = new ArrayList<>(getFavorites(context));
         this.baseView = baseView;
         this.mealName = mealName;
     }
@@ -55,7 +55,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.MainActivity_dining_common_shared_prefs), Context.MODE_PRIVATE);
         String currentDiningCommon = sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON, context.getResources().getString(R.string.DLG));
         return dataStore.select(Favorite.class).join(DiningCommon.class).on(Favorite.DINING_COMMON_ID.eq(DiningCommon.ID)).get().toList();
-}
+    }
 
 
     /**
@@ -114,7 +114,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         final DiningCommon diningCommon = dataStore.select(DiningCommon.class)
                 .where(DiningCommon.NAME.eq(sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON, context.getString(R.string.DLG)))).get().first();
 
-        final Favorite favorite = dataStore.select(Favorite.class)
+        Favorite favorite = dataStore.select(Favorite.class)
                 .where(Favorite.DINING_COMMON_ID.eq(diningCommon.getId())
                         .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
                 .get().firstOrNull();
@@ -122,27 +122,51 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         // Nuts and V/VGN independent
         if(menuItem.getHasNuts()) {
             viewHolder.menuItemNutsImageView.setImageResource(R.mipmap.ic_nuts);
+        } else {
+            viewHolder.menuItemNutsImageView.setImageResource(android.R.color.transparent);
         }
         // Vegan icon has priority over vegetarian
         if (menuItem.getIsVegan()) {
             viewHolder.menuItemVegImageView.setImageResource(R.mipmap.ic_vegan);
         } else if(menuItem.getIsVegetarian()) {
             viewHolder.menuItemVegImageView.setImageResource(R.mipmap.ic_vegetarian);
+        } else {
+            viewHolder.menuItemVegImageView.setImageResource(android.R.color.transparent);
         }
-        viewHolder.menuItemTextView.setText(menuItem.getTitle());
+        if(favorite != null) {
+            viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
+        } else {
+            viewHolder.menuItemFavoriteStar.setImageResource(android.R.color.transparent);
+        }
+        // Remove reduntant (v), (vgn), or (w/ nuts) from name
+        String NUTS_STRING = context.getString(R.string.parsable_has_nuts);
+        String VEG_STRING = context.getString(R.string.parsable_veg);
+        String VGN_STRING = context.getString(R.string.parsable_vgn);
+        viewHolder.menuItemTextView.setText(menuItem.getTitle()
+                .replace(NUTS_STRING, "")
+                .replace(VEG_STRING, "")
+                .replace(VGN_STRING, ""));
         viewHolder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
             @Override
             public void onStartOpen(SwipeLayout layout) {
+                Favorite favorite = dataStore.select(Favorite.class)
+                        .where(Favorite.DINING_COMMON_ID.eq(diningCommon.getId())
+                                .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
+                        .get().firstOrNull();
                 if(favorite != null) {
-                    viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_off);
+                    viewHolder.menuItemSwipeFavoriteStar.setImageResource(android.R.drawable.btn_star_big_off);
                 } else {
-                    viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
+                    viewHolder.menuItemSwipeFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
                 }
 
             }
 
             @Override
             public void onOpen(SwipeLayout layout) {
+                Favorite favorite = dataStore.select(Favorite.class)
+                    .where(Favorite.DINING_COMMON_ID.eq(diningCommon.getId())
+                            .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
+                    .get().firstOrNull();
 
                 String favoriteNotification = "";
                 // If the favorite exists
@@ -150,8 +174,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                     dataStore.delete(favorite);
                     favorites.remove(favorite);
                     favoriteNotification = menuItem.getTitle() + " is removed from your favorites";
-                    // Set background color
-                    viewHolder.swipeLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                    viewHolder.menuItemFavoriteStar.setImageResource(android.R.color.transparent);
                 } else {
                     Favorite newFavorite = new Favorite();
                     newFavorite.setDiningCommonId(diningCommon.getId());
@@ -159,11 +182,10 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                     dataStore.insert(newFavorite);
                     favorites.add(newFavorite);
                     favoriteNotification = menuItem.getTitle() + " has been added to your favorites";
-                    // Set background color
-                    viewHolder.swipeLayout.setBackgroundColor(Color.parseColor("#2C8CA1"));
+                    viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
                 }
 
-                Snackbar.make(baseView.findViewById(android.R.id.content), favoriteNotification, Snackbar.LENGTH_SHORT);
+                Snackbar.make(baseView, favoriteNotification, Snackbar.LENGTH_SHORT);
                 layout.close();
             }
 
@@ -195,6 +217,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         public TextView menuItemTextView;
         public ImageView menuItemVegImageView;
         public ImageView menuItemNutsImageView;
+        public ImageView menuItemSwipeFavoriteStar;
         public ImageView menuItemFavoriteStar;
 
         public ViewHolder(View v) {
@@ -203,7 +226,8 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
             menuItemTextView = (TextView) v.findViewById(R.id.menuItem_text);
             menuItemNutsImageView = (ImageView) v.findViewById(R.id.menuItem_hasNuts);
             menuItemVegImageView = (ImageView) v.findViewById(R.id.menuItem_isVeg);
-            menuItemFavoriteStar = (ImageView) v.findViewById(R.id.menuItem_favoritesStar);
+            menuItemSwipeFavoriteStar = (ImageView) v.findViewById(R.id.menuItem_favoritesStar);
+            menuItemFavoriteStar = (ImageView) v.findViewById(R.id.menuItem_isFavorite);
 
             swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
         }

@@ -111,7 +111,7 @@ public class MenuScraperService extends IntentService {
             Document doc = Jsoup.connect(getString(R.string.parsable_menu_url) + "?day=" + formattedDate).get();
             String[] diningCommonIds = getResources().getStringArray(R.array.parsable_dining_commons_ids);
             for (String id : diningCommonIds) {
-                //Log.d(TAG, "PROCESSING DIV ID: " + id);
+                //Log.d(TAG, "PROCESSING DIV ID: " + id + " using string " + htmlIdToDiningCommon(id));
                 parseDiningCommonMenu(htmlIdToDiningCommon(id), doc.getElementById(id));
             }
         } catch (IOException e) {

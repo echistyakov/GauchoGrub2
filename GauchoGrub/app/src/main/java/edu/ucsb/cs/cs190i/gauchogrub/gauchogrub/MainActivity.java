@@ -229,13 +229,13 @@ public class MainActivity extends AppCompatActivity
         // Set Page Title
         updateAppBarTitle("Menu: " + currentDiningCommon, false);
 
-        Log.d(LOG_TAG, "Current dining common: " + currentDiningCommon);
+        //Log.d(LOG_TAG, "Current dining common: " + currentDiningCommon);
 
         // Set text for cardView buttons
         int i = 0;
         for(String diningCommonString : diningCommonStrings) {
             if(!diningCommonString.equals(currentDiningCommon))  {
-                Log.d(LOG_TAG, diningCommonString);
+                //Log.d(LOG_TAG, diningCommonString);
                 Button fabSheetButton = fabSheetButtons.get(i++);
                 fabSheetButton.setText(diningCommonString);
             }
