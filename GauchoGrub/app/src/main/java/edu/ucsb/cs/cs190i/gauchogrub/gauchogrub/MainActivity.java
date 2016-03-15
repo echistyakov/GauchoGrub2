@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity
                 Button fabSheetButton = fabSheetButtons.get(i++);
                 fabSheetButton.setText(diningCommonString);
                 // if we are in the dining cams fragment, disable the button for Portola\
-                if (diningCommonString.equals(R.string.POR)) {
+                if (diningCommonString.equals(getString(R.string.POR))) {
                     if (currentFragmentId == R.id.nav_cams)
                         fabSheetButton.setClickable(false);
                     else
