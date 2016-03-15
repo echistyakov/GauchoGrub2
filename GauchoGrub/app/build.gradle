@@ -60,9 +60,9 @@ dependencies {
     // Butter Knife
     compile 'com.jakewharton:butterknife:7.0.1'
     // Requery
-    compile 'io.requery:requery:1.0.0-beta4'
-    compile 'io.requery:requery-android:1.0.0-beta4'
-    apt 'io.requery:requery-processor:1.0.0-beta4'
+    compile 'io.requery:requery:1.0.0-beta5'
+    compile 'io.requery:requery-android:1.0.0-beta5'
+    apt 'io.requery:requery-processor:1.0.0-beta5'
     // Material sheet fab
     compile 'com.gordonwong:material-sheet-fab:1.2.1'
     // OpenCSV
