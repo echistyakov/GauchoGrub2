@@ -246,9 +246,12 @@ public class MainActivity extends AppCompatActivity
                 //Log.d(LOG_TAG, diningCommonString);
                 Button fabSheetButton = fabSheetButtons.get(i++);
                 fabSheetButton.setText(diningCommonString);
-                // if we are in the dining cams fragment, disable the button for Portola
-                if (currentFragmentId == R.id.nav_cams && diningCommonString.equals(getString(R.string.POR))) {
-                    fabSheetButton.setClickable(false);
+                // if we are in the dining cams fragment, disable the button for Portola\
+                if (diningCommonString.equals(R.string.POR)) {
+                    if (currentFragmentId == R.id.nav_cams)
+                        fabSheetButton.setClickable(false);
+                    else
+                        fabSheetButton.setClickable(true);
                 }
             }
         }
