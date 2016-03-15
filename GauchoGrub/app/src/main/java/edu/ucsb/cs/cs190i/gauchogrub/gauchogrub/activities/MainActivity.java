@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -135,8 +136,6 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-
-
         if (id == R.id.nav_menus) {
             MenuFragment fragment = new MenuFragment();
             getSupportFragmentManager().beginTransaction()
@@ -154,6 +153,15 @@ public class MainActivity extends AppCompatActivity
                     .commit();
 
         } else if (id == R.id.nav_cams) {
+            // check if feed available for current dining common
+            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs),MODE_PRIVATE);
+            String defaultDiningCommon = getString(R.string.dining_cam_default);
+            String diningCommon = sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON, defaultDiningCommon);
+            if (!Arrays.asList(getResources().getStringArray(R.array.dining_cams)).contains(diningCommon)) {
+                Toast.makeText(this, R.string.dining_cam_no_portola, Toast.LENGTH_SHORT).show();
+                sharedPreferences.edit().putString(STATE_CURRENT_DINING_COMMON, getString(R.string.dining_cam_default)).commit();
+                renderDiningCommonUpdates();
+            }
             DiningCamsFragment fragment = new DiningCamsFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.MainActivity_fragmentWrapper, fragment)
@@ -203,20 +211,25 @@ public class MainActivity extends AppCompatActivity
         editor.apply();
         // Hide the sheet
         materialSheetFab.hideSheet();
-        if(currentFragmentId == R.id.nav_menus) {
+        if (currentFragmentId == R.id.nav_menus) {
             MenuFragment menuFragment = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
-            if(menuFragment != null) {
+            if (menuFragment != null) {
                 menuFragment.switchDiningCommon(diningCommon);
             }
         } else if (currentFragmentId == R.id.nav_favorites) {
             FavoritesFragment favoritesFragment = (FavoritesFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
-            if(favoritesFragment != null) {
+            if (favoritesFragment != null) {
                 favoritesFragment.switchDiningCommon(diningCommon);
             }
-        } else if(currentFragmentId == R.id.nav_schedules) {
+        } else if (currentFragmentId == R.id.nav_schedules) {
             ScheduleFragment scheduleFragment = (ScheduleFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
-            if(scheduleFragment != null) {
+            if (scheduleFragment != null) {
                 scheduleFragment.updateDiningCommon(diningCommon);
+            }
+        } else if (currentFragmentId == R.id.nav_cams) {
+            DiningCamsFragment fragment = (DiningCamsFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
+            if (fragment != null) {
+                fragment.switchDiningCommon();
             }
         }
         // Render buttons
@@ -231,7 +244,7 @@ public class MainActivity extends AppCompatActivity
         String defaultString = getResources().getString(R.string.DLG);
         // Get currently stored default Dining Common or else DLG string
         String currentDiningCommon = sharedPreferences.getString(STATE_CURRENT_DINING_COMMON, defaultString);
-        if(!diningCommonStrings.contains(currentDiningCommon))
+        if (!diningCommonStrings.contains(currentDiningCommon))
             currentDiningCommon = defaultString;
         // Create ArrayList of fabSheetButton references
         ArrayList<Button> fabSheetButtons = new ArrayList<>();
@@ -247,10 +260,17 @@ public class MainActivity extends AppCompatActivity
         // Set text for cardView buttons
         int i = 0;
         for(String diningCommonString : diningCommonStrings) {
-            if(!diningCommonString.equals(currentDiningCommon))  {
+            if (!diningCommonString.equals(currentDiningCommon))  {
                 //Log.d(LOG_TAG, diningCommonString);
                 Button fabSheetButton = fabSheetButtons.get(i++);
                 fabSheetButton.setText(diningCommonString);
+                // if we are in the dining cams fragment, disable the button for Portola\
+                if (diningCommonString.equals(getString(R.string.POR))) {
+                    if (currentFragmentId == R.id.nav_cams)
+                        fabSheetButton.setClickable(false);
+                    else
+                        fabSheetButton.setClickable(true);
+                }
             }
         }
     }
@@ -275,7 +295,7 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs),MODE_PRIVATE);
         String defaultString = getResources().getString(R.string.DLG);
         String currentDiningCommon = sharedPreferences.getString(STATE_CURRENT_DINING_COMMON, defaultString);
-        if(title == null) {
+        if (title == null) {
             setTitle(currentDiningCommon);
         } else if (showDiningCommonName) {
             setTitle(title + ": " + currentDiningCommon);

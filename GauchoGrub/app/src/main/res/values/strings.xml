@@ -95,7 +95,9 @@
         <item name="ORT">@string/ORT</item>
     </string-array>
 
+    <string name="dining_cam_default">@string/DLG</string>
     <string name="dining_cam_description">Live feed of the dining commons exterior</string>
+    <string name="dining_cam_no_portola">No feed available for Portola</string>
 
     <!-- Strings specific to Settings -->
     <string name="pref_key_default_dining_common">default_dining_common</string>
