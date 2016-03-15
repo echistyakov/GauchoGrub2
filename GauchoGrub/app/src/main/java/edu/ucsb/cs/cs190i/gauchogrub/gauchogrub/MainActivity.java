@@ -202,6 +202,11 @@ public class MainActivity extends AppCompatActivity
             if(menuFragment != null) {
                 menuFragment.switchDiningCommon(diningCommon);
             }
+        } else if (currentFragmentId == R.id.nav_favorites) {
+            FavoritesFragment favoritesFragment = (FavoritesFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
+            if(favoritesFragment != null) {
+                favoritesFragment.switchDiningCommon(diningCommon);
+            }
         }
         // Render buttons
         renderDiningCommonUpdates();

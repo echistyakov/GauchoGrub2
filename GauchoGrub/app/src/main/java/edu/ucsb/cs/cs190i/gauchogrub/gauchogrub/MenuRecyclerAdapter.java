@@ -161,6 +161,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                     viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
                 }
                 thisAdapter.notifyDataSetChanged();
+                thisAdapter.queryAsync();
                 layout.close();
             }
 

@@ -1,12 +1,21 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 
 /**
@@ -28,6 +37,14 @@ public class FavoritesFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    @Bind(R.id.FavoritesFragment_recyclerView)
+    RecyclerView recyclerView;
+
+    private String diningCommon;
+    private FavoriteRecyclerAdapter favoriteRecyclerAdapter;
+    ExecutorService executorService;
+
 
     public FavoritesFragment() {
         // Required empty public constructor
@@ -58,6 +75,10 @@ public class FavoritesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs), Context.MODE_PRIVATE);
+        diningCommon = sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON,
+                sharedPreferences.getString(getString(R.string.pref_key_default_dining_common),
+                        getString(R.string.DLG)));
     }
 
     @Override
@@ -72,7 +93,10 @@ public class FavoritesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favorites, container, false);
+        View view = inflater.inflate(R.layout.fragment_favorites, container, false);
+        ButterKnife.bind(this, view);
+        setRecyclerAdapter(diningCommon);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -80,6 +104,29 @@ public class FavoritesFragment extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    public void switchDiningCommon(String diningCommon) {
+        this.diningCommon = diningCommon;
+        setRecyclerAdapter(diningCommon);
+    }
+
+    private void setRecyclerAdapter(String diningCommon) {
+        if(favoriteRecyclerAdapter != null) {
+            recyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
+            favoriteRecyclerAdapter.close();
+            executorService.shutdownNow();
+        }
+        // Create new adapter and executor
+        favoriteRecyclerAdapter = new FavoriteRecyclerAdapter(diningCommon, getContext());
+        executorService = Executors.newSingleThreadExecutor();
+        // Set executor and adapter
+        favoriteRecyclerAdapter.setExecutor(executorService);
+        recyclerView.setAdapter(favoriteRecyclerAdapter);
+        // Set layout manager
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        // Start async query
+        favoriteRecyclerAdapter.queryAsync();
     }
 
     @Override
