@@ -139,55 +139,13 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                 .replace(VEG_STRING, "")
                 .replace(VGN_STRING, "")
                 .trim());
-        viewHolder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
-            @Override
-            public void onStartOpen(SwipeLayout layout) {
-
-            }
-
-            @Override
-            public void onOpen(SwipeLayout layout) {
-                Favorite favorite = dataStore.select(Favorite.class)
-                        .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
-                                .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
-                        .get()
-                        .firstOrNull();
-                // If the favorite exists
-                if(favorite != null) {
-                    dataStore.delete(favorite);
-                    viewHolder.menuItemFavoriteStar.setImageResource(android.R.color.transparent);
-                } else {
-                    Favorite newFavorite = new Favorite();
-                    newFavorite.setDiningCommonId(diningCommonId);
-                    newFavorite.setMenuItemId(menuItem.getId());
-                    dataStore.insert(newFavorite);
-                    viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
-                }
-                thisAdapter.notifyDataSetChanged();
-                thisAdapter.queryAsync();
-                layout.close();
-            }
-
-            @Override
-            public void onStartClose(SwipeLayout layout) {
-
-            }
-
-            @Override
-            public void onClose(SwipeLayout layout) {
-
-            }
-
-            @Override
-            public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
-
-            }
-
-            @Override
-            public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
-
-            }
-        });
+        // create MenuSwipeListener unique to each ViewHolder
+        if (viewHolder.menuSwipeListener == null) {
+            viewHolder.menuSwipeListener = new MenuSwipeListener(viewHolder);
+            viewHolder.swipeLayout.addSwipeListener(viewHolder.menuSwipeListener);
+        }
+        // set the correct MenuItem to update if swipe event occurs
+        viewHolder.menuSwipeListener.setMenuItem(menuItem);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -198,6 +156,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         public ImageView menuItemNutsImageView;
         public ImageView menuItemSwipeFavoriteStar;
         public ImageView menuItemFavoriteStar;
+        public MenuSwipeListener menuSwipeListener;
 
         public ViewHolder(View v) {
             super(v);
@@ -208,6 +167,68 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
             menuItemSwipeFavoriteStar = (ImageView) v.findViewById(R.id.menuItem_favoritesStar);
             menuItemFavoriteStar = (ImageView) v.findViewById(R.id.menuItem_isFavorite);
             swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
+        }
+    }
+
+    public class MenuSwipeListener implements SwipeLayout.SwipeListener {
+
+        private final ViewHolder viewHolder;
+        private MenuItem menuItem;
+
+        public MenuSwipeListener(ViewHolder viewHolder) {
+            this.viewHolder = viewHolder;
+        }
+
+        public void setMenuItem(MenuItem menuItem) {
+            this.menuItem = menuItem;
+        }
+
+        @Override
+        public void onStartOpen(SwipeLayout layout) {
+
+        }
+
+        @Override
+        public void onOpen(SwipeLayout layout) {
+            Favorite favorite = dataStore.select(Favorite.class)
+                    .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
+                            .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
+                    .get()
+                    .firstOrNull();
+            // If the favorite exists
+            if (favorite != null) {
+                dataStore.delete(favorite);
+                viewHolder.menuItemFavoriteStar.setImageResource(android.R.color.transparent);
+            } else {
+                Favorite newFavorite = new Favorite();
+                newFavorite.setDiningCommonId(diningCommonId);
+                newFavorite.setMenuItemId(menuItem.getId());
+                dataStore.insert(newFavorite);
+                viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
+            }
+            thisAdapter.notifyDataSetChanged();
+            thisAdapter.queryAsync();
+            layout.close();
+        }
+
+        @Override
+        public void onStartClose(SwipeLayout layout) {
+
+        }
+
+        @Override
+        public void onClose(SwipeLayout layout) {
+
+        }
+
+        @Override
+        public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
+
+        }
+
+        @Override
+        public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
+
         }
     }
 }
