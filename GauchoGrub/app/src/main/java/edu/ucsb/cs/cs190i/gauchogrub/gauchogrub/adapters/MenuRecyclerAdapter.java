@@ -1,6 +1,7 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.adapters;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +12,12 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 
 import org.joda.time.DateTime;
+import org.jsoup.Connection;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.GGApp;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
@@ -94,8 +98,25 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                 .get()
                 .first();
         List<BaseMenuItem> menuItems = menu.getMenuItems().toList();
+        List<BaseMenuItem> filteredMenuItems = new ArrayList<>();
+        // apply filter from settings
+        Set<String> filterValues = PreferenceManager.getDefaultSharedPreferences(context).getStringSet(context.getString(R.string.pref_key_default_filter), new HashSet<String>());
+        for (BaseMenuItem menuItem : menuItems) {
+            boolean canAdd = true;
+            if (filterValues.contains(context.getString(R.string.pref_vegan_value))) {
+                canAdd = menuItem.isVegan;
+            } else if (filterValues.contains(context.getString(R.string.pref_vegetarian_value))) {
+                canAdd = menuItem.isVegetarian;
+            }
+            if (filterValues.contains(context.getString(R.string.pref_no_nuts_value))) {
+                canAdd = !menuItem.hasNuts;
+            }
+            if (canAdd) {
+                filteredMenuItems.add(menuItem);
+            }
+        }
         List<Integer> menuItemIds = new ArrayList<>();
-        for(BaseMenuItem menuItem : menuItems) {
+        for(BaseMenuItem menuItem : filteredMenuItems) {
             menuItemIds.add(menuItem.id);
         }
         return dataStore.select(MenuItem.class).where(MenuItem.ID.in(menuItemIds)).get();
