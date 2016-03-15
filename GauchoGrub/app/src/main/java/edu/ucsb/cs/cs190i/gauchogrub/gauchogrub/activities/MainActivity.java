@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity
         } else if(currentFragmentId == R.id.nav_schedules) {
             ScheduleFragment scheduleFragment = (ScheduleFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
             if(scheduleFragment != null) {
-
+                // TODO: Handle scheduleFragment diningCommons switching
             }
         }
         // Render buttons

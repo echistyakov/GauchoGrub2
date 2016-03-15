@@ -68,7 +68,7 @@ public class MenuScraperService extends IntentService {
 
     /**
      * Starts a MenuScraperService for a specific day
-     * @param context
+     * @param context the base context of the application
      * @param date the day to get information for
      */
     public static void startActionScrapeMenu(Context context, DateTime date) {
@@ -80,7 +80,7 @@ public class MenuScraperService extends IntentService {
 
     /**
      * Starts 7 individual MenuScraperService instances to handle the next 7 days
-     * @param context
+     * @param context the base context of the application
      */
     public static void startActionScrapeMenu(Context context) {
         for(int i = 0; i < 7; i++) {
