@@ -1,5 +1,7 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dining_cams;
 
+import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -11,9 +13,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabContentFactory;
+import android.widget.Toast;
+
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.MainActivity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 
 public class DiningCamsFragment extends android.support.v4.app.Fragment implements Runnable {
@@ -27,22 +34,39 @@ public class DiningCamsFragment extends android.support.v4.app.Fragment implemen
 
     private final int delay = 10 * 1000;  // Milliseconds (10 seconds)
     private boolean isOn;
+    private String diningCommon;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        MainActivity activity = (MainActivity) getActivity();
+        activity.fab.show();
+        activity.updateAppBarTitle(getString(R.string.DiningCamsFragment_app_bar_title), true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_diningcams, container, false);
         ButterKnife.bind(this, rootView);
         this.handler = new Handler();
-
+        initCam();
         return rootView;
+    }
+
+    public void initCam() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs), Activity.MODE_PRIVATE);
+        diningCommon = sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON,
+                sharedPreferences.getString(getString(R.string.pref_key_default_dining_common),
+                        getString(R.string.DLG)));
+        List<String> diningCams = Arrays.asList(getResources().getStringArray(R.array.dining_cams));
+        setDisplayContent(diningCams.indexOf(diningCommon));
     }
 
     /**
      *
-     * @param index
+     * @param index determines which feed to get
      */
     public void setDisplayContent(int index) {
-        // An item was selected. You can retrieve the selected item using parent.getItemAtPosition(pos)
         String[] camUrls = new String[]{DiningCam.CARRILLO, DiningCam.DE_LA_GUERRA, DiningCam.ORTEGA};
         String camUrl = camUrls[index];
         this.currentCam = new DiningCam(camUrl);
@@ -117,4 +141,8 @@ public class DiningCamsFragment extends android.support.v4.app.Fragment implemen
         }
     }
 
+    public void switchDiningCommon(String diningCommon) {
+        MainActivity activity = (MainActivity) getActivity();
+        activity.updateAppBarTitle(getString(R.string.DiningCamsFragment_app_bar_title), true);
+    }
 }

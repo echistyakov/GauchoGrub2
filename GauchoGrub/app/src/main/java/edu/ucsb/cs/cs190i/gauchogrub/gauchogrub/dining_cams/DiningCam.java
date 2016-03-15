@@ -36,7 +36,7 @@ public class DiningCam {
 
     /**
      * getCurrentImageUrl() is a private helper method to get the properly formed URL
-     * to use when accessingthe database
+     * to use when accessing the database
      * @return
      */
     private URL getCurrentImageUrl() {
