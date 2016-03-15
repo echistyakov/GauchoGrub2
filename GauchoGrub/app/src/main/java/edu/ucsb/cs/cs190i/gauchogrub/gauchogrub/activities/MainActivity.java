@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity
 
     public final static String STATE_CURRENT_DINING_COMMON = "STATE_CURRENT_DINING_COMMON";
 
-    private final String STATE_FRAGMENT_ID = "FRAGMENT_ID";
+    private final static String STATE_FRAGMENT_ID = "FRAGMENT_ID";
     private int currentFragmentId = R.id.nav_menus;
 
     @Override
@@ -227,8 +227,9 @@ public class MainActivity extends AppCompatActivity
         String defaultString = getResources().getString(R.string.DLG);
         // Get currently stored default Dining Common or else DLG string
         String currentDiningCommon = sharedPreferences.getString(STATE_CURRENT_DINING_COMMON, defaultString);
-        if (!diningCommonStrings.contains(currentDiningCommon))
+        if (!diningCommonStrings.contains(currentDiningCommon)) {
             currentDiningCommon = defaultString;
+        }
         // Create ArrayList of fabSheetButton references
         ArrayList<Button> fabSheetButtons = new ArrayList<>();
         fabSheetButtons.add(fabSheetButton1);
