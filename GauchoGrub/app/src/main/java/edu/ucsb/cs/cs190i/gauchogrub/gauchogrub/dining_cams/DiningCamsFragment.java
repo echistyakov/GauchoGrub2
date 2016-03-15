@@ -2,7 +2,6 @@ package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dining_cams;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,17 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TabHost;
-import android.widget.TabHost.TabContentFactory;
-import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.MainActivity;
+
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.activities.MainActivity;
 
 public class DiningCamsFragment extends android.support.v4.app.Fragment implements Runnable {
 
