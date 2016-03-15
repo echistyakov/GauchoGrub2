@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -151,6 +152,7 @@ public class MainActivity extends AppCompatActivity
             String defaultDiningCommon = getString(R.string.dining_cam_default);
             String diningCommon = sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON, defaultDiningCommon);
             if (!Arrays.asList(getResources().getStringArray(R.array.dining_cams)).contains(diningCommon)) {
+                Toast.makeText(this, R.string.dining_cam_no_portola, Toast.LENGTH_SHORT).show();
                 sharedPreferences.edit().putString(STATE_CURRENT_DINING_COMMON, getString(R.string.dining_cam_default)).commit();
                 renderDiningCommonUpdates();
             }
