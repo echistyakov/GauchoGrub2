@@ -13,4 +13,12 @@
 
     <!-- Menu Fragment Meal Buttons -->
     <dimen name="MenuFragment_meal_button_width">150dp</dimen>
+
+    <!-- Schedule Fragment -->
+    <dimen name="ScheduleFragment_header_text_size">30sp</dimen>
+    <dimen name="ScheduleFragment_header_side_padding">25dp</dimen>
+    <dimen name="ScheduleFragment_header_vertical_padding">15dp</dimen>
+    <dimen name="ScheduleFragment_item_side_padding">30dp</dimen>
+    <dimen name="ScheduleFragment_item_vertical_padding">5dp</dimen>
+    <dimen name="ScheduleFragment_item_text_size">18sp</dimen>
 </resources>
