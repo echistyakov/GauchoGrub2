@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -250,18 +249,19 @@ public class MainActivity extends AppCompatActivity
                 fabSheetButton.setText(diningCommonString);
                 // if we are in the dining cams fragment, disable the button for Portola
                 if (diningCommonString.equals(getString(R.string.POR))) {
-                    if (currentFragmentId == R.id.nav_cams)
+                    if (currentFragmentId == R.id.nav_cams){
                         fabSheetButton.setClickable(false);
-                    else
+                    } else {
                         fabSheetButton.setClickable(true);
+                    }
                 }
             }
         }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         // Preserve fragment id
         outState.putInt(STATE_FRAGMENT_ID, currentFragmentId);
     }
