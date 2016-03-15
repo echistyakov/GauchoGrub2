@@ -5,8 +5,8 @@ import android.net.Uri;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,9 +25,9 @@ import java.util.Arrays;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fab.MaterialSheetFab;
-
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dining_cams.DiningCamsFragment;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.AboutFragment;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.FavoritesFragment;
@@ -42,8 +42,6 @@ public class MainActivity extends AppCompatActivity
                    FavoritesFragment.OnFragmentInteractionListener,
                    AboutFragment.OnFragmentInteractionListener,
                    SwipesFragment.OnFragmentInteractionListener {
-
-    public static final String LOG_TAG = "MainActivity";
 
     private ActionBarDrawerToggle toggle;
 
@@ -72,7 +70,7 @@ public class MainActivity extends AppCompatActivity
 
     public final static String STATE_CURRENT_DINING_COMMON = "STATE_CURRENT_DINING_COMMON";
 
-    private final String STATE_FRAGMENT_ID = "FRAGMENT_ID";
+    private final static String STATE_FRAGMENT_ID = "FRAGMENT_ID";
     private int currentFragmentId = R.id.nav_menus;
 
     @Override
@@ -86,18 +84,18 @@ public class MainActivity extends AppCompatActivity
         materialSheetFab = new com.gordonwong.materialsheetfab.MaterialSheetFab<>(fab, fabSheetView, fabOverlay, sheetColor, fabColor);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Restore state
+        this.restoreInstanceState(savedInstanceState);
+
         // Set to Menu Fragment on open
-        MenuFragment fragment = new MenuFragment();
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.MainActivity_fragmentWrapper, fragment)
-                .commit();
+        showFragment(currentFragmentId);
     }
 
     @Override
@@ -123,35 +121,28 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         // Not using optionsMenu
-
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        showFragment(id);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
+    private void showFragment(int id) {
+        Fragment fragment = null;
         if (id == R.id.nav_menus) {
-            MenuFragment fragment = new MenuFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
-                    .commit();
+            fragment = new MenuFragment();
         } else if (id == R.id.nav_favorites) {
-            FavoritesFragment fragment = new FavoritesFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
-                    .commit();
+            fragment = new FavoritesFragment();
         } else if (id == R.id.nav_schedules) {
-            ScheduleFragment fragment = new ScheduleFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
-                    .commit();
-
+            fragment = new ScheduleFragment();
         } else if (id == R.id.nav_cams) {
             // check if feed available for current dining common
             SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs),MODE_PRIVATE);
@@ -162,30 +153,24 @@ public class MainActivity extends AppCompatActivity
                 sharedPreferences.edit().putString(STATE_CURRENT_DINING_COMMON, getString(R.string.dining_cam_default)).commit();
                 renderDiningCommonUpdates();
             }
-            DiningCamsFragment fragment = new DiningCamsFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
-                    .commit();
+            fragment = new DiningCamsFragment();
         } else if (id == R.id.nav_swipes) {
-            SwipesFragment fragment = new SwipesFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
-                    .commit();
+            fragment = new SwipesFragment();
         } else if (id == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             this.startActivity(intent);
         } else if (id == R.id.nav_about) {
-            AboutFragment fragment = new AboutFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
-                    .commit();
+            fragment = new AboutFragment();
         }
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                .commit();
         // Update current fragment id
         currentFragmentId = id;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         renderDiningCommonUpdates();
-        return true;
     }
 
     @Override
@@ -240,15 +225,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void renderDiningCommonUpdates() {
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs),MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs), MODE_PRIVATE);
         // Get diningCommonStrings
         ArrayList<String> diningCommonStrings = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.dining_commons)));
         // Get constant strings for switch
         String defaultString = getResources().getString(R.string.DLG);
         // Get currently stored default Dining Common or else DLG string
         String currentDiningCommon = sharedPreferences.getString(STATE_CURRENT_DINING_COMMON, defaultString);
-        if (!diningCommonStrings.contains(currentDiningCommon))
+        if (!diningCommonStrings.contains(currentDiningCommon)) {
             currentDiningCommon = defaultString;
+        }
         // Create ArrayList of fabSheetButton references
         ArrayList<Button> fabSheetButtons = new ArrayList<>();
         fabSheetButtons.add(fabSheetButton1);
@@ -267,11 +253,10 @@ public class MainActivity extends AppCompatActivity
                 //Log.d(LOG_TAG, diningCommonString);
                 Button fabSheetButton = fabSheetButtons.get(i++);
                 fabSheetButton.setText(diningCommonString);
-                // if we are in the dining cams fragment, disable the button for Portola\
+                // if we are in the dining cams fragment, remove the button for Portola
                 if (diningCommonString.equals(getString(R.string.POR))) {
-                    if (currentFragmentId == R.id.nav_cams){
+                    if (currentFragmentId == R.id.nav_cams)
                         fabSheetButton.setVisibility(View.GONE);
-                    }
                     else
                         fabSheetButton.setVisibility(View.VISIBLE);
                 }
@@ -280,9 +265,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Preserve fragment id
         outState.putInt(STATE_FRAGMENT_ID, currentFragmentId);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        this.restoreInstanceState(savedInstanceState);
+    }
+
+    private void restoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            // Restore fragment id
+            currentFragmentId = savedInstanceState.getInt(STATE_FRAGMENT_ID, currentFragmentId);
+        }
     }
 
     @Override
