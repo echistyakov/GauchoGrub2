@@ -108,7 +108,7 @@
     <string name="pref_title_default_dining_common">Default Dining Common</string>
     <string name="pref_title_previously_open_dining_common">Previously Open Override</string>
     <string name="pref_title_favorites_notification">Favorites Notification</string>
-    <string name="pref_title_default_filter">Default Filter for Menu</string>
+    <string name="pref_title_default_filter">Food Category Filters</string>
 
     <string name="pref_summary_previously_open_dining_common">Override the default dining common with your previously open dining common</string>
 
