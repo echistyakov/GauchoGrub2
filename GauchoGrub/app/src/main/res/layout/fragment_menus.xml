@@ -51,7 +51,6 @@
                 android:layout_width="@dimen/MenuFragment_date_button_width"
                 android:layout_height="wrap_content"
                 android:id="@+id/MenuFragment_button_6days"/>
-
         </LinearLayout>
     </HorizontalScrollView>
 
