@@ -34,6 +34,10 @@ public class NotificationService extends IntentService {
 
     public final static String LOG_TAG = "NotificationService";
 
+    public NotificationService() {
+        super("NotificationService");
+    }
+
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *
@@ -47,6 +51,7 @@ public class NotificationService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(LOG_TAG, "NotificationService triggered");
+        data = ((GGApp) getApplication()).getData();
         List<FavoriteStruct> favorites = getAllFavoritesToday();
         // Stop if favorites are empty
         if(favorites.size() <= 0) {
@@ -60,8 +65,9 @@ public class NotificationService extends IntentService {
         int i = 0;
         for(FavoriteStruct favorite : favorites) {
             builder = new NotificationCompat.Builder(getBaseContext())
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentText(favorite.menuItem.title + " is at " + favorite.diningCommon + " for " + favorite.mealName);
+                    .setContentTitle(favorite.menuItem.title)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setContentText(favorite.mealName + " at " + favorite.diningCommon);
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             notificationManager.notify(i++, builder.build());
         }
@@ -85,11 +91,11 @@ public class NotificationService extends IntentService {
                 .getId();
         // Get Menu of the current day
         List<Menu> menusInDiningCommonToday = data.select(Menu.class)
-                .join(RepeatedEvent.class)
-                .on(Menu.EVENT_ID.eq(RepeatedEvent.ID))
-                .where(Menu.DATE.eq(date)
-                        .and(RepeatedEvent.DAY_OF_WEEK.eq(dayOfWeek))
-                        .and(RepeatedEvent.DINING_COMMON_ID.eq(diningCommonId)))
+                .join(RepeatedEvent.class).on(Menu.EVENT_ID.eq(RepeatedEvent.ID))
+                .join(DiningCommon.class).on(RepeatedEvent.DINING_COMMON_ID.eq(diningCommonId))
+                .join(Meal.class).on(RepeatedEvent.MEAL_ID.eq(Meal.ID))
+                .where(DiningCommon.NAME.eq(diningCommon)
+                        .and(Menu.DATE.eq(date)))
                 .get()
                 .toList();
         // Get all favorites
