@@ -123,10 +123,14 @@
         <item>@string/pref_no_nuts</item>
     </string-array>
 
+    <string name="pref_vegetarian_value">ONLY_VEGETARIAN</string>
+    <string name="pref_vegan_value">ONLY_VEGAN</string>
+    <string name="pref_no_nuts_value">NO_NUTS</string>
+
     <string-array name="pref_default_filter_entry_values">
-        <item>ONLY_VEGETARIAN</item>
-        <item>ONLY_VEGAN</item>
-        <item>NO_NUTS</item>
+        <item>@string/pref_vegetarian_value</item>
+        <item>@string/pref_vegan_value</item>
+        <item>@string/pref_no_nuts_value</item>
     </string-array>
 
     <string-array name="pref_default_filter_default_values"/>
