@@ -211,6 +211,9 @@ public class MainActivity extends AppCompatActivity
         editor.apply();
         // Hide the sheet
         materialSheetFab.hideSheet();
+        // Render buttons
+        renderDiningCommonUpdates();
+        // call update function from fragment
         if (currentFragmentId == R.id.nav_menus) {
             MenuFragment menuFragment = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
             if (menuFragment != null) {
@@ -232,8 +235,7 @@ public class MainActivity extends AppCompatActivity
                 fragment.switchDiningCommon();
             }
         }
-        // Render buttons
-        renderDiningCommonUpdates();
+
     }
 
     public void renderDiningCommonUpdates() {
