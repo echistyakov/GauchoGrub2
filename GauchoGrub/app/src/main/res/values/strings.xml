@@ -101,16 +101,16 @@
 
     <!-- Strings specific to Settings -->
     <string name="pref_key_default_dining_common">default_dining_common</string>
-    <string name="pref_key_geolocation_override">geolocation_override_switch</string>
+    <string name="pref_key_previously_open_dining_common">previously_open_switch</string>
     <string name="pref_key_default_filter">default_filter</string>
     <string name="pref_key_favorites_notification">favorites_notification_switch</string>
 
     <string name="pref_title_default_dining_common">Default Dining Common</string>
-    <string name="pref_title_geolocation_override">Geolocation Override</string>
+    <string name="pref_title_previously_open_dining_common">Previously Open Override</string>
     <string name="pref_title_favorites_notification">Favorites Notification</string>
     <string name="pref_title_default_filter">Default Filter for Menu</string>
 
-    <string name="pref_summary_geolocation_override">Override the default dining common based on your location</string>
+    <string name="pref_summary_previously_open_dining_common">Override the default dining common with your previously open dining common</string>
 
     <!-- Human-readable Pref Strings -->
     <string name="pref_vegetarian">Only vegetarian</string>

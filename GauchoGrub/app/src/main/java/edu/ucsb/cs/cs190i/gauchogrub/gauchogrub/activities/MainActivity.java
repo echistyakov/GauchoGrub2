@@ -95,11 +95,14 @@ public class MainActivity extends AppCompatActivity
         // Restore state
         this.restoreInstanceState(savedInstanceState);
 
-        // Set the dining common to preferred (if available)
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs), MODE_PRIVATE);
-        String defaultDiningCommon = sharedPreferences.getString(STATE_CURRENT_DINING_COMMON, getString(R.string.DLG));
-        String diningCommon = PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_key_default_dining_common), defaultDiningCommon);
-        sharedPreferences.edit().putString(STATE_CURRENT_DINING_COMMON, diningCommon).apply();
+        // Set the dining common to preferred unless previously open flag is true
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!preferences.getBoolean(getString(R.string.pref_key_previously_open_dining_common), true)) {
+            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs), MODE_PRIVATE);
+            String defaultDiningCommon = sharedPreferences.getString(STATE_CURRENT_DINING_COMMON, getString(R.string.DLG));
+            String diningCommon = preferences.getString(getString(R.string.pref_key_default_dining_common), defaultDiningCommon);
+            sharedPreferences.edit().putString(STATE_CURRENT_DINING_COMMON, diningCommon).apply();
+        }
 
         // Set to Menu Fragment on open
         showFragment(currentFragmentId);
