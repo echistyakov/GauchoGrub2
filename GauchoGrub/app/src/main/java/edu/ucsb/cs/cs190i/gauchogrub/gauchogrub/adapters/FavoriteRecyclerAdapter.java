@@ -78,45 +78,11 @@ public class FavoriteRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, Favo
                 .trim());
 
         viewHolder.swipeLayout.addDrag(SwipeLayout.DragEdge.Left, viewHolder.bottomWrapper);
-        viewHolder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
-            @Override
-            public void onStartOpen(SwipeLayout layout) {
-
-            }
-
-            @Override
-            public void onOpen(SwipeLayout layout) {
-                Favorite favorite = dataStore.select(Favorite.class)
-                        .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
-                                .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
-                        .get()
-                        .firstOrNull();
-                if(favorite != null)
-                    dataStore.delete(favorite);
-                thisAdapter.notifyDataSetChanged();
-                thisAdapter.queryAsync();
-            }
-
-            @Override
-            public void onStartClose(SwipeLayout layout) {
-
-            }
-
-            @Override
-            public void onClose(SwipeLayout layout) {
-
-            }
-
-            @Override
-            public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
-
-            }
-
-            @Override
-            public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
-
-            }
-        });
+        if (viewHolder.menuSwipeListener == null) {
+            viewHolder.menuSwipeListener = new MenuSwipeListener(viewHolder);
+            viewHolder.swipeLayout.addSwipeListener(viewHolder.menuSwipeListener);
+        }
+        viewHolder.menuSwipeListener.setMenuItem(menuItem);
     }
 
     @Override
@@ -132,6 +98,7 @@ public class FavoriteRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, Favo
         public LinearLayout bottomWrapper;
         public ImageView favoriteVegImageView;
         public ImageView favoriteNutsImageview;
+        public MenuSwipeListener menuSwipeListener = null;
 
         public ViewHolder(View v) {
             super(v);
@@ -140,6 +107,59 @@ public class FavoriteRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, Favo
             bottomWrapper = (LinearLayout) v.findViewById(R.id.favorite_bottomWrapper);
             favoriteNutsImageview = (ImageView) v.findViewById(R.id.favorite_hasNuts);
             favoriteVegImageView = (ImageView) v.findViewById(R.id.favorite_isVeg);
+        }
+
+    }
+
+    public class MenuSwipeListener implements SwipeLayout.SwipeListener {
+
+        private final ViewHolder viewHolder;
+        private MenuItem menuItem;
+
+        public MenuSwipeListener(ViewHolder viewHolder) {
+            this.viewHolder = viewHolder;
+        }
+
+        public void setMenuItem(MenuItem menuItem) {
+            this.menuItem = menuItem;
+        }
+
+        @Override
+        public void onStartOpen(SwipeLayout layout) {
+
+        }
+
+        @Override
+        public void onOpen(SwipeLayout layout) {
+            Favorite favorite = dataStore.select(Favorite.class)
+                    .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
+                            .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
+                    .get()
+                    .firstOrNull();
+            if(favorite != null)
+                dataStore.delete(favorite);
+            thisAdapter.notifyDataSetChanged();
+            thisAdapter.queryAsync();
+        }
+
+        @Override
+        public void onStartClose(SwipeLayout layout) {
+
+        }
+
+        @Override
+        public void onClose(SwipeLayout layout) {
+
+        }
+
+        @Override
+        public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
+
+        }
+
+        @Override
+        public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
+
         }
 
     }
