@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity
         } else if (currentFragmentId == R.id.nav_cams) {
             DiningCamsFragment fragment = (DiningCamsFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
             if(fragment != null) {
-                fragment.switchDiningCommon(diningCommon);
+                fragment.switchDiningCommon();
             }
         }
         // Render buttons

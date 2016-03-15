@@ -141,8 +141,9 @@ public class DiningCamsFragment extends android.support.v4.app.Fragment implemen
         }
     }
 
-    public void switchDiningCommon(String diningCommon) {
+    public void switchDiningCommon() {
         MainActivity activity = (MainActivity) getActivity();
         activity.updateAppBarTitle(getString(R.string.DiningCamsFragment_app_bar_title), true);
+        initCam();
     }
 }
