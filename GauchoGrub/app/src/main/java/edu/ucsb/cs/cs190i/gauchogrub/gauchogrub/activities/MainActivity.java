@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -94,6 +95,15 @@ public class MainActivity extends AppCompatActivity
         // Restore state
         this.restoreInstanceState(savedInstanceState);
 
+        // Set the dining common to preferred unless previously open flag is true
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!preferences.getBoolean(getString(R.string.pref_key_previously_open_dining_common), true)) {
+            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs), MODE_PRIVATE);
+            String defaultDiningCommon = sharedPreferences.getString(STATE_CURRENT_DINING_COMMON, getString(R.string.DLG));
+            String diningCommon = preferences.getString(getString(R.string.pref_key_default_dining_common), defaultDiningCommon);
+            sharedPreferences.edit().putString(STATE_CURRENT_DINING_COMMON, diningCommon).apply();
+        }
+
         // Set to Menu Fragment on open
         showFragment(currentFragmentId);
     }
@@ -162,10 +172,12 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_about) {
             fragment = new AboutFragment();
         }
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.MainActivity_fragmentWrapper, fragment)
-                .commit();
+        if (fragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.MainActivity_fragmentWrapper, fragment)
+                    .commit();
+        }
         // Update current fragment id
         currentFragmentId = id;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

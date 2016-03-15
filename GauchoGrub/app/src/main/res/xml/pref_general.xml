@@ -8,10 +8,10 @@
         android:title="@string/pref_title_default_dining_common" />
 
     <SwitchPreference
-        android:key="@string/pref_key_geolocation_override"
+        android:key="@string/pref_key_previously_open_dining_common"
         android:defaultValue="false"
-        android:title="@string/pref_title_geolocation_override"
-        android:summary="@string/pref_summary_geolocation_override"/>
+        android:title="@string/pref_title_previously_open_dining_common"
+        android:summary="@string/pref_summary_previously_open_dining_common"/>
 
     <MultiSelectListPreference
         android:key="@string/pref_key_default_filter"

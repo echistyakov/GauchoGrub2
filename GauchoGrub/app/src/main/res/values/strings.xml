@@ -76,10 +76,10 @@
     </string-array>
 
     <!-- Dining Commons Value Array (for Settings) -->
-    <string name="CAR_value">CAR</string>
-    <string name="DLG_value">DLG</string>
-    <string name="ORT_value">ORT</string>
-    <string name="POR_value">POR</string>
+    <string name="CAR_value">@string/CAR</string>
+    <string name="DLG_value">@string/DLG</string>
+    <string name="ORT_value">@string/ORT</string>
+    <string name="POR_value">@string/POR</string>
 
     <string-array name="dining_commons_values">
         <item>@string/CAR_value</item>
@@ -101,16 +101,16 @@
 
     <!-- Strings specific to Settings -->
     <string name="pref_key_default_dining_common">default_dining_common</string>
-    <string name="pref_key_geolocation_override">geolocation_override_switch</string>
+    <string name="pref_key_previously_open_dining_common">previously_open_switch</string>
     <string name="pref_key_default_filter">default_filter</string>
     <string name="pref_key_favorites_notification">favorites_notification_switch</string>
 
     <string name="pref_title_default_dining_common">Default Dining Common</string>
-    <string name="pref_title_geolocation_override">Geolocation Override</string>
+    <string name="pref_title_previously_open_dining_common">Previously Open Override</string>
     <string name="pref_title_favorites_notification">Favorites Notification</string>
     <string name="pref_title_default_filter">Default Filter for Menu</string>
 
-    <string name="pref_summary_geolocation_override">Override the default dining common based on your location</string>
+    <string name="pref_summary_previously_open_dining_common">Override the default dining common with your previously open dining common</string>
 
     <!-- Human-readable Pref Strings -->
     <string name="pref_vegetarian">Only vegetarian</string>
