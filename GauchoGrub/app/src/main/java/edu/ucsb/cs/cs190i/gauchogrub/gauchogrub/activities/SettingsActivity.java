@@ -1,11 +1,10 @@
-package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
+package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.activities;
 
 
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -16,7 +15,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.view.MenuItem;
 
 import com.google.common.base.Joiner;
@@ -25,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On

@@ -1,4 +1,4 @@
-package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
+package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -8,16 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.activities.MainActivity;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ScheduleFragment.OnFragmentInteractionListener} interface
+ * {@link AboutFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ScheduleFragment#newInstance} factory method to
+ * Use the {@link AboutFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ScheduleFragment extends Fragment {
+public class AboutFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -29,7 +32,7 @@ public class ScheduleFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public ScheduleFragment() {
+    public AboutFragment() {
         // Required empty public constructor
     }
 
@@ -39,11 +42,11 @@ public class ScheduleFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ScheduleFragment.
+     * @return A new instance of fragment AboutFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ScheduleFragment newInstance(String param1, String param2) {
-        ScheduleFragment fragment = new ScheduleFragment();
+    public static AboutFragment newInstance(String param1, String param2) {
+        AboutFragment fragment = new AboutFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -64,15 +67,15 @@ public class ScheduleFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         MainActivity activity = (MainActivity) getActivity();
-        activity.fab.show();
-        activity.updateAppBarTitle(getString(R.string.SchedulesFragment_app_bar_title), true);
+        activity.fab.hide();
+        activity.updateAppBarTitle(getString(R.string.AboutFragment_app_bar_title), false);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_schedule, container, false);
+        return inflater.inflate(R.layout.fragment_about, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

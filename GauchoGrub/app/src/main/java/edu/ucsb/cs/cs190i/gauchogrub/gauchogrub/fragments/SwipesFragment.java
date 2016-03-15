@@ -1,4 +1,4 @@
-package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
+package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -7,17 +7,23 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.activities.MainActivity;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link AboutFragment.OnFragmentInteractionListener} interface
+ * {@link SwipesFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link AboutFragment#newInstance} factory method to
+ * Use the {@link SwipesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AboutFragment extends Fragment {
+public class SwipesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -29,7 +35,10 @@ public class AboutFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public AboutFragment() {
+    @Bind(R.id.SwipesFragment_webView)
+    public WebView webView;
+
+    public SwipesFragment() {
         // Required empty public constructor
     }
 
@@ -39,11 +48,11 @@ public class AboutFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment AboutFragment.
+     * @return A new instance of fragment SwipesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AboutFragment newInstance(String param1, String param2) {
-        AboutFragment fragment = new AboutFragment();
+    public static SwipesFragment newInstance(String param1, String param2) {
+        SwipesFragment fragment = new SwipesFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -65,14 +74,17 @@ public class AboutFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         MainActivity activity = (MainActivity) getActivity();
         activity.fab.hide();
-        activity.updateAppBarTitle(getString(R.string.AboutFragment_app_bar_title), false);
+        activity.updateAppBarTitle(getString(R.string.SwipesFragment_app_bar_title), false);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_about, container, false);
+        View view = inflater.inflate(R.layout.fragment_swipes, container, false);
+        ButterKnife.bind(this, view);
+        webView.loadUrl(getString(R.string.swipes_url));
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
