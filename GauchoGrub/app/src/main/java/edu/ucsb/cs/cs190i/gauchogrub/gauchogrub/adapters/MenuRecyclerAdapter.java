@@ -109,7 +109,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                 canAdd = menuItem.isVegetarian;
             }
             if (filterValues.contains(context.getString(R.string.pref_no_nuts_value))) {
-                canAdd = !menuItem.hasNuts;
+                canAdd = !menuItem.hasNuts && canAdd;
             }
             if (canAdd) {
                 filteredMenuItems.add(menuItem);
