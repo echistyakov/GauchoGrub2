@@ -1,4 +1,4 @@
-package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
+package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -9,8 +9,8 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 
-import org.joda.time.DateTime;
-
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.activities.MainActivity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.MenuScraperService;
 
 /**

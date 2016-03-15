@@ -1,8 +1,7 @@
-package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
+package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.adapters;
 
 
 import android.content.Context;
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +12,8 @@ import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
 
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.GGApp;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Favorite;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
@@ -29,7 +30,7 @@ public class FavoriteRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, Favo
     private Context context;
     private FavoriteRecyclerAdapter thisAdapter;
 
-    protected FavoriteRecyclerAdapter(String diningCommon, Context context) {
+    public FavoriteRecyclerAdapter(String diningCommon, Context context) {
         super(MenuItem.$TYPE);
         dataStore = ((GGApp) context.getApplicationContext()).getData();
         this.diningCommon = diningCommon;
@@ -41,8 +42,11 @@ public class FavoriteRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, Favo
 
     @Override
     public Result<MenuItem> performQuery() {
-        return dataStore.select(MenuItem.class).join(Favorite.class).on(MenuItem.ID.eq(Favorite.MENU_ITEM_ID))
-                .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)).get();
+        return dataStore.select(MenuItem.class)
+                .join(Favorite.class)
+                .on(MenuItem.ID.eq(Favorite.MENU_ITEM_ID))
+                .where(Favorite.DINING_COMMON_ID.eq(diningCommonId))
+                .get();
     }
 
     @Override
@@ -70,7 +74,8 @@ public class FavoriteRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, Favo
         viewHolder.favoriteTextView.setText(menuItem.getTitle()
                 .replace(NUTS_STRING, "")
                 .replace(VEG_STRING, "")
-                .replace(VGN_STRING, ""));
+                .replace(VGN_STRING, "")
+                .trim());
 
         viewHolder.swipeLayout.addDrag(SwipeLayout.DragEdge.Left, viewHolder.bottomWrapper);
         viewHolder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
@@ -84,7 +89,8 @@ public class FavoriteRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, Favo
                 Favorite favorite = dataStore.select(Favorite.class)
                         .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
                                 .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
-                        .get().firstOrNull();
+                        .get()
+                        .firstOrNull();
                 if(favorite != null)
                     dataStore.delete(favorite);
                 thisAdapter.notifyDataSetChanged();

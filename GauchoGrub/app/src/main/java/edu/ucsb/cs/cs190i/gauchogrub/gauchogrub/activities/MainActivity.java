@@ -1,4 +1,4 @@
-package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
+package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.activities;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -24,9 +24,15 @@ import java.util.Arrays;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fab.MaterialSheetFab;
 
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dining_cams.DiningCamsFragment;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.AboutFragment;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.FavoritesFragment;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.MenuFragment;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.ScheduleFragment;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.SwipesFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,

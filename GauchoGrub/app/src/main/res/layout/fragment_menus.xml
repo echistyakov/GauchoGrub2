@@ -103,7 +103,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="LinearLayoutManager"
-        tools:context="edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.MenuFragment"
+        tools:context=".fragments.MenuFragment"
         tools:listitem="@layout/fragment_menuitem"
         android:layout_below="@+id/MenuFragment_MealScrollView"
         android:layout_alignParentStart="true" />
