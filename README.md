@@ -31,3 +31,4 @@ Icons:
  3. Menus icon made by [Freepik](http://www.flaticon.com/authors/freepik) from [www.flaticon.com](www.flaticon.com)
  4. Swipes icon made by [Freepik](http://www.flaticon.com/authors/freepik) from [www.flaticon.com](www.flaticon.com)
  5. Nuts icon made by [Rami McMin](http://www.flaticon.com/authors/rami-mcmin) from [www.flaticon.com](www.flaticon.com)
+ 6. Notification icon made by [Freepik](http://www.flaticon.com/authors/freepik) from [www.flaticon.com](www.flaticon.com)
