@@ -147,9 +147,11 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         }
         // Handle favorites star
         if(favorite != null) {
-            viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
+            viewHolder.menuItemFavoriteStar.setImageResource(R.drawable.ic_favorite_on);
+            viewHolder.menuItemSwipeFavoriteStar.setImageResource(R.drawable.ic_favorite_off);
         } else {
             viewHolder.menuItemFavoriteStar.setImageResource(android.R.color.transparent);
+            viewHolder.menuItemSwipeFavoriteStar.setImageResource(R.drawable.ic_favorite_on);
         }
         // Remove reduntant (v), (vgn), or (w/ nuts) from name
         String NUTS_STRING = context.getString(R.string.parsable_has_nuts);
@@ -225,7 +227,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                 newFavorite.setDiningCommonId(diningCommonId);
                 newFavorite.setMenuItemId(menuItem.getId());
                 dataStore.insert(newFavorite);
-                viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
+                viewHolder.menuItemFavoriteStar.setImageResource(R.drawable.ic_favorite_on);
             }
             thisAdapter.notifyDataSetChanged();
             thisAdapter.queryAsync();

@@ -9,7 +9,7 @@
     <dimen name="text_margin">16dp</dimen>
 
     <!-- Menu Fragment Date Buttons -->
-    <dimen name="MenuFragment_date_button_width">80dp</dimen>
+    <dimen name="MenuFragment_date_button_width">86dp</dimen>
 
     <!-- Menu Fragment Meal Buttons -->
     <dimen name="MenuFragment_meal_button_width">150dp</dimen>
