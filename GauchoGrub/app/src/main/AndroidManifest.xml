@@ -41,6 +41,9 @@
         <service
             android:name=".services.MenuScraperService"
             android:exported="false"/>
+        <service
+            android:name=".services.NotificationService"
+            android:enabled="true" />
 
         <receiver android:name=".utils.BootReceiver"
             android:enabled="false">

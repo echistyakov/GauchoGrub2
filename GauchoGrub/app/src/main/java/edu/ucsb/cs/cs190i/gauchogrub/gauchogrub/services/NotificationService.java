@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import org.joda.time.LocalDate;
 
@@ -31,6 +32,12 @@ public class NotificationService extends IntentService {
 
     private EntityDataStore<Persistable> data;
 
+    public final static String LOG_TAG = "NotificationService";
+
+    public NotificationService() {
+        super("NotificationService");
+    }
+
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *
@@ -43,6 +50,8 @@ public class NotificationService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.d(LOG_TAG, "NotificationService triggered");
+        data = ((GGApp) getApplication()).getData();
         List<FavoriteStruct> favorites = getAllFavoritesToday();
         // Stop if favorites are empty
         if(favorites.size() <= 0) {
@@ -56,8 +65,9 @@ public class NotificationService extends IntentService {
         int i = 0;
         for(FavoriteStruct favorite : favorites) {
             builder = new NotificationCompat.Builder(getBaseContext())
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentText(favorite.menuItem.title + " is at " + favorite.diningCommon + " for " + favorite.mealName);
+                    .setContentTitle(favorite.menuItem.title)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setContentText(favorite.mealName + " at " + favorite.diningCommon);
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             notificationManager.notify(i++, builder.build());
         }
@@ -72,30 +82,39 @@ public class NotificationService extends IntentService {
     private List<FavoriteStruct> getFavorites(String diningCommon, LocalDate date) {
         ArrayList<FavoriteStruct> favorites = new ArrayList<>();
         int dayOfWeek = date.getDayOfWeek();
+
         // Get DiningCommon from diningCommon string
-        DiningCommon diningCommonResult = data.select(DiningCommon.class).where(DiningCommon.NAME.eq(diningCommon)).get().first();
-        // Get RepeatedEvent result for current day of the week and the right dining common
-        List<RepeatedEvent> repeatedEvents = data.select(RepeatedEvent.class)
-                .where(RepeatedEvent.DAY_OF_WEEK.equal(dayOfWeek)
-                        .and(RepeatedEvent.DINING_COMMON_ID.eq(diningCommonResult.getId()))).get().toList();
+        int diningCommonId = data.select(DiningCommon.class)
+                .where(DiningCommon.NAME.eq(diningCommon))
+                .get()
+                .first()
+                .getId();
         // Get Menu of the current day
         List<Menu> menusInDiningCommonToday = data.select(Menu.class)
-                .where(Menu.DATE.eq(date)).get().toList();
+                .join(RepeatedEvent.class).on(Menu.EVENT_ID.eq(RepeatedEvent.ID))
+                .join(DiningCommon.class).on(RepeatedEvent.DINING_COMMON_ID.eq(diningCommonId))
+                .join(Meal.class).on(RepeatedEvent.MEAL_ID.eq(Meal.ID))
+                .where(DiningCommon.NAME.eq(diningCommon)
+                        .and(Menu.DATE.eq(date)))
+                .get()
+                .toList();
         // Get all favorites
-        List<Favorite> favoriteEntities = data.select(Favorite.class).get().toList();
+        List<Favorite> favoriteEntities = data.select(Favorite.class).where(Favorite.DINING_COMMON_ID.eq(diningCommonId)).get().toList();
         for(Menu menu : menusInDiningCommonToday) {
-            for(RepeatedEvent repeatedEvent : repeatedEvents) {
-                // If menu is today and corresponds to a repeatedEvent for the correct diningCommon
-                if(menu.getEventId() == repeatedEvent.getId()) {
-                    // Traverse all items in the menu, add favorites to list of favorites
-                    for(Favorite favorite : favoriteEntities) {
-                        for(BaseMenuItem menuItem : menu.getMenuItems().toList()) {
-                            // If menuItem is favorite, add to list of favorites
-                            if(menuItem.id == favorite.getMenuItemId()) {
-                                Meal meal = data.select(Meal.class).where(Meal.ID.eq(repeatedEvent.getMealId())).get().first();
-                                favorites.add(new FavoriteStruct(menuItem, diningCommon, meal.getName()));
-                            }
-                        }
+            // Traverse all items in the menu, add favorites to list of favorites
+            for(Favorite favorite : favoriteEntities) {
+                for(BaseMenuItem menuItem : menu.getMenuItems().toList()) {
+                    // If menuItem is favorite, add to list of favorites
+                    if(menuItem.id == favorite.getMenuItemId()) {
+                        RepeatedEvent repeatedEvent = data.select(RepeatedEvent.class)
+                                .where(RepeatedEvent.ID.eq(menu.getEventId()))
+                                .get()
+                                .first();
+                        Meal meal = data.select(Meal.class)
+                                .where(Meal.ID.eq(repeatedEvent.getMealId()))
+                                .get()
+                                .first();
+                        favorites.add(new FavoriteStruct(menuItem, diningCommon, meal.getName()));
                     }
                 }
             }

@@ -20,36 +20,43 @@
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="@dimen/MenuFragment_date_button_width"
                 android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
                 android:id="@+id/MenuFragment_button_today"/>
             <Button
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="@dimen/MenuFragment_date_button_width"
                 android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
                 android:id="@+id/MenuFragment_button_tomorrow"/>
             <Button
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="@dimen/MenuFragment_date_button_width"
                 android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
                 android:id="@+id/MenuFragment_button_2days"/>
             <Button
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="@dimen/MenuFragment_date_button_width"
                 android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
                 android:id="@+id/MenuFragment_button_3days"/>
             <Button
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="@dimen/MenuFragment_date_button_width"
                 android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
                 android:id="@+id/MenuFragment_button_4days"/>
             <Button
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="@dimen/MenuFragment_date_button_width"
                 android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
                 android:id="@+id/MenuFragment_button_5days"/>
             <Button
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="@dimen/MenuFragment_date_button_width"
                 android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text"
                 android:id="@+id/MenuFragment_button_6days"/>
         </LinearLayout>
     </HorizontalScrollView>
@@ -71,24 +78,28 @@
                 android:layout_width="@dimen/MenuFragment_meal_button_width"
                 android:layout_height="match_parent"
                 android:id="@+id/MenuFragment_mealButton_breakfast"
+                android:textColor="@color/secondary_text"
                 android:text="@string/MenuFragment_breakfast_string"/>
             <Button
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="@dimen/MenuFragment_meal_button_width"
                 android:layout_height="match_parent"
                 android:text="@string/MenuFragment_lunch_string"
+                android:textColor="@color/secondary_text"
                 android:id="@+id/MenuFragment_mealButton_lunch"/>
             <Button
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="@dimen/MenuFragment_meal_button_width"
                 android:layout_height="match_parent"
                 android:text="@string/MenuFragment_dinner_string"
+                android:textColor="@color/secondary_text"
                 android:id="@+id/MenuFragment_mealButton_dinner"/>
             <Button
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="@dimen/MenuFragment_meal_button_width"
                 android:layout_height="match_parent"
                 android:text="@string/MenuFragment_latenight_string"
+                android:textColor="@color/secondary_text"
                 android:id="@+id/MenuFragment_mealButton_late_night"/>
 
         </LinearLayout>
