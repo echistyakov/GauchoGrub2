@@ -76,10 +76,10 @@
     </string-array>
 
     <!-- Dining Commons Value Array (for Settings) -->
-    <string name="CAR_value">CAR</string>
-    <string name="DLG_value">DLG</string>
-    <string name="ORT_value">ORT</string>
-    <string name="POR_value">POR</string>
+    <string name="CAR_value">@string/CAR</string>
+    <string name="DLG_value">@string/DLG</string>
+    <string name="ORT_value">@string/ORT</string>
+    <string name="POR_value">@string/POR</string>
 
     <string-array name="dining_commons_values">
         <item>@string/CAR_value</item>
