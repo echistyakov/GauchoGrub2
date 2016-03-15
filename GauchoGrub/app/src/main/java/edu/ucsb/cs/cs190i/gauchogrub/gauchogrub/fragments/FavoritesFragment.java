@@ -1,27 +1,35 @@
-package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
+package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.activities.MainActivity;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.adapters.FavoriteRecyclerAdapter;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SwipesFragment.OnFragmentInteractionListener} interface
+ * {@link FavoritesFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link SwipesFragment#newInstance} factory method to
+ * Use the {@link FavoritesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SwipesFragment extends Fragment {
+public class FavoritesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -33,10 +41,15 @@ public class SwipesFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    @Bind(R.id.SwipesFragment_webView)
-    public WebView webView;
+    @Bind(R.id.FavoritesFragment_recyclerView)
+    RecyclerView recyclerView;
 
-    public SwipesFragment() {
+    private String diningCommon;
+    private FavoriteRecyclerAdapter favoriteRecyclerAdapter;
+    ExecutorService executorService;
+
+
+    public FavoritesFragment() {
         // Required empty public constructor
     }
 
@@ -46,11 +59,11 @@ public class SwipesFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment SwipesFragment.
+     * @return A new instance of fragment FavoritesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SwipesFragment newInstance(String param1, String param2) {
-        SwipesFragment fragment = new SwipesFragment();
+    public static FavoritesFragment newInstance(String param1, String param2) {
+        FavoritesFragment fragment = new FavoritesFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -65,23 +78,27 @@ public class SwipesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs), Context.MODE_PRIVATE);
+        diningCommon = sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON,
+                sharedPreferences.getString(getString(R.string.pref_key_default_dining_common),
+                        getString(R.string.DLG)));
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         MainActivity activity = (MainActivity) getActivity();
-        activity.fab.hide();
-        activity.updateAppBarTitle(getString(R.string.SwipesFragment_app_bar_title), false);
+        activity.fab.show();
+        activity.updateAppBarTitle(getString(R.string.FavoritesFragment_app_bar_title), true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_swipes, container, false);
+        View view = inflater.inflate(R.layout.fragment_favorites, container, false);
         ButterKnife.bind(this, view);
-        webView.loadUrl(getString(R.string.swipes_url));
+        setRecyclerAdapter(diningCommon);
         return view;
     }
 
@@ -90,6 +107,29 @@ public class SwipesFragment extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    public void switchDiningCommon(String diningCommon) {
+        this.diningCommon = diningCommon;
+        setRecyclerAdapter(diningCommon);
+    }
+
+    private void setRecyclerAdapter(String diningCommon) {
+        if(favoriteRecyclerAdapter != null) {
+            recyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
+            favoriteRecyclerAdapter.close();
+            executorService.shutdownNow();
+        }
+        // Create new adapter and executor
+        favoriteRecyclerAdapter = new FavoriteRecyclerAdapter(diningCommon, getContext());
+        executorService = Executors.newSingleThreadExecutor();
+        // Set executor and adapter
+        favoriteRecyclerAdapter.setExecutor(executorService);
+        recyclerView.setAdapter(favoriteRecyclerAdapter);
+        // Set layout manager
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        // Start async query
+        favoriteRecyclerAdapter.queryAsync();
     }
 
     @Override

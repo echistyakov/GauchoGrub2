@@ -1,4 +1,4 @@
-package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
+package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.activities;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -25,9 +25,15 @@ import java.util.Arrays;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fab.MaterialSheetFab;
 
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dining_cams.DiningCamsFragment;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.AboutFragment;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.FavoritesFragment;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.MenuFragment;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.ScheduleFragment;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.SwipesFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -197,7 +203,7 @@ public class MainActivity extends AppCompatActivity
     @OnClick ({R.id.fab_sheet_button1, R.id.fab_sheet_button2, R.id.fab_sheet_button3})
     public void updateCurrentDiningCommon(Button fabSheetButton) {
         String diningCommon = fabSheetButton.getText().toString();
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs), MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs),MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         // Set state
         editor.putString(STATE_CURRENT_DINING_COMMON, diningCommon);
@@ -209,6 +215,11 @@ public class MainActivity extends AppCompatActivity
             MenuFragment menuFragment = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
             if(menuFragment != null) {
                 menuFragment.switchDiningCommon(diningCommon);
+            }
+        } else if (currentFragmentId == R.id.nav_favorites) {
+            FavoritesFragment favoritesFragment = (FavoritesFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
+            if(favoritesFragment != null) {
+                favoritesFragment.switchDiningCommon(diningCommon);
             }
         } else if (currentFragmentId == R.id.nav_cams) {
             DiningCamsFragment fragment = (DiningCamsFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);

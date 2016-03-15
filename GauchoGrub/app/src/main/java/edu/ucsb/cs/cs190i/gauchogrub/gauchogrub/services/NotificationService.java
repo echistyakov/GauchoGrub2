@@ -3,7 +3,6 @@ package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
@@ -11,14 +10,13 @@ import android.support.v4.app.NotificationCompat;
 import org.joda.time.LocalDate;
 
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.GGApp;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.MainActivity;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.activities.MainActivity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.BaseMenuItem;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Favorite;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Meal;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Menu;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.MenuItem;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.RepeatedEvent;
 import io.requery.Persistable;
 import io.requery.sql.EntityDataStore;
@@ -66,10 +64,10 @@ public class NotificationService extends IntentService {
     }
 
     /**
-     * Gets favorites for a specific diningCommon, today
-     * @param diningCommon
-     * @param date
-     * @return
+     * Gets favorites for a specific diningCommon
+     * @param diningCommon the diningCommon to get favorites for
+     * @param date a date for menus
+     * @return a list of FavoriteStruct objects containing information for building notifications
      */
     private List<FavoriteStruct> getFavorites(String diningCommon, LocalDate date) {
         ArrayList<FavoriteStruct> favorites = new ArrayList<>();

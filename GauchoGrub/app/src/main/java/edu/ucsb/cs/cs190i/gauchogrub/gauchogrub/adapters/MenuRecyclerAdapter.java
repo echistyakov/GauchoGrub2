@@ -1,10 +1,7 @@
-package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
+package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +11,12 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.GGApp;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.BaseMenuItem;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Favorite;
@@ -44,7 +42,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
 
     private final String LOG_TAG = "MenuRecyclerAdapter";
 
-    protected MenuRecyclerAdapter(String diningCommon, DateTime date, String mealName, Context context) {
+    public MenuRecyclerAdapter(String diningCommon, DateTime date, String mealName, Context context) {
         super(MenuItem.$TYPE);
         this.date = date;
         this.context = context;
@@ -92,7 +90,9 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                 .join(Meal.class).on(RepeatedEvent.MEAL_ID.eq(Meal.ID))
                 .where(DiningCommon.NAME.eq(diningCommon)
                         .and(Menu.DATE.eq(date.toLocalDate()))
-                        .and(Meal.NAME.eq(mealName))).get().first();
+                        .and(Meal.NAME.eq(mealName)))
+                .get()
+                .first();
         List<BaseMenuItem> menuItems = menu.getMenuItems().toList();
         List<Integer> menuItemIds = new ArrayList<>();
         for(BaseMenuItem menuItem : menuItems) {
@@ -107,7 +107,8 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         Favorite favorite = dataStore.select(Favorite.class)
                 .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
                         .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
-                .get().firstOrNull();
+                .get()
+                .firstOrNull();
 
         // Nuts and V/VGN independent
         if(menuItem.getHasNuts()) {
@@ -136,7 +137,8 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         viewHolder.menuItemTextView.setText(menuItem.getTitle()
                 .replace(NUTS_STRING, "")
                 .replace(VEG_STRING, "")
-                .replace(VGN_STRING, ""));
+                .replace(VGN_STRING, "")
+                .trim());
         viewHolder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
             @Override
             public void onStartOpen(SwipeLayout layout) {
@@ -148,7 +150,8 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                 Favorite favorite = dataStore.select(Favorite.class)
                         .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
                                 .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
-                        .get().firstOrNull();
+                        .get()
+                        .firstOrNull();
                 // If the favorite exists
                 if(favorite != null) {
                     dataStore.delete(favorite);
@@ -161,6 +164,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                     viewHolder.menuItemFavoriteStar.setImageResource(android.R.drawable.btn_star_big_on);
                 }
                 thisAdapter.notifyDataSetChanged();
+                thisAdapter.queryAsync();
                 layout.close();
             }
 
