@@ -4,8 +4,6 @@ import io.requery.Column;
 import io.requery.Entity;
 import io.requery.Generated;
 import io.requery.Key;
-import io.requery.OneToMany;
-import io.requery.query.Result;
 
 @Entity
 public class BaseDiningCommon {

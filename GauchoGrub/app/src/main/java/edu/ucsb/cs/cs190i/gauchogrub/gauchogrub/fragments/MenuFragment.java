@@ -1,14 +1,12 @@
-package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub;
+package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +24,10 @@ import java.util.concurrent.Executors;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.GGApp;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.activities.MainActivity;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.adapters.MenuRecyclerAdapter;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Meal;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.Menu;
@@ -122,7 +124,7 @@ public class MenuFragment extends Fragment {
         diningCommon = sharedPreferences.getString(MainActivity.STATE_CURRENT_DINING_COMMON,
                 sharedPreferences.getString(getString(R.string.pref_key_default_dining_common),
                         getString(R.string.DLG)));
-        int savedDateInMillis = 0;
+        int savedDateInMillis;
         // Attempt to restore date and mealName from savedInstanceState, if it exists
         if(savedInstanceState != null) {
             savedDateInMillis = savedInstanceState.getInt(STATE_DISPLAY_DATE, 0);
@@ -165,7 +167,7 @@ public class MenuFragment extends Fragment {
 
     /**
      * To be triggered from outside MenuFragment upon the switching of a diningCommon
-     * @param diningCommon
+     * @param diningCommon the diningCommon to switch to
      */
     public void switchDiningCommon(String diningCommon) {
         resetMealButtonBackgrounds();
@@ -227,7 +229,9 @@ public class MenuFragment extends Fragment {
                     .join(Meal.class).on(RepeatedEvent.MEAL_ID.eq(Meal.ID))
                     .where(DiningCommon.NAME.eq(diningCommon)
                             .and(Menu.DATE.eq(displayDate.toLocalDate()))
-                            .and(Meal.NAME.eq(mealNames[i]))).get().firstOrNull();
+                            .and(Meal.NAME.eq(mealNames[i])))
+                    .get()
+                    .firstOrNull();
             if(menu != null && !menu.getMenuItems().toList().isEmpty()) {
                 return mealNames[i];
             }
