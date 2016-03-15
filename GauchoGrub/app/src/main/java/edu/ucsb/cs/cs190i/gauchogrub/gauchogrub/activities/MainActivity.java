@@ -211,24 +211,24 @@ public class MainActivity extends AppCompatActivity
         editor.apply();
         // Hide the sheet
         materialSheetFab.hideSheet();
-        if(currentFragmentId == R.id.nav_menus) {
+        if (currentFragmentId == R.id.nav_menus) {
             MenuFragment menuFragment = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
-            if(menuFragment != null) {
+            if (menuFragment != null) {
                 menuFragment.switchDiningCommon(diningCommon);
             }
         } else if (currentFragmentId == R.id.nav_favorites) {
             FavoritesFragment favoritesFragment = (FavoritesFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
-            if(favoritesFragment != null) {
+            if (favoritesFragment != null) {
                 favoritesFragment.switchDiningCommon(diningCommon);
             }
-        } else if(currentFragmentId == R.id.nav_schedules) {
+        } else if (currentFragmentId == R.id.nav_schedules) {
             ScheduleFragment scheduleFragment = (ScheduleFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
-            if(scheduleFragment != null) {
+            if (scheduleFragment != null) {
                 scheduleFragment.updateDiningCommon(diningCommon);
             }
         } else if (currentFragmentId == R.id.nav_cams) {
             DiningCamsFragment fragment = (DiningCamsFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
-            if(fragment != null) {
+            if (fragment != null) {
                 fragment.switchDiningCommon();
             }
         }
@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity
         String defaultString = getResources().getString(R.string.DLG);
         // Get currently stored default Dining Common or else DLG string
         String currentDiningCommon = sharedPreferences.getString(STATE_CURRENT_DINING_COMMON, defaultString);
-        if(!diningCommonStrings.contains(currentDiningCommon))
+        if (!diningCommonStrings.contains(currentDiningCommon))
             currentDiningCommon = defaultString;
         // Create ArrayList of fabSheetButton references
         ArrayList<Button> fabSheetButtons = new ArrayList<>();
@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity
         // Set text for cardView buttons
         int i = 0;
         for(String diningCommonString : diningCommonStrings) {
-            if(!diningCommonString.equals(currentDiningCommon))  {
+            if (!diningCommonString.equals(currentDiningCommon))  {
                 //Log.d(LOG_TAG, diningCommonString);
                 Button fabSheetButton = fabSheetButtons.get(i++);
                 fabSheetButton.setText(diningCommonString);
@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.MainActivity_dining_common_shared_prefs),MODE_PRIVATE);
         String defaultString = getResources().getString(R.string.DLG);
         String currentDiningCommon = sharedPreferences.getString(STATE_CURRENT_DINING_COMMON, defaultString);
-        if(title == null) {
+        if (title == null) {
             setTitle(currentDiningCommon);
         } else if (showDiningCommonName) {
             setTitle(title + ": " + currentDiningCommon);
