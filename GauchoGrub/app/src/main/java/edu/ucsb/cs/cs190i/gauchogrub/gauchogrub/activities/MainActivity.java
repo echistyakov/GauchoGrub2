@@ -255,10 +255,11 @@ public class MainActivity extends AppCompatActivity
                 fabSheetButton.setText(diningCommonString);
                 // if we are in the dining cams fragment, remove the button for Portola
                 if (diningCommonString.equals(getString(R.string.POR))) {
-                    if (currentFragmentId == R.id.nav_cams)
+                    if (currentFragmentId == R.id.nav_cams) {
                         fabSheetButton.setVisibility(View.GONE);
-                    else
+                    } else {
                         fabSheetButton.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         }
