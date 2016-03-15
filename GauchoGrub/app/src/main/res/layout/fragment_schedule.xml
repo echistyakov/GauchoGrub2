@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,10 +8,165 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".fragments.ScheduleFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-</FrameLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/ScheduleFragment_header_text_size"
+            android:paddingLeft="@dimen/ScheduleFragment_header_side_padding"
+            android:paddingRight="@dimen/ScheduleFragment_header_side_padding"
+            android:paddingTop="@dimen/ScheduleFragment_header_vertical_padding"
+            android:paddingBottom="@dimen/ScheduleFragment_header_vertical_padding"
+            android:text="@string/monday"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/fragment_schedule_header_style" />
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/ScheduleFragment_Monday"
+            android:name="edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.ScheduleFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".fragments.ScheduleFragment"
+            tools:listitem="@layout/fragment_schedule_row"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/ScheduleFragment_header_text_size"
+            android:paddingLeft="@dimen/ScheduleFragment_header_side_padding"
+            android:paddingRight="@dimen/ScheduleFragment_header_side_padding"
+            android:paddingTop="@dimen/ScheduleFragment_header_vertical_padding"
+            android:paddingBottom="@dimen/ScheduleFragment_header_vertical_padding"
+            android:text="@string/tuesday"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/fragment_schedule_header_style" />
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/ScheduleFragment_Tuesday"
+            android:name="edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.ScheduleFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".fragments.ScheduleFragment"
+            tools:listitem="@layout/fragment_schedule_row"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/ScheduleFragment_header_text_size"
+            android:paddingLeft="@dimen/ScheduleFragment_header_side_padding"
+            android:paddingRight="@dimen/ScheduleFragment_header_side_padding"
+            android:paddingTop="@dimen/ScheduleFragment_header_vertical_padding"
+            android:paddingBottom="@dimen/ScheduleFragment_header_vertical_padding"
+            android:text="@string/wednesday"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/fragment_schedule_header_style" />
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/ScheduleFragment_Wednesday"
+            android:name="edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.ScheduleFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".fragments.ScheduleFragment"
+            tools:listitem="@layout/fragment_schedule_row" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/ScheduleFragment_header_text_size"
+            android:paddingLeft="@dimen/ScheduleFragment_header_side_padding"
+            android:paddingRight="@dimen/ScheduleFragment_header_side_padding"
+            android:paddingTop="@dimen/ScheduleFragment_header_vertical_padding"
+            android:paddingBottom="@dimen/ScheduleFragment_header_vertical_padding"
+            android:text="@string/thursday"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/fragment_schedule_header_style" />
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/ScheduleFragment_Thursday"
+            android:name="edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.ScheduleFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".fragments.ScheduleFragment"
+            tools:listitem="@layout/fragment_schedule_row"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/ScheduleFragment_header_text_size"
+            android:paddingLeft="@dimen/ScheduleFragment_header_side_padding"
+            android:paddingRight="@dimen/ScheduleFragment_header_side_padding"
+            android:paddingTop="@dimen/ScheduleFragment_header_vertical_padding"
+            android:paddingBottom="@dimen/ScheduleFragment_header_vertical_padding"
+            android:text="@string/friday"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/fragment_schedule_header_style" />
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/ScheduleFragment_Friday"
+            android:name="edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.ScheduleFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".fragments.ScheduleFragment"
+            tools:listitem="@layout/fragment_schedule_row"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/ScheduleFragment_header_text_size"
+            android:paddingLeft="@dimen/ScheduleFragment_header_side_padding"
+            android:paddingRight="@dimen/ScheduleFragment_header_side_padding"
+            android:paddingTop="@dimen/ScheduleFragment_header_vertical_padding"
+            android:paddingBottom="@dimen/ScheduleFragment_header_vertical_padding"
+            android:text="@string/saturday"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/fragment_schedule_header_style" />
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/ScheduleFragment_Saturday"
+            android:name="edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.ScheduleFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".fragments.ScheduleFragment"
+            tools:listitem="@layout/fragment_schedule_row"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/ScheduleFragment_header_text_size"
+            android:paddingLeft="@dimen/ScheduleFragment_header_side_padding"
+            android:paddingRight="@dimen/ScheduleFragment_header_side_padding"
+            android:paddingTop="@dimen/ScheduleFragment_header_vertical_padding"
+            android:paddingBottom="@dimen/ScheduleFragment_header_vertical_padding"
+            android:text="@string/sunday"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/fragment_schedule_header_style" />
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/ScheduleFragment_Sunday"
+            android:name="edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.MenuFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".fragments.ScheduleFragment"
+            tools:listitem="@layout/fragment_schedule_row"/>
+
+    </LinearLayout>
+
+</ScrollView>

@@ -213,6 +213,11 @@ public class MainActivity extends AppCompatActivity
             if(favoritesFragment != null) {
                 favoritesFragment.switchDiningCommon(diningCommon);
             }
+        } else if(currentFragmentId == R.id.nav_schedules) {
+            ScheduleFragment scheduleFragment = (ScheduleFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
+            if(scheduleFragment != null) {
+                scheduleFragment.updateDiningCommon(diningCommon);
+            }
         }
         // Render buttons
         renderDiningCommonUpdates();
