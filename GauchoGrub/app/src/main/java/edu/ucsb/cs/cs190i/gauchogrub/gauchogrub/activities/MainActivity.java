@@ -184,6 +184,7 @@ public class MainActivity extends AppCompatActivity
         currentFragmentId = id;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+        renderDiningCommonUpdates();
         return true;
     }
 
@@ -268,10 +269,11 @@ public class MainActivity extends AppCompatActivity
                 fabSheetButton.setText(diningCommonString);
                 // if we are in the dining cams fragment, disable the button for Portola\
                 if (diningCommonString.equals(getString(R.string.POR))) {
-                    if (currentFragmentId == R.id.nav_cams)
-                        fabSheetButton.setClickable(false);
+                    if (currentFragmentId == R.id.nav_cams){
+                        fabSheetButton.setVisibility(View.GONE);
+                    }
                     else
-                        fabSheetButton.setClickable(true);
+                        fabSheetButton.setVisibility(View.VISIBLE);
                 }
             }
         }
