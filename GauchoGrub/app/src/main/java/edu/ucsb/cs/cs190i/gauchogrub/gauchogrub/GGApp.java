@@ -24,6 +24,7 @@ public class GGApp extends Application {
         SharedPreferences prefs = getSharedPreferences(packageName, MODE_PRIVATE);
 
         // If this is the first time an app is launched
+        // TODO: uncomment at some point
         //if (prefs.getBoolean("first_run", true)) {
             InitialMigration migration = new InitialMigration(this.getSchemaModifier(), this.getData(), getApplicationContext());
             // Clear our tables in case `first_run` flag was somehow compromised
