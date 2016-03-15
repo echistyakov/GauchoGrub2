@@ -13,7 +13,7 @@
 
     <string name="drawer_category_settings">About and Settings</string>
     <string name="drawer_settings">Settings</string>
-    <string name="drawer_about">About</string>
+    <string name="drawer_test_notifications">Test Favorites Notifications</string>
 
     <string-array name="naviation_drawer_items">
         <item name="menus">@string/drawer_menus</item>
@@ -22,7 +22,7 @@
         <item name="swipes">@string/drawer_swipes</item>
         <item name="cams">@string/drawer_cams</item>
         <item name="settings">@string/drawer_settings</item>
-        <item name="about">@string/drawer_about</item>
+        <item name="test_notifications">@string/drawer_test_notifications</item>
     </string-array>
 
     <!-- MainActivity -->

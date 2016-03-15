@@ -160,7 +160,7 @@ public class MenuFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.MenuFragment_recyclerView);
         setDateButtonsText();
         generateMealButtons();
-        buttonToday.setBackgroundColor(Color.LTGRAY);
+        buttonToday.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight, null));
         setRecyclerAdapter(diningCommon, displayDate, mealName);
         return view;
     }
@@ -277,28 +277,28 @@ public class MenuFragment extends Fragment {
         } else {
             breakfastButton.setVisibility(View.VISIBLE);
             if(mealName.equals(breakfastString) || mealName.equals(brunchString))
-                breakfastButton.setBackgroundColor(Color.LTGRAY);
+                breakfastButton.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight, null));
         }
         if(!offeredMeals.contains(lunchString)) {
             lunchButton.setVisibility(View.INVISIBLE);
         } else {
             lunchButton.setVisibility(View.VISIBLE);
             if(mealName.equals(lunchString))
-                lunchButton.setBackgroundColor(Color.LTGRAY);
+                lunchButton.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight, null));
         }
         if(!offeredMeals.contains(dinnerString)) {
             dinnerButton.setVisibility(View.INVISIBLE);
         } else {
             dinnerButton.setVisibility(View.VISIBLE);
             if(mealName.equals(dinnerString))
-                dinnerButton.setBackgroundColor(Color.LTGRAY);
+                dinnerButton.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight, null));
         }
         if(!offeredMeals.contains(lateNightString)) {
             lateNightButton.setVisibility(View.INVISIBLE);
         } else {
             lateNightButton.setVisibility(View.VISIBLE);
             if(mealName.equals(lateNightString))
-                lateNightButton.setBackgroundColor(Color.LTGRAY);
+                lateNightButton.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight, null));
         }
     }
 
@@ -356,7 +356,7 @@ public class MenuFragment extends Fragment {
     @OnClick({R.id.MenuFragment_button_today, R.id.MenuFragment_button_tomorrow, R.id.MenuFragment_button_2days, R.id.MenuFragment_button_3days, R.id.MenuFragment_button_4days, R.id.MenuFragment_button_5days, R.id.MenuFragment_button_6days})
     public void handleDateButtonClick(Button button) {
         resetDateButtonBackgrounds();
-        button.setBackgroundColor(Color.LTGRAY);
+        button.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight, null));
         switch(button.getId()) {
             case R.id.MenuFragment_button_today:
                 displayDate = DateTime.now();
@@ -386,7 +386,7 @@ public class MenuFragment extends Fragment {
     @OnClick({R.id.MenuFragment_mealButton_breakfast, R.id.MenuFragment_mealButton_lunch, R.id.MenuFragment_mealButton_dinner, R.id.MenuFragment_mealButton_late_night})
     public void handleMealButtonClick(Button button) {
         resetMealButtonBackgrounds();
-        button.setBackgroundColor(Color.LTGRAY);
+        button.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight, null));
         mealName = button.getText().toString();
         setRecyclerAdapter(diningCommon, displayDate, mealName);
     }

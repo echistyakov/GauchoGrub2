@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -30,18 +31,17 @@ import butterknife.OnClick;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fab.MaterialSheetFab;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.dining_cams.DiningCamsFragment;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.AboutFragment;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.FavoritesFragment;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.MenuFragment;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.ScheduleFragment;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fragments.SwipesFragment;
+import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.NotificationService;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
                    MenuFragment.OnListFragmentInteractionListener,
                    ScheduleFragment.OnFragmentInteractionListener,
                    FavoritesFragment.OnFragmentInteractionListener,
-                   AboutFragment.OnFragmentInteractionListener,
                    SwipesFragment.OnFragmentInteractionListener {
 
     private ActionBarDrawerToggle toggle;
@@ -169,8 +169,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             this.startActivity(intent);
-        } else if (id == R.id.nav_about) {
-            fragment = new AboutFragment();
+        } else if (id == R.id.nav_test_notifications) {
+            Log.d("MainActivity", "Attempting to start service");
+            Intent intent = new Intent(this, NotificationService.class);
+            this.startService(intent);
         }
         if (fragment != null) {
             getSupportFragmentManager()
