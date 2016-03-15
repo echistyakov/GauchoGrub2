@@ -168,6 +168,9 @@ public class MainActivity extends AppCompatActivity
                 .commit();
         // Update current fragment id
         currentFragmentId = id;
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        renderDiningCommonUpdates();
     }
 
     @Override
@@ -194,6 +197,9 @@ public class MainActivity extends AppCompatActivity
         editor.apply();
         // Hide the sheet
         materialSheetFab.hideSheet();
+        // Render buttons
+        renderDiningCommonUpdates();
+        // call update function from fragment
         if (currentFragmentId == R.id.nav_menus) {
             MenuFragment menuFragment = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
             if (menuFragment != null) {
@@ -215,8 +221,7 @@ public class MainActivity extends AppCompatActivity
                 fragment.switchDiningCommon();
             }
         }
-        // Render buttons
-        renderDiningCommonUpdates();
+
     }
 
     public void renderDiningCommonUpdates() {
@@ -248,12 +253,12 @@ public class MainActivity extends AppCompatActivity
                 //Log.d(LOG_TAG, diningCommonString);
                 Button fabSheetButton = fabSheetButtons.get(i++);
                 fabSheetButton.setText(diningCommonString);
-                // if we are in the dining cams fragment, disable the button for Portola
+                // if we are in the dining cams fragment, remove the button for Portola
                 if (diningCommonString.equals(getString(R.string.POR))) {
-                    if (currentFragmentId == R.id.nav_cams){
-                        fabSheetButton.setClickable(false);
+                    if (currentFragmentId == R.id.nav_cams) {
+                        fabSheetButton.setVisibility(View.GONE);
                     } else {
-                        fabSheetButton.setClickable(true);
+                        fabSheetButton.setVisibility(View.VISIBLE);
                     }
                 }
             }
