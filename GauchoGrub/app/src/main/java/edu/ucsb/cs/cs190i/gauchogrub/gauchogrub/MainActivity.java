@@ -202,6 +202,11 @@ public class MainActivity extends AppCompatActivity
             if(menuFragment != null) {
                 menuFragment.switchDiningCommon(diningCommon);
             }
+        } else if(currentFragmentId == R.id.nav_schedules) {
+            ScheduleFragment scheduleFragment = (ScheduleFragment) getSupportFragmentManager().findFragmentById(R.id.MainActivity_fragmentWrapper);
+            if(scheduleFragment != null) {
+
+            }
         }
         // Render buttons
         renderDiningCommonUpdates();
