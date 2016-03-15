@@ -112,6 +112,7 @@ public class FavoritesFragment extends Fragment {
     public void switchDiningCommon(String diningCommon) {
         this.diningCommon = diningCommon;
         setRecyclerAdapter(diningCommon);
+        ((MainActivity) getActivity()).updateAppBarTitle(getString(R.string.FavoritesFragment_app_bar_title), true);
     }
 
     private void setRecyclerAdapter(String diningCommon) {

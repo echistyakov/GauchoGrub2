@@ -147,6 +147,7 @@ public class ScheduleFragment extends Fragment {
     public void updateDiningCommon(String diningCommon) {
         this.diningCommon = diningCommon;
         setScheduleAdapters();
+        ((MainActivity) getActivity()).updateAppBarTitle(getString(R.string.SchedulesFragment_app_bar_title), true);
     }
 
     private void setScheduleAdapters() {
