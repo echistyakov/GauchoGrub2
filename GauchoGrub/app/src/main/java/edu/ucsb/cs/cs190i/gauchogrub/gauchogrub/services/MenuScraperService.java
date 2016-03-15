@@ -38,7 +38,6 @@ import io.requery.sql.EntityDataStore;
  */
 public class MenuScraperService extends IntentService {
 
-    private static final String TAG = "MenuScraperService";
     private final static Logger logger = Logger.getLogger("MenuScrapper");
 
     private String BRIGHT_MEAL;
@@ -137,7 +136,7 @@ public class MenuScraperService extends IntentService {
         // menu if it doesn't exist in the DB
         for (Element mealPanel : filteredMealPanels) {
             String mealTypeStr = mealPanel.getElementsByTag("h5").first().text();
-            logger.info(mealTypeStr);
+            //logger.info(mealTypeStr);
             // check if menu exists in the DB
             LocalDate localDate = mDate.toLocalDate();
             RepeatedEvent repeatedEvent = dataStore
@@ -168,7 +167,7 @@ public class MenuScraperService extends IntentService {
                 Elements elements = mealPanel.getElementsByClass("course-list").first().children();
                 for (Element foodListByCategory : elements) {
                     String menuCategoryStr = foodListByCategory.getElementsByTag("dt").first().text();
-                    logger.info("    " + menuCategoryStr);
+                    //logger.info("  " + menuCategoryStr);
                     MenuCategory menuCategory = dataStore
                             .select(MenuCategory.class)
                             .where(MenuCategory.NAME.equal(menuCategoryStr))
@@ -182,7 +181,7 @@ public class MenuScraperService extends IntentService {
 
                     for (Element menuItemElement : foodListByCategory.getElementsByTag("dd")) {
                         String menuItemTitleStr = menuItemElement.text();
-                        logger.info("        " + menuItemTitleStr);
+                        //logger.info("    " + menuItemTitleStr);
                         // determine if MenuItem of same title and MenuCategory exists in DB
                         // if not, create new entity and insert it into the database
                         MenuItem menuItem = dataStore
