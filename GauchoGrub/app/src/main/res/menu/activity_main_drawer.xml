@@ -16,7 +16,7 @@
             android:title="@string/drawer_schedules" />
         <item
             android:id="@+id/nav_cams"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_dining_cams"
             android:title="@string/drawer_cams" />
         <item
             android:id="@+id/nav_swipes"
@@ -28,12 +28,12 @@
         <menu>
             <item
                 android:id="@+id/nav_settings"
-                android:icon="@android:drawable/ic_menu_help"
+                android:icon="@drawable/ic_menu_settings"
                 android:title="@string/drawer_settings" />
             <item
-                android:id="@+id/nav_about"
-                android:icon="@android:drawable/ic_menu_help"
-                android:title="@string/drawer_about"/>
+                android:id="@+id/nav_test_notifications"
+                android:icon="@drawable/ic_menu_trigger_notification"
+                android:title="@string/drawer_test_notifications"/>
         </menu>
     </item>
 
