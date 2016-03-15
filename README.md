@@ -19,11 +19,12 @@ Libraries:
  2. [About Libraries](https://github.com/mikepenz/AboutLibraries)
  3. [Joda Time](http://www.joda.org/joda-time/)
  4. [Google Guava](https://github.com/google/guava)
- 5. [ButterKnife](http://jakewharton.github.io/butterknife/)
- 6. [Material Sheet Fab](https://github.com/gowong/material-sheet-fab)
- 7. [OpenCSV](http://opencsv.sourceforge.net/)
- 8. [Jsoup](http://jsoup.org/)
- 9. [Swipe Layout](https://github.com/daimajia/AndroidSwipeLayout)
+ 5. [Google gson](https://github.com/google/gson)
+ 6. [ButterKnife](http://jakewharton.github.io/butterknife/)
+ 7. [Material Sheet Fab](https://github.com/gowong/material-sheet-fab)
+ 8. [OpenCSV](http://opencsv.sourceforge.net/)
+ 9. [Jsoup](http://jsoup.org/)
+ 10. [Swipe Layout](https://github.com/daimajia/AndroidSwipeLayout)
  
 Icons:
  1. Schedules icon made by [Appzgear](http://www.flaticon.com/authors/appzgear) from [www.flaticon.com](www.flaticon.com)
