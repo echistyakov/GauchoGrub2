@@ -53,7 +53,7 @@ public class FavoriteRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, Favo
     public void onBindViewHolder(final MenuItem menuItem, final ViewHolder viewHolder, int i) {
 
         // Nuts and V/VGN independent
-        if(menuItem.getHasNuts()) {
+        if (menuItem.getHasNuts()) {
             viewHolder.favoriteNutsImageview.setImageResource(R.mipmap.ic_nuts);
         } else {
             viewHolder.favoriteNutsImageview.setImageResource(android.R.color.transparent);
@@ -61,7 +61,7 @@ public class FavoriteRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, Favo
         // Vegan icon has priority over vegetarian
         if (menuItem.getIsVegan()) {
             viewHolder.favoriteVegImageView.setImageResource(R.mipmap.ic_vegan);
-        } else if(menuItem.getIsVegetarian()) {
+        } else if (menuItem.getIsVegetarian()) {
             viewHolder.favoriteVegImageView.setImageResource(R.mipmap.ic_vegetarian);
         } else {
             viewHolder.favoriteVegImageView.setImageResource(android.R.color.transparent);
@@ -132,12 +132,13 @@ public class FavoriteRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, Favo
         @Override
         public void onOpen(SwipeLayout layout) {
             Favorite favorite = dataStore.select(Favorite.class)
-                    .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
-                            .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
+                    .where(Favorite.DINING_COMMON_ID.eq(diningCommonId))
+                    .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId()))
                     .get()
                     .firstOrNull();
-            if(favorite != null)
+            if (favorite != null) {
                 dataStore.delete(favorite);
+            }
             thisAdapter.notifyDataSetChanged();
             thisAdapter.queryAsync();
         }
@@ -161,6 +162,5 @@ public class FavoriteRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, Favo
         public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
 
         }
-
     }
 }

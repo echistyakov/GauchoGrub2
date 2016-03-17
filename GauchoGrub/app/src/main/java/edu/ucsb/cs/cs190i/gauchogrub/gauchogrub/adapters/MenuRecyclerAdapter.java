@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 
 import org.joda.time.DateTime;
-import org.jsoup.Connection;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,8 +43,6 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
     private int diningCommonId;
     private MenuRecyclerAdapter thisAdapter;
 
-    private final String LOG_TAG = "MenuRecyclerAdapter";
-
     public MenuRecyclerAdapter(String diningCommon, DateTime date, String mealName, Context context) {
         super(MenuItem.$TYPE);
         this.date = date;
@@ -55,7 +52,6 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         this.diningCommon = diningCommon;
         this.diningCommonId = dataStore.select(DiningCommon.class).where(DiningCommon.NAME.eq(diningCommon)).get().first().getId();
         thisAdapter = this;
-        //Log.d(LOG_TAG, diningCommon + " " + date.toString("MM/dd") + " " + mealName);
     }
 
 
@@ -132,7 +128,7 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
                 .firstOrNull();
 
         // Nuts and V/VGN independent
-        if(menuItem.getHasNuts()) {
+        if (menuItem.getHasNuts()) {
             viewHolder.menuItemNutsImageView.setImageResource(R.mipmap.ic_nuts);
         } else {
             viewHolder.menuItemNutsImageView.setImageResource(android.R.color.transparent);
@@ -140,20 +136,20 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         // Vegan icon has priority over vegetarian
         if (menuItem.getIsVegan()) {
             viewHolder.menuItemVegImageView.setImageResource(R.mipmap.ic_vegan);
-        } else if(menuItem.getIsVegetarian()) {
+        } else if (menuItem.getIsVegetarian()) {
             viewHolder.menuItemVegImageView.setImageResource(R.mipmap.ic_vegetarian);
         } else {
             viewHolder.menuItemVegImageView.setImageResource(android.R.color.transparent);
         }
         // Handle favorites star
-        if(favorite != null) {
+        if (favorite != null) {
             viewHolder.menuItemFavoriteStar.setImageResource(R.drawable.ic_favorite_on);
             viewHolder.menuItemSwipeFavoriteStar.setImageResource(R.drawable.ic_favorite_off);
         } else {
             viewHolder.menuItemFavoriteStar.setImageResource(android.R.color.transparent);
             viewHolder.menuItemSwipeFavoriteStar.setImageResource(R.drawable.ic_favorite_on);
         }
-        // Remove reduntant (v), (vgn), or (w/ nuts) from name
+        // Remove redundant (v), (vgn), or (w/ nuts) from name
         String NUTS_STRING = context.getString(R.string.parsable_has_nuts);
         String VEG_STRING = context.getString(R.string.parsable_veg);
         String VGN_STRING = context.getString(R.string.parsable_vgn);
@@ -214,8 +210,8 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         @Override
         public void onOpen(SwipeLayout layout) {
             Favorite favorite = dataStore.select(Favorite.class)
-                    .where(Favorite.DINING_COMMON_ID.eq(diningCommonId)
-                            .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId())))
+                    .where(Favorite.DINING_COMMON_ID.eq(diningCommonId))
+                    .and(Favorite.MENU_ITEM_ID.eq(menuItem.getId()))
                     .get()
                     .firstOrNull();
             // If the favorite exists
@@ -255,4 +251,3 @@ public class MenuRecyclerAdapter extends QueryRecyclerAdapter<MenuItem, MenuRecy
         }
     }
 }
-

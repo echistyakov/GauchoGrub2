@@ -1,7 +1,6 @@
 package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.fab;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 import android.view.View;
@@ -22,8 +21,6 @@ public class MaterialSheetFab extends FloatingActionButton implements AnimatedFa
     public MaterialSheetFab(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-
-
 
     @Override
     public void show(float translationX, float translationY) {

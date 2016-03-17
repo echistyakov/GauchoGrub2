@@ -98,7 +98,6 @@ public class MenuFragment extends Fragment {
     private static final String STATE_DISPLAY_DATE = "STATE_DISPLAY_DATE";
     private static final String STATE_MEAL_NAME = "STATE_MEAL_NAME";
 
-    private final String LOG_TAG = "MenuFragment";
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -107,7 +106,6 @@ public class MenuFragment extends Fragment {
     }
 
     // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static MenuFragment newInstance(int columnCount) {
         MenuFragment fragment = new MenuFragment();
         Bundle args = new Bundle();
@@ -126,11 +124,11 @@ public class MenuFragment extends Fragment {
                         getString(R.string.DLG)));
         int savedDateInMillis;
         // Attempt to restore date and mealName from savedInstanceState, if it exists
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             savedDateInMillis = savedInstanceState.getInt(STATE_DISPLAY_DATE, 0);
-            if(savedDateInMillis == 0)
+            if (savedDateInMillis == 0){
                 displayDate = DateTime.now();
-            else {
+            } else {
                 displayDate = new DateTime(savedDateInMillis);
             }
             mealName = savedInstanceState.getString(STATE_MEAL_NAME, firstMealOffered(diningCommon));
@@ -153,8 +151,7 @@ public class MenuFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menus, container, false);
         ButterKnife.bind(this, view);
         recyclerView = (RecyclerView) view.findViewById(R.id.MenuFragment_recyclerView);
@@ -184,18 +181,17 @@ public class MenuFragment extends Fragment {
      * @param mealName the name of the meal of the menu which will be viewed
      */
     private void setRecyclerAdapter(String diningCommon, DateTime date, String mealName) {
-        // Log.d(LOG_TAG, "Setting new recyclerAdapter for " + diningCommon + " " + date.toString("MM/dd") + " " + mealName);
         // Update member variables
         this.diningCommon = diningCommon;
         this.displayDate = date;
         this.mealName = mealName;
         // Remove current recyclerAdapater
-        if(menuRecyclerAdapter != null) {
+        if (menuRecyclerAdapter != null) {
             recyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
             menuRecyclerAdapter.close();
             executorService.shutdownNow();
         }
-        // Create new adapter an dexecutor
+        // Create new adapter and executor
         menuRecyclerAdapter = new MenuRecyclerAdapter(diningCommon, date, mealName, getContext());
         executorService = Executors.newSingleThreadExecutor();
         // Set executor and adapter
@@ -222,7 +218,7 @@ public class MenuFragment extends Fragment {
     private String firstMealOffered(String diningCommon) {
         String[] mealNames = getResources().getStringArray(R.array.MenuFragment_mealStrings);
         int diningCommonId = data.select(DiningCommon.class).where(DiningCommon.NAME.eq(diningCommon)).get().first().getId();
-        for(int i = 0; i < mealNames.length; i++) {
+        for (int i = 0; i < mealNames.length; i++) {
             Menu menu = data.select(Menu.class)
                     .join(RepeatedEvent.class).on(Menu.EVENT_ID.eq(RepeatedEvent.ID))
                     .join(DiningCommon.class).on(RepeatedEvent.DINING_COMMON_ID.eq(diningCommonId))
@@ -232,7 +228,7 @@ public class MenuFragment extends Fragment {
                             .and(Meal.NAME.eq(mealNames[i])))
                     .get()
                     .firstOrNull();
-            if(menu != null && !menu.getMenuItems().toList().isEmpty()) {
+            if (menu != null && !menu.getMenuItems().toList().isEmpty()) {
                 return mealNames[i];
             }
         }
@@ -258,47 +254,52 @@ public class MenuFragment extends Fragment {
                     .join(RepeatedEvent.class).on(Menu.EVENT_ID.eq(RepeatedEvent.ID))
                     .join(DiningCommon.class).on(RepeatedEvent.DINING_COMMON_ID.eq(diningCommonId))
                     .join(Meal.class).on(RepeatedEvent.MEAL_ID.eq(Meal.ID))
-                    .where(DiningCommon.NAME.eq(diningCommon)
-                            .and(Menu.DATE.eq(displayDate.toLocalDate()))
-                            .and(Meal.NAME.eq(mealName))).get().firstOrNull();
-            if(menu != null && !menu.getMenuItems().toList().isEmpty()) {
+                    .where(DiningCommon.NAME.eq(diningCommon))
+                    .and(Menu.DATE.eq(displayDate.toLocalDate()))
+                    .and(Meal.NAME.eq(mealName))
+                    .get()
+                    .firstOrNull();
+            if (menu != null && !menu.getMenuItems().toList().isEmpty()) {
                 offeredMeals.add(mealName);
             }
         }
         for(String mealName : offeredMeals) {
-            //Log.d(LOG_TAG, mealName);
-            if(mealName.equals(breakfastString) || mealName.equals(brunchString)) {
+            if (mealName.equals(breakfastString) || mealName.equals(brunchString)) {
                 breakfastButton.setText(mealName);
             }
         }
         //Log.d(LOG_TAG, "MealName = " + mealName);
-        if(!offeredMeals.contains(breakfastString) && !offeredMeals.contains(brunchString)) {
+        if (!offeredMeals.contains(breakfastString) && !offeredMeals.contains(brunchString)) {
             breakfastButton.setVisibility(View.INVISIBLE);
         } else {
             breakfastButton.setVisibility(View.VISIBLE);
-            if(mealName.equals(breakfastString) || mealName.equals(brunchString))
+            if (mealName.equals(breakfastString) || mealName.equals(brunchString)) {
                 breakfastButton.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight, null));
+            }
         }
-        if(!offeredMeals.contains(lunchString)) {
+        if (!offeredMeals.contains(lunchString)) {
             lunchButton.setVisibility(View.INVISIBLE);
         } else {
             lunchButton.setVisibility(View.VISIBLE);
-            if(mealName.equals(lunchString))
+            if (mealName.equals(lunchString)) {
                 lunchButton.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight, null));
+            }
         }
-        if(!offeredMeals.contains(dinnerString)) {
+        if (!offeredMeals.contains(dinnerString)) {
             dinnerButton.setVisibility(View.INVISIBLE);
         } else {
             dinnerButton.setVisibility(View.VISIBLE);
-            if(mealName.equals(dinnerString))
+            if (mealName.equals(dinnerString)) {
                 dinnerButton.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight, null));
+            }
         }
-        if(!offeredMeals.contains(lateNightString)) {
+        if (!offeredMeals.contains(lateNightString)) {
             lateNightButton.setVisibility(View.INVISIBLE);
         } else {
             lateNightButton.setVisibility(View.VISIBLE);
-            if(mealName.equals(lateNightString))
+            if (mealName.equals(lateNightString)) {
                 lateNightButton.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight, null));
+            }
         }
     }
 
@@ -357,7 +358,7 @@ public class MenuFragment extends Fragment {
     public void handleDateButtonClick(Button button) {
         resetDateButtonBackgrounds();
         button.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight, null));
-        switch(button.getId()) {
+        switch (button.getId()) {
             case R.id.MenuFragment_button_today:
                 displayDate = DateTime.now();
                 break;

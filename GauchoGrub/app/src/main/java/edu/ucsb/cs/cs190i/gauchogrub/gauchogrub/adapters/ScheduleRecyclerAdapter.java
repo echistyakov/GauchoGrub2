@@ -8,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.joda.time.DateTime;
-
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.GGApp;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
@@ -42,8 +40,8 @@ public class ScheduleRecyclerAdapter extends QueryRecyclerAdapter<RepeatedEvent,
         return dataStore.select(RepeatedEvent.class)
                 .join(Meal.class)
                 .on(Meal.ID.eq(RepeatedEvent.MEAL_ID))
-                .where(RepeatedEvent.DINING_COMMON_ID.eq(diningCommonId)
-                        .and(RepeatedEvent.DAY_OF_WEEK.eq(dayOfWeek)))
+                .where(RepeatedEvent.DINING_COMMON_ID.eq(diningCommonId))
+                .and(RepeatedEvent.DAY_OF_WEEK.eq(dayOfWeek))
                 .get();
     }
 
@@ -73,10 +71,8 @@ public class ScheduleRecyclerAdapter extends QueryRecyclerAdapter<RepeatedEvent,
 
         public ViewHolder(View view) {
             super(view);
-
             mealNameTextView = (TextView) view.findViewById(R.id.ScheduleFragment_mealNameTextView);
             mealTimeTextView = (TextView) view.findViewById(R.id.ScheduleFragment_mealTimeTextView);
         }
     }
-
 }
