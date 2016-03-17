@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 
 import java.util.concurrent.ExecutorService;
@@ -23,7 +22,6 @@ import butterknife.ButterKnife;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.adapters.ScheduleRecyclerAdapter;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.activities.MainActivity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.adapters.FavoriteRecyclerAdapter;
 
 
 /**
@@ -56,13 +54,13 @@ public class ScheduleFragment extends Fragment {
 
     @Bind(R.id.ScheduleFragment_Tuesday)
     RecyclerView recyclerViewTuesday;
-    
+
     private ScheduleRecyclerAdapter tuesdayRecyclerAdapter;
     private ExecutorService tuesdayExecutorService;
 
     @Bind(R.id.ScheduleFragment_Wednesday)
     RecyclerView recyclerViewWednesday;
-    
+
     private ScheduleRecyclerAdapter wednesdayRecyclerAdapter;
     private ExecutorService wednesdayExecutorService;
 
@@ -161,7 +159,7 @@ public class ScheduleFragment extends Fragment {
     }
 
     private void setScheduleAdapter(RecyclerView recyclerView, @Nullable ScheduleRecyclerAdapter adapter, @Nullable ExecutorService executorService, int dayOfWeek) {
-        if(adapter != null && executorService != null) {
+        if (adapter != null && executorService != null) {
             recyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
             adapter.close();
             executorService.shutdownNow();

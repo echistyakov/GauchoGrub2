@@ -10,7 +10,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.activities.MainActivity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services.MenuScraperService;
 
 /**
@@ -127,7 +126,6 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.

@@ -2,18 +2,14 @@ package edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.services;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import org.joda.time.LocalDate;
 
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.GGApp;
-import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.activities.MainActivity;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.R;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.BaseMenuItem;
 import edu.ucsb.cs.cs190i.gauchogrub.gauchogrub.db.models.DiningCommon;
@@ -34,8 +30,6 @@ public class NotificationService extends IntentService {
 
     private EntityDataStore<Persistable> data;
 
-    public final static String LOG_TAG = "NotificationService";
-
     public NotificationService() {
         super("NotificationService");
     }
@@ -52,24 +46,19 @@ public class NotificationService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(LOG_TAG, "NotificationService triggered");
         data = ((GGApp) getApplication()).getData();
         List<FavoriteStruct> favorites = getAllFavoritesToday();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(!preferences.getBoolean(getString(R.string.pref_key_favorites_notification), true)) {
+        if (!preferences.getBoolean(getString(R.string.pref_key_favorites_notification), true)) {
             return;
         }
         // Stop if favorites are empty
-        if(favorites.size() <= 0) {
+        if (favorites.size() <= 0) {
             return;
         }
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this).addParentStack(MainActivity.class);
         NotificationCompat.Builder builder;
-        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         int i = 0;
-        for(FavoriteStruct favorite : favorites) {
+        for (FavoriteStruct favorite : favorites) {
             builder = new NotificationCompat.Builder(getBaseContext())
                     .setContentTitle(favorite.menuItem.title)
                     .setSmallIcon(R.drawable.ic_notification)
@@ -87,7 +76,6 @@ public class NotificationService extends IntentService {
      */
     private List<FavoriteStruct> getFavorites(String diningCommon, LocalDate date) {
         ArrayList<FavoriteStruct> favorites = new ArrayList<>();
-        int dayOfWeek = date.getDayOfWeek();
 
         // Get DiningCommon from diningCommon string
         int diningCommonId = data.select(DiningCommon.class)
@@ -100,23 +88,25 @@ public class NotificationService extends IntentService {
                 .join(RepeatedEvent.class).on(Menu.EVENT_ID.eq(RepeatedEvent.ID))
                 .join(DiningCommon.class).on(RepeatedEvent.DINING_COMMON_ID.eq(diningCommonId))
                 .join(Meal.class).on(RepeatedEvent.MEAL_ID.eq(Meal.ID))
-                .where(DiningCommon.NAME.eq(diningCommon)
-                        .and(Menu.DATE.eq(date)))
+                .where(DiningCommon.NAME.eq(diningCommon))
+                .and(Menu.DATE.eq(date))
                 .get()
                 .toList();
         // Get all favorites
         List<Favorite> favoriteEntities = data.select(Favorite.class).where(Favorite.DINING_COMMON_ID.eq(diningCommonId)).get().toList();
-        for(Menu menu : menusInDiningCommonToday) {
+        for (Menu menu : menusInDiningCommonToday) {
             // Traverse all items in the menu, add favorites to list of favorites
-            for(Favorite favorite : favoriteEntities) {
-                for(BaseMenuItem menuItem : menu.getMenuItems().toList()) {
+            for (Favorite favorite : favoriteEntities) {
+                for (BaseMenuItem menuItem : menu.getMenuItems().toList()) {
                     // If menuItem is favorite, add to list of favorites
-                    if(menuItem.id == favorite.getMenuItemId()) {
-                        RepeatedEvent repeatedEvent = data.select(RepeatedEvent.class)
+                    if (menuItem.id == favorite.getMenuItemId()) {
+                        RepeatedEvent repeatedEvent = data
+                                .select(RepeatedEvent.class)
                                 .where(RepeatedEvent.ID.eq(menu.getEventId()))
                                 .get()
                                 .first();
-                        Meal meal = data.select(Meal.class)
+                        Meal meal = data
+                                .select(Meal.class)
                                 .where(Meal.ID.eq(repeatedEvent.getMealId()))
                                 .get()
                                 .first();
@@ -135,7 +125,7 @@ public class NotificationService extends IntentService {
     private List<FavoriteStruct> getAllFavoritesToday() {
         String[] diningCommons = getResources().getStringArray(R.array.dining_commons);
         ArrayList<FavoriteStruct> favorites = new ArrayList<>();
-        for(String diningCommon : diningCommons) {
+        for (String diningCommon : diningCommons) {
             favorites.addAll(getFavoritesToday(diningCommon));
         }
         return favorites;
@@ -145,7 +135,6 @@ public class NotificationService extends IntentService {
      * Helper class Favorite for storing relevant data succinctly
      */
     public class FavoriteStruct {
-
         public BaseMenuItem menuItem;
         public String mealName;
         public String diningCommon;

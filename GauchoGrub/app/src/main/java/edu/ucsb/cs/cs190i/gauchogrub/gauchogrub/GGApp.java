@@ -35,12 +35,6 @@ public class GGApp extends Application {
         }
     }
 
-    /**
-     * @return {@link EntityDataStore} single instance for the application.
-     * <p/>
-     * Note if you're using Dagger you can make this part of your application level module returning
-     * {@code @Provides @Singleton}.
-     */
     public EntityDataStore<Persistable> getData() {
         if (dataStore == null) {
             // override onUpgrade to handle migrating to a new version
